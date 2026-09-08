@@ -16,10 +16,9 @@ data/
 *.csv
 !docs/**/*.csv
 
-# Salidas de análisis
+# Salidas de análisis (figuras generadas; las de docs/ sí se versionan)
 out/
 *.png
-*.html
 !docs/**/*.png
 
 # IDE / editor

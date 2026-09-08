@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wii Golf</title>
+<style>
+  :root{--bg:#0f1318;--card:#171c23;--line:#222a33;--text:#e6edf3;--muted:#9aa4b2;
+        --accent:#50c8ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#ffd166}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif}
+  header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  h1{font-size:18px;margin:0 8px 0 0}
+  h2{font-size:15px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  .pill{padding:3px 10px;border-radius:999px;font-size:13px;background:#2a3038}
+  .pill.ok{background:#153d2e;color:var(--ok)} .pill.bad{background:#3d1a1a;color:var(--bad)} .pill.sim{background:#3d3416;color:var(--warn)}
+  .muted{color:var(--muted);font-size:13px}
+  main{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;padding:14px;max-width:1400px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+  canvas{width:100%;display:block}
+  .big{font-size:46px;font-weight:600;line-height:1}
+  .big small{font-size:18px;color:var(--muted);font-weight:400}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
+  button{background:#232b35;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
+  button:hover{background:#2b3440} button:disabled{opacity:.5;cursor:default}
+  button.primary{background:#1c4d66;border-color:#2b7aa3} button.rec{background:#6b1f1f;border-color:#a33}
+  button.small{padding:4px 8px;font-size:13px}
+  input[type=text]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 10px;font-size:14px;width:150px}
+  select{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:7px 8px;font-size:14px}
+  label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .bars{margin:12px 0 4px}
+  .barlabels{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+  .bar{height:16px;background:#232b35;border-radius:8px;overflow:hidden;position:relative}
+  .bar>div{height:100%;background:var(--accent);transition:width .05s linear}
+  .bar::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed #55606d}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+  th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase}
+  tr.sel td{background:#1f2a36}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 14px;font-size:15px}
+  .metrics b{color:var(--muted);font-weight:500;display:block;font-size:12px}
+  .notes{color:var(--warn);font-size:13px;margin:8px 0}
+  img#anpng{width:100%;border-radius:8px;margin-top:10px;background:#fff;display:none}
+  #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#232b35;border:1px solid #2f3945;
+         padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+  #flash{position:fixed;inset:0;background:rgba(80,200,255,.18);opacity:0;pointer-events:none;transition:opacity .15s}
+  @media(max-width:900px){main{grid-template-columns:1fr} .big{font-size:38px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>⛳ Wii Golf</h1>
+  <span id="pill" class="pill">Conectando…</span>
+  <span id="hz" class="muted"></span>
+  <span id="err" class="muted" style="color:var(--bad)"></span>
+</header>
+
+<main>
+  <section class="card">
+    <canvas id="board"></canvas>
+  </section>
+
+  <section class="card">
+    <div class="big"><span id="total">0.0</span> <small>kg</small>
+      <span class="muted" style="font-size:16px;margin-left:14px">fuerza <b id="force">–</b> % del peso</span></div>
+    <div class="row muted">Peso corporal: <span id="bw">–</span>
+      <button id="fixbw" class="small">Fijar peso</button></div>
+
+    <div class="bars">
+      <div class="barlabels"><span>LEAD <b id="leadpct">–</b></span><span><b id="trailpct">–</b> TRAIL</span></div>
+      <div class="bar"><div id="trailbar" style="width:0%"></div></div>
+      <div class="muted" style="font-size:12px;margin-top:4px">la barra muestra el % de peso en el pie trail</div>
+    </div>
+
+    <div class="row">
+      <button id="tare">Tarar (tabla vacía)</button>
+      <button id="untare" class="small" hidden>quitar tara</button>
+      <span id="tared" class="muted"></span>
+    </div>
+
+    <div class="row">
+      <input type="text" id="recname" placeholder="nombre">
+      <button id="rec" class="primary">● Grabar</button>
+      <span id="rectimer" class="muted"></span>
+    </div>
+
+    <div class="row">
+      <label><input type="checkbox" id="auto"> Captura automática de swings</label>
+      <span id="autocount" class="muted"></span>
+    </div>
+
+    <div class="row">
+      <select id="handed"><option value="right">Diestro</option><option value="left">Zurdo</option></select>
+      <label><input type="checkbox" id="flipx"> invertir izq/der</label>
+      <label><input type="checkbox" id="flipy"> invertir punta/talón</label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Swings grabados</h2>
+    <table><thead><tr><th>Nombre</th><th>Fecha</th><th></th></tr></thead><tbody id="swings"></tbody></table>
+    <div id="noswings" class="muted">Todavía no hay grabaciones.</div>
+  </section>
+
+  <section class="card">
+    <h2 id="antitle">Análisis</h2>
+    <div id="anmeta" class="muted"></div>
+    <div id="annotes" class="notes"></div>
+    <div id="anmetrics" class="metrics"></div>
+    <img id="anpng" alt="figura del análisis">
+  </section>
+</main>
+
+<div id="flash"></div>
+<div id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const SETTINGS_KEY = "wiigolf.settings";
+const HX = 21.65, HY = 11.4;          // mitad de la distancia entre sensores (cm)
+const TRAIL_S = 1.5;                   // segundos de estela
+
+let settings = Object.assign({handed:"right", flip_x:false, flip_y:false},
+                             JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"));
+let latest = null, trail = [], bw = null, bwFixed = false, status = {}, ws = null, selected = null;
+let recentTotals = [];
+
+// ---------- utilidades ----------
+async function api(path, body, method) {
+  const r = await fetch(path, {method: method || (body ? "POST" : "GET"),
+    headers: body ? {"Content-Type": "application/json"} : {}, body: body ? JSON.stringify(body) : undefined});
+  if (!r.ok) { let m = r.statusText; try { m = (await r.json()).detail || m; } catch (e) {} throw new Error(m); }
+  return r.json();
+}
+let toastTimer;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.opacity = 1;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.opacity = 0, 2800); }
+function flash() { const f = $("flash"); f.style.opacity = 1; setTimeout(() => f.style.opacity = 0, 250); }
+function setPill(text, cls) { const p = $("pill"); p.textContent = text; p.className = "pill " + (cls || ""); }
+function fmtDate(ts) { const d = new Date(ts * 1000); return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}); }
+
+// ---------- ajustes ----------
+function applySettingsToUI() {
+  $("handed").value = settings.handed; $("flipx").checked = settings.flip_x; $("flipy").checked = settings.flip_y;
+}
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  api("/api/settings", settings).catch(e => toast("Ajustes: " + e.message));
+}
+$("handed").onchange = () => { settings.handed = $("handed").value; saveSettings(); };
+$("flipx").onchange = () => { settings.flip_x = $("flipx").checked; saveSettings(); };
+$("flipy").onchange = () => { settings.flip_y = $("flipy").checked; saveSettings(); };
+
+// ---------- websocket ----------
+function connect() {
+  ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
+  ws.onmessage = (e) => {
+    const m = JSON.parse(e.data);
+    if (m.type === "s") {
+      latest = m;
+      trail.push({x: m.x, y: m.y, t: m.t, tot: m.tot});
+      while (trail.length && trail[0].t < m.t - TRAIL_S) trail.shift();
+      if (m.tot > 20) {
+        recentTotals.push(m.tot); if (recentTotals.length > 100) recentTotals.shift();
+        if (!bwFixed) bw = bw == null ? m.tot : bw * 0.99 + m.tot * 0.01;
+      }
+    } else if (m.type === "status") { status = m; renderStatus(); }
+    else if (m.type === "auto_trigger") { flash(); toast("Swing detectado, guardando…"); }
+    else if (m.type === "auto_saved") {
+      loadSwings();
+      if (m.analysis) { toast("Guardado y analizado: " + m.name); showAnalysis(m.analysis); }
+      else toast("Guardado " + m.name + (m.error ? " (error en el análisis: " + m.error + ")" : ""));
+    }
+  };
+  ws.onclose = () => { setPill("Sin conexión con el servidor", "bad"); setTimeout(connect, 1500); };
+}
+
+// ---------- estado ----------
+function renderStatus() {
+  const s = status;
+  if (s.sim) setPill("Tabla simulada", "sim");
+  else if (s.connected) setPill("Tabla conectada", "ok");
+  else setPill("Tabla no conectada", "bad");
+  $("hz").textContent = s.connected ? `${s.hz} Hz` : "";
+  $("err").textContent = (!s.connected && s.error) ? s.error : "";
+  $("tared").textContent = s.tared ? "tara aplicada" : "";
+  $("untare").hidden = !s.tared;
+  const rec = $("rec");
+  if (s.recording) {
+    rec.textContent = "■ Detener y analizar"; rec.className = "rec";
+    $("rectimer").textContent = `${s.recording.name} · ${s.recording.seconds.toFixed(0)} s · ${s.recording.samples} muestras`;
+    $("recname").disabled = true;
+  } else {
+    rec.textContent = "● Grabar"; rec.className = "primary"; $("rectimer").textContent = "";
+    $("recname").disabled = false;
+    const v = $("recname").value.trim();
+    if (!v || /^swing_\d+$/.test(v)) $("recname").value = s.next_name || "";
+  }
+  $("auto").checked = !!(s.auto && s.auto.armed);
+  $("autocount").textContent = (s.auto && s.auto.armed) ? `armada · ${s.auto.count} capturas` : "";
+  if (s.settings && JSON.stringify(s.settings) !== JSON.stringify(settings)) {
+    // el servidor manda por defecto sus ajustes; el navegador manda los suyos la primera vez
+    if (!renderStatus.synced) { renderStatus.synced = true; saveSettings(); }
+    else { settings = Object.assign({}, s.settings); localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); applySettingsToUI(); }
+  } else renderStatus.synced = true;
+}
+
+// ---------- lectura en vivo ----------
+function renderLive() {
+  if (!latest) return;
+  $("total").textContent = latest.tot.toFixed(1);
+  let right = latest.tr + latest.br, left = latest.tl + latest.bl;
+  if (settings.flip_x) [right, left] = [left, right];
+  const trailKg = settings.handed === "right" ? right : left;
+  const tp = latest.tot >= 2 ? trailKg / latest.tot * 100 : null;
+  $("trailbar").style.width = (tp ?? 0) + "%";
+  $("trailpct").textContent = tp == null ? "–" : tp.toFixed(0) + " %";
+  $("leadpct").textContent = tp == null ? "–" : (100 - tp).toFixed(0) + " %";
+  $("force").textContent = (bw && latest.tot >= 2) ? (latest.tot / bw * 100).toFixed(0) : "–";
+  $("bw").textContent = bw ? bw.toFixed(1) + " kg" + (bwFixed ? " (fijado)" : " (estimado)") : "–";
+  $("fixbw").textContent = bwFixed ? "Soltar peso" : "Fijar peso";
+}
+setInterval(renderLive, 50);
+
+$("fixbw").onclick = () => {
+  if (bwFixed) { bwFixed = false; return; }
+  if (recentTotals.length < 10) { toast("Súbete a la tabla y quédate quieto un momento"); return; }
+  const arr = [...recentTotals].sort((a, b) => a - b); bw = arr[Math.floor(arr.length / 2)]; bwFixed = true;
+  toast(`Peso corporal fijado: ${bw.toFixed(1)} kg`);
+};
+
+// ---------- canvas ----------
+const cv = $("board"), ctx = cv.getContext("2d");
+function resize() { const w = cv.clientWidth || 600; cv.width = w * devicePixelRatio; cv.height = w * 0.62 * devicePixelRatio; }
+window.addEventListener("resize", resize); resize();
+
+function draw() {
+  const dpr = devicePixelRatio, W = cv.width, H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+  const pad = 0.09 * W, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
+  const toPx = (x, y) => {
+    const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y;
+    return [ox + bwid / 2 + sx * bwid / 2, oy + bhei / 2 - sy * bhei / 2];
+  };
+  // tabla
+  ctx.fillStyle = "#121820"; ctx.fillRect(ox, oy, bwid, bhei);
+  ctx.strokeStyle = "#2a3038"; ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(ox + bwid * i / 4, oy); ctx.lineTo(ox + bwid * i / 4, oy + bhei); ctx.stroke(); }
+  for (let i = 1; i < 2; i++) { ctx.beginPath(); ctx.moveTo(ox, oy + bhei * i / 2); ctx.lineTo(ox + bwid, oy + bhei * i / 2); ctx.stroke(); }
+  ctx.strokeStyle = "#55606d"; ctx.lineWidth = 3 * dpr; ctx.strokeRect(ox, oy, bwid, bhei);
+  // estela
+  if (trail.length > 1) {
+    const t1 = trail[trail.length - 1].t;
+    ctx.lineCap = "round"; ctx.lineWidth = 3.5 * dpr;
+    for (let i = 1; i < trail.length; i++) {
+      const a = trail[i - 1], b = trail[i];
+      if (a.tot < 2 || b.tot < 2) continue;
+      const age = Math.min(1, (t1 - b.t) / TRAIL_S);
+      ctx.strokeStyle = `rgba(80,200,255,${(1 - age) * 0.9})`;
+      const [x0, y0] = toPx(a.x, a.y), [x1, y1] = toPx(b.x, b.y);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    }
+  }
+  // punto actual (tamaño y color según la fuerza vertical)
+  if (latest && latest.tot >= 2) {
+    const [x, y] = toPx(latest.x, latest.y);
+    const f = bw ? latest.tot / bw : 1;
+    const r = (9 + 12 * Math.max(0, Math.min(2, f))) * dpr;
+    ctx.fillStyle = f > 1.15 ? "#ff7a59" : "#ffd166";
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = "#0f1318"; ctx.lineWidth = 2 * dpr; ctx.stroke();
+  }
+  // etiquetas
+  ctx.fillStyle = "#9aa4b2"; ctx.font = `${13 * dpr}px system-ui`; ctx.textAlign = "center";
+  const trailRight = settings.handed === "right";
+  ctx.fillText(trailRight ? "LEAD" : "TRAIL", ox + bwid * 0.12, oy + bhei + 20 * dpr);
+  ctx.fillText(trailRight ? "TRAIL" : "LEAD", ox + bwid * 0.88, oy + bhei + 20 * dpr);
+  ctx.fillText("punta", ox + bwid / 2, oy - 8 * dpr);
+  ctx.fillText("talón", ox + bwid / 2, oy + bhei + 20 * dpr);
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ---------- controles ----------
+function resetBw() { if (!bwFixed) { bw = null; recentTotals = []; } }  // la tara cambia la escala: reestimar el peso
+$("tare").onclick = async () => {
+  try { const r = await api("/api/tare", null, "POST"); status = r.status; renderStatus(); resetBw(); toast("Tara aplicada"); }
+  catch (e) { toast("Tara: " + e.message); }
+};
+$("untare").onclick = async () => {
+  try { const r = await api("/api/tare/clear", null, "POST"); status = r.status; renderStatus(); resetBw(); toast("Tara quitada"); }
+  catch (e) { toast("Tara: " + e.message); }
+};
+$("rec").onclick = async () => {
+  try {
+    if (status.recording) {
+      $("rec").disabled = true;
+      const r = await api("/api/record/stop", {analyze: true});
+      status = r.status; renderStatus();
+      toast(`Guardado ${r.recording.name} (${r.recording.samples} muestras, ${r.recording.duration} s)`);
+      loadSwings();
+      if (r.analysis) showAnalysis(r.analysis); else if (r.analysis_error) toast("Análisis: " + r.analysis_error);
+    } else {
+      const r = await api("/api/record/start", {name: $("recname").value.trim()});
+      status = r.status; renderStatus(); toast("Grabando " + r.name);
+    }
+  } catch (e) { toast("Error: " + e.message); }
+  finally { $("rec").disabled = false; }
+};
+$("auto").onchange = async () => {
+  try { const r = await api("/api/auto", {armed: $("auto").checked}); status = r.status; renderStatus();
+        toast($("auto").checked ? "Captura automática armada: haz swings" : "Captura automática desactivada"); }
+  catch (e) { toast("Auto: " + e.message); }
+};
+
+// ---------- swings y análisis ----------
+async function loadSwings() {
+  const list = await api("/api/swings");
+  const tb = $("swings"); tb.innerHTML = "";
+  $("noswings").style.display = list.length ? "none" : "";
+  for (const s of list) {
+    const tr = document.createElement("tr"); if (s.name === selected) tr.className = "sel";
+    tr.innerHTML = `<td>${s.name}${s.analyzed ? "" : ' <span class="muted">(sin analizar)</span>'}</td><td class="muted">${fmtDate(s.mtime)}</td><td style="text-align:right;white-space:nowrap"></td>`;
+    const cell = tr.lastElementChild;
+    const bA = document.createElement("button"); bA.className = "small"; bA.textContent = "Analizar";
+    bA.onclick = async () => { bA.disabled = true; try { showAnalysis(await api("/api/analyze/" + s.name, {})); loadSwings(); } catch (e) { toast(e.message); } finally { bA.disabled = false; } };
+    const bD = document.createElement("button"); bD.className = "small"; bD.textContent = "Borrar"; bD.style.marginLeft = "6px";
+    bD.onclick = async () => { if (!confirm(`¿Borrar ${s.name}?`)) return; try { await api("/api/swings/" + s.name, null, "DELETE"); if (selected === s.name) clearAnalysis(); loadSwings(); } catch (e) { toast(e.message); } };
+    cell.append(bA, bD);
+    tb.appendChild(tr);
+  }
+}
+const LABELS = {
+  peso_corporal_kg: "Peso corporal (kg)", trail_pct_en_top: "% trail en el top", lead_pct_en_impacto: "% lead en el impacto",
+  pico_fuerza_pct_bw: "Pico de fuerza (% peso)", fuerza_en_impacto_pct_bw: "Fuerza en impacto (% peso)",
+  top_a_impacto_ms: "Top → impacto (ms)", t_top_s: "Top (s)", t_impacto_s: "Impacto (s)", t_pico_fuerza_s: "Pico de fuerza (s)",
+  trail_pct_min_max: "% trail mín / máx", cop_x_rango_cm: "Rango lateral CoP (cm)", cop_y_rango_cm: "Rango punta-talón (cm)",
+  cop_longitud_trazo_cm: "Longitud del trazo (cm)",
+};
+const ORDER = ["peso_corporal_kg", "trail_pct_en_top", "lead_pct_en_impacto", "pico_fuerza_pct_bw", "top_a_impacto_ms",
+               "fuerza_en_impacto_pct_bw", "t_top_s", "t_impacto_s", "t_pico_fuerza_s", "trail_pct_min_max",
+               "cop_x_rango_cm", "cop_y_rango_cm", "cop_longitud_trazo_cm"];
+function showAnalysis(a) {
+  selected = a.name;
+  $("antitle").textContent = "Análisis · " + a.name;
+  $("anmeta").textContent = `${a.samples} muestras · ${a.duration} s · ${a.hz} Hz`;
+  $("annotes").textContent = (a.notes || []).join(" ");
+  const m = $("anmetrics"); m.innerHTML = "";
+  for (const k of ORDER) {
+    if (!(k in a.metrics) || a.metrics[k] == null) continue;
+    let v = a.metrics[k]; if (Array.isArray(v)) v = v.join(" / ");
+    const d = document.createElement("div"); d.innerHTML = `<b>${LABELS[k] || k}</b>${v}`; m.appendChild(d);
+  }
+  const img = $("anpng"); img.src = a.png; img.style.display = "";
+  document.querySelectorAll("#swings tr").forEach(tr => tr.className = tr.firstElementChild.textContent.startsWith(a.name) ? "sel" : "");
+}
+function clearAnalysis() { selected = null; $("antitle").textContent = "Análisis"; $("anmeta").textContent = ""; $("annotes").textContent = ""; $("anmetrics").innerHTML = ""; $("anpng").style.display = "none"; }
+
+// ---------- arranque ----------
+applySettingsToUI();
+connect();
+loadSwings();
+</script>
+</body>
+</html>
