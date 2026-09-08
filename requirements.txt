@@ -1,0 +1,8 @@
+# Lectura HID de la Wii Balance Board.
+# El paquete PyPI se llama "hidapi" y expone el módulo `import hid`.
+# En Windows incluye la DLL precompilada (no requiere nada extra).
+hidapi>=0.14.0
+
+# Para la fase de análisis/gráficas (prueba 2 en adelante).
+numpy>=1.24
+matplotlib>=3.7
