@@ -3,6 +3,10 @@
 # En Windows incluye la DLL precompilada (no requiere nada extra).
 hidapi>=0.14.0
 
-# Para la fase de análisis/gráficas (prueba 2 en adelante).
+# Análisis y gráficas (03_analyze.py).
 numpy>=1.24
 matplotlib>=3.7
+
+# Servidor web local en tiempo real (04_web.py).
+fastapi>=0.115
+uvicorn[standard]>=0.30

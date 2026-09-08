@@ -20,7 +20,11 @@ scripts/
   01_detect.py              detecta la tabla, lee la calibración y comprueba la lectura
   02_live_read.py           lectura en vivo + grabación a CSV
   03_analyze.py             analiza un CSV y genera out/<nombre>.png
+  04_web.py                 web local en tiempo real (CoP en vivo, grabación, captura automática)
   make_synthetic_swing.py   genera un swing sintético para probar sin la tabla
+wiigolf/web/
+  server.py                 FastAPI + WebSocket: hilo lector, grabación, auto-captura, API
+  static/index.html         interfaz (canvas con el CoP, barras, lista de swings, análisis)
 ```
 
 ## Requisitos
@@ -112,6 +116,39 @@ python scripts/03_analyze.py data/synthetic_swing.csv
 
 ![Análisis del swing sintético](docs/img/synthetic_swing.png)
 
+### Prueba 4 - Web local en tiempo real
+
+```powershell
+python scripts/04_web.py
+```
+
+Abre `http://localhost:8000` en el PC o la URL que imprime (`http://<ip>:8000`)
+desde una **tablet o móvil en el mismo WiFi**, para tenerla al lado de la
+tabla. La primera vez Windows puede pedir permiso en el firewall para
+`python.exe`; acéptalo para poder entrar desde la tablet.
+
+Qué hay en la pantalla:
+
+- **CoP en vivo** sobre la silueta de la tabla, con estela de 1,5 s. El punto
+  crece y se pone naranja cuando la fuerza vertical supera el 115 % del peso.
+- **Peso total**, **fuerza vertical** (% del peso corporal) y barra
+  **trail / lead**. El peso corporal se estima solo; con *Fijar peso* se toma
+  la mediana del último segundo estando quieto.
+- **Tarar**: con la tabla vacía (o con la alfombra encima) pone las cuatro
+  células a cero.
+- **Grabar**: graba a `data/<nombre>.csv` y, al detener, analiza y muestra la
+  figura y las métricas.
+- **Captura automática**: sin pulsar nada entre swings. Mantiene un buffer de
+  los últimos segundos; cuando el % de peso en el trail cae 25 puntos en menos
+  de 0,5 s (el downswing), guarda `data/auto_<fecha>.csv` con los 3 s previos y
+  1,5 s posteriores, y lo analiza al vuelo.
+- **Swings grabados**: re-analizar, borrar o descargar (`/api/swings/<n>/csv`).
+- Ajustes de diestro/zurdo e inversión de ejes: se guardan en el navegador y
+  en `data/settings.json` y los usa también el análisis.
+
+Para desarrollar sin la tabla: `python scripts/04_web.py --sim` reproduce en
+bucle un swing simulado.
+
 ## Orientación sobre la tabla
 
 - Colócate con los pies **a lo ancho** de la tabla: el eje x es el lateral
@@ -149,9 +186,11 @@ tablas).
 1. ✅ Leer 1 tabla: CoP + peso a CSV.
 2. ✅ Análisis del CSV: trazo del CoP, % trail/lead, fuerza vertical, marcas de
    top e impacto (heurístico).
-3. Validar con swings reales y ajustar la heurística; marcado fiable del impacto
+3. ✅ Visualización en tiempo real: web local (FastAPI + WebSocket + canvas) con
+   estela del CoP, barras trail/lead, fuerza vertical, grabación y captura
+   automática de swings, accesible desde tablet.
+4. Validar con swings reales y ajustar la heurística; marcado fiable del impacto
    (micrófono o IMU sincronizado).
-4. Visualización en tiempo real: web local (FastAPI + WebSocket + canvas) con
-   estela del CoP, barras trail/lead y fuerza vertical, accesible desde tablet.
-5. **2 tablas** (una por pie) sincronizadas: CoP por pie y GRF vertical.
-6. Matriz de presión (FSR/Velostat) sobre cada tabla para el mapa de presión.
+5. Comparar varios swings (superposición alineada en el impacto, consistencia).
+6. **2 tablas** (una por pie) sincronizadas: CoP por pie y GRF vertical.
+7. Matriz de presión (FSR/Velostat) sobre cada tabla para el mapa de presión.
