@@ -108,8 +108,9 @@ jobs:
             sed -i '' 's/containsString:@"Nintendo RVL-CNT-01"/containsString:@"Nintendo RVL-"/' WiimotePair/ViewController.m
             grep -n 'Nintendo RVL-' WiimotePair/ViewController.m
             xcodebuild -version
+            # con -target no se admite -derivedDataPath: la salida se fija con SYMROOT
             xcodebuild -project WiimotePair.xcodeproj -target WiimotePair -configuration Release \
-              -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+              SYMROOT="$PWD/build" CODE_SIGNING_ALLOWED=NO build
             APP=$(find build -name "WiimotePair.app" -type d | head -1)
             test -n "$APP"
             codesign --force --deep --sign - "$APP"
