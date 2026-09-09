@@ -10,3 +10,9 @@ matplotlib>=3.7
 # Servidor web local en tiempo real (04_web.py).
 fastapi>=0.115
 uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+
+# Micrófono (impacto por audio) y webcam (vídeo del swing); opcionales:
+# si faltan, la web sigue funcionando sin audio/vídeo.
+sounddevice>=0.5
+opencv-python>=4.10

@@ -220,9 +220,11 @@ def analyze(
         cop_x = (right - left) / safe * HALF_X_CM
         cop_y = (top - bottom) / safe * HALF_Y_CM
 
-    # Peso corporal: mediana mientras está de pie (excluye subir/bajar de la tabla)
-    peak = float(np.percentile(total, 99)) if total.size else 0.0
-    standing = total >= 0.5 * peak if peak >= MIN_LOAD_KG else np.zeros_like(total, bool)
+    # "De pie": relativo al peso corporal (mediana con carga), no al pico, porque
+    # en un swing real la fuerza vertical llega al 150-190 % y luego cae al 40 %.
+    loaded = total >= max(MIN_LOAD_KG, 10.0)
+    bw0 = float(np.median(total[loaded])) if loaded.any() else 0.0
+    standing = total >= 0.2 * bw0 if bw0 >= MIN_LOAD_KG else np.zeros_like(total, bool)
     if bw_kg is None:
         bw_kg = float(np.median(total[standing])) if standing.any() else float("nan")
         if not standing.any():
@@ -246,7 +248,10 @@ def analyze(
         tp = trail_pct[s:e]
         fp = force_pct[s:e]
         if np.nanmax(tp) - np.nanmin(tp) >= _MIN_TRAIL_SWING_PCT:
-            v = np.gradient(smooth(np.nan_to_num(tp, nan=50.0), 5), tt)  # %/s
+            # pendiente con el paso de muestreo mediano: hay muestras con la misma
+            # marca de tiempo (ráfagas Bluetooth) y np.gradient(tp, tt) dividiría por 0
+            dt_med = float(np.median(np.diff(tt))) if tt.size > 1 else 0.01
+            v = np.gradient(smooth(np.nan_to_num(tp, nan=50.0), 5)) / max(dt_med, 1e-3)  # %/s
             i_fast = int(np.nanargmin(v))  # bajada más rápida de trail = downswing
             w0 = int(np.searchsorted(tt, tt[i_fast] - _TOP_SEARCH_S))
             i_top_l = w0 + int(np.nanargmax(tp[w0:i_fast + 1]))
@@ -271,7 +276,10 @@ def analyze(
 # Gráficas
 # --------------------------------------------------------------------------- #
 def plot(an: SwingAnalysis, out_path: str | Path | None = None,
-         show: bool = False, title: str | None = None) -> Path | None:
+         show: bool = False, title: str | None = None,
+         reference: "SwingAnalysis | None" = None) -> Path | None:
+    """Figura de 3 paneles. Si se da `reference`, se superpone en gris
+    alineada en el impacto (o en el top, o en el inicio si no hay eventos)."""
     import matplotlib
     if not show:
         matplotlib.use("Agg")
@@ -288,11 +296,27 @@ def plot(an: SwingAnalysis, out_path: str | Path | None = None,
     ax_tr = fig.add_subplot(gs[0, 1])
     ax_f = fig.add_subplot(gs[1, 1], sharex=ax_tr)
 
+    ref_shift, ref_label = None, None
+    if reference is not None:
+        ref_label = "referencia" + (f" ({Path(reference.source).stem})" if reference.source else "")
+        if an.t_impact is not None and reference.t_impact is not None:
+            ref_shift = an.t_impact - reference.t_impact
+        elif an.t_top is not None and reference.t_top is not None:
+            ref_shift = an.t_top - reference.t_top
+        else:
+            ref_shift = an.t[an.segment[0]] - reference.t[reference.segment[0]]
+
     # --- 1) trazo del CoP sobre la tabla ---------------------------------- #
     ax_cop.add_patch(plt.Rectangle((-HALF_X_CM, -HALF_Y_CM), 2 * HALF_X_CM, 2 * HALF_Y_CM,
                                    fill=False, lw=1.5, color="0.4"))
     ax_cop.axhline(0, color="0.85", lw=0.8)
     ax_cop.axvline(0, color="0.85", lw=0.8)
+    if reference is not None:
+        rs, re_ = reference.segment
+        rx, ry = reference.cop_x_cm[rs:re_], reference.cop_y_cm[rs:re_]
+        rok = ~np.isnan(rx) & ~np.isnan(ry)
+        if rok.sum() > 1:
+            ax_cop.plot(rx[rok], ry[rok], color="0.6", lw=1.3, alpha=0.9, zorder=1, label=ref_label)
     ok = ~np.isnan(x) & ~np.isnan(y)
     if ok.sum() > 1:
         pts = np.column_stack([x[ok], y[ok]]).reshape(-1, 1, 2)
@@ -320,13 +344,20 @@ def plot(an: SwingAnalysis, out_path: str | Path | None = None,
         ax_cop.legend(loc="upper left", fontsize=9)
 
     # --- 2) % peso trail vs tiempo ---------------------------------------- #
-    ax_tr.plot(an.t, an.trail_pct, color="tab:blue", lw=1.6)
+    if reference is not None:
+        ax_tr.plot(reference.t + ref_shift, reference.trail_pct, color="0.55", lw=1.2, ls="--",
+                   label=ref_label, zorder=1)
+    ax_tr.plot(an.t, an.trail_pct, color="tab:blue", lw=1.6, label="este swing")
+    if reference is not None:
+        ax_tr.legend(loc="best", fontsize=8)
     ax_tr.axhline(50, color="0.6", lw=0.8, ls="--")
     ax_tr.set_ylim(0, 100)
     ax_tr.set_ylabel("% peso en pie trail")
     ax_tr.set_title(f"Reparto trail / lead  ({'diestro' if an.handed == 'right' else 'zurdo'})")
 
     # --- 3) fuerza vertical vs tiempo ------------------------------------- #
+    if reference is not None:
+        ax_f.plot(reference.t + ref_shift, reference.force_pct, color="0.55", lw=1.2, ls="--", zorder=1)
     ax_f.plot(an.t, an.force_pct, color="tab:purple", lw=1.6)
     ax_f.axhline(100, color="0.6", lw=0.8, ls="--")
     ax_f.set_ylabel("fuerza vertical (% peso)")

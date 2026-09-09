@@ -15,23 +15,28 @@ Funciona la cadena completa con **una** tabla en Windows: lectura HID a
 ```
 wiigolf/
   balance_board.py          driver HID (init, calibración, lectura, CoP)
-  analysis.py               análisis del swing: métricas, detección de top/impacto, figura
+  analysis.py               análisis del swing: métricas, top/impacto, figura, referencia
+  media.py                  micrófono y webcam en continuo; WAV + fotogramas JPEG; golpe a la bola
+  bt_win.py                 emparejar/conectar la tabla por Bluetooth (API de Windows, sin apps)
 scripts/
   01_detect.py              detecta la tabla, lee la calibración y comprueba la lectura
   02_live_read.py           lectura en vivo + grabación a CSV
   03_analyze.py             analiza un CSV y genera out/<nombre>.png
   04_web.py                 web local en tiempo real (CoP en vivo, grabación, captura automática)
   make_synthetic_swing.py   genera un swing sintético para probar sin la tabla
+  wiigolf.bat               arranca el servidor y abre el navegador (doble clic)
+  autostart.ps1             instala/quita la tarea que arranca el servidor al iniciar sesión
 wiigolf/web/
-  server.py                 FastAPI + WebSocket: hilo lector, grabación, auto-captura, API
-  static/index.html         interfaz (canvas con el CoP, barras, lista de swings, análisis)
+  server.py                 FastAPI + WebSocket: lector, grabación, auto-captura, medios, API
+  static/index.html         interfaz: CoP en vivo, swings, análisis, reproductor a cámara lenta
 ```
 
 ## Requisitos
 
 - **Python 3.10+** en el PATH (probado con 3.14).
 - Una Wii Balance Board **emparejada por Bluetooth** con el PC.
-- `pip install -r requirements.txt` (instala `hidapi`, `numpy`, `matplotlib`).
+- `pip install -r requirements.txt` (`hidapi`, `numpy`, `matplotlib`, `fastapi`,
+  `uvicorn`, y opcionales `sounddevice` para el micro y `opencv-python` para la webcam).
 
 ## Puesta en marcha (Windows / PowerShell)
 
@@ -122,32 +127,75 @@ python scripts/03_analyze.py data/synthetic_swing.csv
 python scripts/04_web.py
 ```
 
+O doble clic en `scripts\wiigolf.bat` (arranca el servidor y abre el navegador).
 Abre `http://localhost:8000` en el PC o la URL que imprime (`http://<ip>:8000`)
-desde una **tablet o móvil en el mismo WiFi**, para tenerla al lado de la
-tabla. La primera vez Windows puede pedir permiso en el firewall para
-`python.exe`; acéptalo para poder entrar desde la tablet.
+desde una **tablet o móvil en el mismo WiFi**. La primera vez Windows puede
+pedir permiso en el firewall para `python.exe`; acéptalo para entrar desde la
+tablet.
 
-Qué hay en la pantalla:
+**En vivo**
 
-- **CoP en vivo** sobre la silueta de la tabla, con estela de 1,5 s. El punto
-  crece y se pone naranja cuando la fuerza vertical supera el 115 % del peso.
-- **Peso total**, **fuerza vertical** (% del peso corporal) y barra
-  **trail / lead**. El peso corporal se estima solo; con *Fijar peso* se toma
-  la mediana del último segundo estando quieto.
-- **Tarar**: con la tabla vacía (o con la alfombra encima) pone las cuatro
-  células a cero.
-- **Grabar**: graba a `data/<nombre>.csv` y, al detener, analiza y muestra la
-  figura y las métricas.
-- **Captura automática**: sin pulsar nada entre swings. Mantiene un buffer de
-  los últimos segundos; cuando el % de peso en el trail cae 25 puntos en menos
-  de 0,5 s (el downswing), guarda `data/auto_<fecha>.csv` con los 3 s previos y
-  1,5 s posteriores, y lo analiza al vuelo.
-- **Swings grabados**: re-analizar, borrar o descargar (`/api/swings/<n>/csv`).
-- Ajustes de diestro/zurdo e inversión de ejes: se guardan en el navegador y
-  en `data/settings.json` y los usa también el análisis.
+- CoP con estela sobre la silueta de la tabla; el punto crece y se pone naranja
+  cuando la fuerza vertical supera el 115 % del peso. Peso, fuerza (% del peso
+  corporal) y barra trail / lead. *Fijar peso* toma la mediana estando quieto.
+- **Tarar** con la tabla vacía (o con la alfombra encima); *quitar tara* deshace.
+- **Micrófono** y **cámara**: se activan con sus casillas y capturan en continuo
+  (buffer de 20 s) con el mismo reloj que la tabla. El medidor muestra el nivel
+  del micro; *ver* enseña la cámara para encuadrar.
+
+**Grabar swings**
+
+- **Grabar / Detener y analizar**: un CSV por grabación, con audio y vídeo si
+  están activos.
+- **Captura automática**: sin pulsar nada entre swings. Dispara cuando el % de
+  peso en el trail cae 25 puntos en < 0,5 s **y** hubo un pico de fuerza
+  ≥ 112 % del peso en los 0,4 s previos (el rebote tras el swing no lo tiene);
+  guarda 3 s antes + 1,5 s después y analiza al vuelo.
+- Cada swing son varios archivos en `data/`: `<n>.csv` (tabla), `<n>.json`
+  (meta y eventos), `<n>.wav` (audio), `<n>.frames.zip` (vídeo: un JPEG por
+  fotograma con su instante) y `out/<n>.png` (figura).
+
+**Impacto por audio**: si hay audio, se busca el golpe a la bola (transitorio
+≥ 8× la mediana y nivel ≥ 0,02) en la ventana [top − 0,2 s, top + 1,2 s] y esa
+marca sustituye a la estimación por fuerza. La lista muestra `impacto audio`.
+
+**Reproductor a cámara lenta** (▶ en la lista o en el análisis): vídeo
+fotograma a fotograma con el trazo del CoP superpuesto (recuadro de la tabla),
+barra de tiempo con top / impacto / golpe, velocidades de 1× a 1/20×, avance
+por fotograma (⏮ ⏭ o flechas, espacio = reproducir), *ir al top / impacto*, y
+**marcar top / impacto aquí** para fijar las marcas a mano viendo el vídeo
+(*restablecer marcas* vuelve al automático). Sin vídeo se reproduce el trazo.
+
+**Swing de referencia**: ★ en un swing lo fija como base; los análisis
+posteriores muestran sus métricas al lado con la diferencia (Δ), la figura
+superpone la referencia en gris alineada en el impacto y el reproductor dibuja
+su trazo y su punto a la vez que el del swing actual.
+
+**Exportar / importar**: ⤓ descarga `<n>.wiigolf.zip` con todo (CSV, meta,
+audio, vídeo, figura); *Importar zip* lo carga en otro PC (si el nombre ya
+existe se renombra) y lo analiza.
+
+**Tabla / Bluetooth** (botón de la cabecera): estado del adaptador y de la
+tabla (conectada / emparejada), *Reconectar* y **Emparejar**: pulsa el botón
+SYNC rojo de la tabla y luego el botón; se empareja con el PIN que espera la
+tabla (la dirección del adaptador) y se activa su servicio HID, como hace
+WiiPair, sin WiiBalanceWalker. Emparejada de forma permanente, basta con
+encenderla: el servidor la detecta solo (reintenta cada 3 s).
+
+**Arrancar como servicio** (siempre disponible, también para la tablet):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\autostart.ps1 -Install
+```
+
+crea una tarea programada que arranca el servidor al iniciar sesión, oculto y
+con reinicio automático si se cae (log en `data\server.log`); `-Uninstall` la
+quita y `-Status` la consulta. Un navegador no puede lanzar procesos del PC,
+así que esta es la forma de que la web "esté siempre"; la página se reconecta
+sola cuando el servidor vuelve.
 
 Para desarrollar sin la tabla: `python scripts/04_web.py --sim` reproduce en
-bucle un swing simulado.
+bucle un swing simulado (el micro y la cámara sí son reales).
 
 ## Orientación sobre la tabla
 
@@ -171,6 +219,14 @@ bucle un swing simulado.
   como (0, 0) para no dividir entre ruido.
 - Pipeline de análisis validado con un swing sintético: detecta el top
   (2,79 s vs 2,80 diseñado) y el impacto (3,02 s), pico de fuerza 129,5 % BW.
+- **Cinco swings reales** (captura automática, 9/9/2026): top a ~2,8 s de la
+  captura, 73-87 % de trail en el top, pico de fuerza **152-190 %** del peso y
+  downswing de 180-220 ms. Obligaron a dos cambios: la máscara "de pie" del
+  análisis pasó a ser relativa al peso corporal (el pico del 190 % y la descarga
+  al 45 % rompían la anterior) y el disparador automático exige ahora también
+  un pico de fuerza (el rebote tras el swing lo disparaba).
+- La tabla ya está **emparejada de forma permanente** en Windows (autenticada
+  con el adaptador): basta con encenderla, sin WiiBalanceWalker.
 
 ## Nota sobre Windows
 
@@ -186,11 +242,11 @@ tablas).
 1. ✅ Leer 1 tabla: CoP + peso a CSV.
 2. ✅ Análisis del CSV: trazo del CoP, % trail/lead, fuerza vertical, marcas de
    top e impacto (heurístico).
-3. ✅ Visualización en tiempo real: web local (FastAPI + WebSocket + canvas) con
-   estela del CoP, barras trail/lead, fuerza vertical, grabación y captura
-   automática de swings, accesible desde tablet.
-4. Validar con swings reales y ajustar la heurística; marcado fiable del impacto
-   (micrófono o IMU sincronizado).
-5. Comparar varios swings (superposición alineada en el impacto, consistencia).
+3. ✅ Web local en tiempo real con grabación y captura automática.
+4. ✅ Audio del golpe para marcar el impacto, vídeo de la webcam sincronizado,
+   reproductor a cámara lenta con el trazo del CoP, swing de referencia,
+   exportar/importar, emparejado Bluetooth propio y arranque como servicio.
+5. Validar el impacto por audio con golpes reales y afinar umbrales; comparar
+   varios swings superpuestos (consistencia).
 6. **2 tablas** (una por pie) sincronizadas: CoP por pie y GRF vertical.
 7. Matriz de presión (FSR/Velostat) sobre cada tabla para el mapa de presión.

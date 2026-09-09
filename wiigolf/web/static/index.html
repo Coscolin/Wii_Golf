@@ -8,15 +8,17 @@
   :root{--bg:#0f1318;--card:#171c23;--line:#222a33;--text:#e6edf3;--muted:#9aa4b2;
         --accent:#50c8ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#ffd166}
   *{box-sizing:border-box}
+  [hidden]{display:none !important}
   body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif}
   header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
   h1{font-size:18px;margin:0 8px 0 0}
-  h2{font-size:15px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  h2{font-size:15px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .pill{padding:3px 10px;border-radius:999px;font-size:13px;background:#2a3038}
   .pill.ok{background:#153d2e;color:var(--ok)} .pill.bad{background:#3d1a1a;color:var(--bad)} .pill.sim{background:#3d3416;color:var(--warn)}
   .muted{color:var(--muted);font-size:13px}
   main{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;padding:14px;max-width:1400px;margin:0 auto}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+  .wide{grid-column:1 / -1}
   canvas{width:100%;display:block}
   .big{font-size:46px;font-weight:600;line-height:1}
   .big small{font-size:18px;color:var(--muted);font-weight:400}
@@ -26,23 +28,32 @@
   button.primary{background:#1c4d66;border-color:#2b7aa3} button.rec{background:#6b1f1f;border-color:#a33}
   button.small{padding:4px 8px;font-size:13px}
   input[type=text]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 10px;font-size:14px;width:150px}
-  select{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:7px 8px;font-size:14px}
+  input[type=number]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:6px 8px;font-size:14px;width:64px}
+  select{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:7px 8px;font-size:14px;max-width:260px}
   label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
   .bars{margin:12px 0 4px}
   .barlabels{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
   .bar{height:16px;background:#232b35;border-radius:8px;overflow:hidden;position:relative}
   .bar>div{height:100%;background:var(--accent);transition:width .05s linear}
   .bar::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed #55606d}
+  .meter{height:8px;background:#232b35;border-radius:4px;overflow:hidden;width:110px;display:inline-block;vertical-align:middle}
+  .meter>div{height:100%;background:var(--ok)}
+  #campreview{width:160px;border-radius:6px;background:#000;display:none}
   table{width:100%;border-collapse:collapse;font-size:14px}
   td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
   th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase}
   tr.sel td{background:#1f2a36}
-  .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 14px;font-size:15px}
-  .metrics b{color:var(--muted);font-weight:500;display:block;font-size:12px}
+  .badge{display:inline-block;font-size:11px;padding:1px 6px;border-radius:6px;background:#2a3038;color:var(--muted);margin-left:4px;vertical-align:middle}
+  .badge.ref{background:#3d3416;color:var(--warn)}
+  .mtable td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+  .delta.pos{color:var(--ok)} .delta.neg{color:var(--bad)}
   .notes{color:var(--warn);font-size:13px;margin:8px 0}
   img#anpng{width:100%;border-radius:8px;margin-top:10px;background:#fff;display:none}
+  #pcanvas{width:100%;background:#000;border-radius:8px;display:block}
+  input[type=range]{flex:1;min-width:180px}
+  pre.log{background:#0f1318;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;max-height:220px;overflow:auto;white-space:pre-wrap;margin:8px 0 0}
   #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#232b35;border:1px solid #2f3945;
-         padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+         padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:90vw}
   #flash{position:fixed;inset:0;background:rgba(80,200,255,.18);opacity:0;pointer-events:none;transition:opacity .15s}
   @media(max-width:900px){main{grid-template-columns:1fr} .big{font-size:38px}}
 </style>
@@ -53,9 +64,25 @@
   <span id="pill" class="pill">Conectando…</span>
   <span id="hz" class="muted"></span>
   <span id="err" class="muted" style="color:var(--bad)"></span>
+  <span style="flex:1"></span>
+  <button id="boardbtn" class="small">Tabla / Bluetooth</button>
 </header>
 
 <main>
+  <section class="card wide" id="boardpanel" hidden>
+    <h2>Tabla y Bluetooth</h2>
+    <div id="btinfo" class="muted">Consultando…</div>
+    <div class="row">
+      <button id="reconnect">Reconectar tabla</button>
+      <button id="pair" class="primary">Emparejar: pulsa el botón SYNC rojo de la tabla y luego aquí</button>
+      <label><input type="checkbox" id="forgetfirst"> olvidar el emparejado anterior</label>
+      <button id="btrefresh" class="small">Actualizar</button>
+    </div>
+    <div class="muted">Una vez emparejada de forma permanente, basta con pulsar el botón de encendido de la tabla:
+      el servidor la detecta solo (reintenta cada 3 s). Sin necesidad de WiiBalanceWalker.</div>
+    <pre id="btlog" class="log" hidden></pre>
+  </section>
+
   <section class="card">
     <canvas id="board"></canvas>
   </section>
@@ -94,10 +121,29 @@
       <label><input type="checkbox" id="flipx"> invertir izq/der</label>
       <label><input type="checkbox" id="flipy"> invertir punta/talón</label>
     </div>
+
+    <div class="row">
+      <label><input type="checkbox" id="audio"> Micrófono (impacto)</label>
+      <select id="audiodev"><option value="">micro por defecto</option></select>
+      <span class="meter"><div id="audiolevel" style="width:0%"></div></span>
+      <span id="audioinfo" class="muted"></span>
+    </div>
+    <div class="row">
+      <label><input type="checkbox" id="video"> Cámara (vídeo del swing)</label>
+      <input type="number" id="camera" min="0" max="9" value="0" title="índice de la cámara">
+      <span id="videoinfo" class="muted"></span>
+      <label><input type="checkbox" id="showcam"> ver</label>
+      <img id="campreview" alt="">
+    </div>
   </section>
 
   <section class="card">
-    <h2>Swings grabados</h2>
+    <h2>Swings grabados
+      <span style="flex:1"></span>
+      <label class="small" style="font-weight:400;text-transform:none;letter-spacing:0">
+        <input type="file" id="importfile" accept=".zip" hidden><button id="importbtn" class="small">Importar zip</button></label>
+    </h2>
+    <div id="refline" class="muted" style="margin-bottom:8px"></div>
     <table><thead><tr><th>Nombre</th><th>Fecha</th><th></th></tr></thead><tbody id="swings"></tbody></table>
     <div id="noswings" class="muted">Todavía no hay grabaciones.</div>
   </section>
@@ -106,8 +152,37 @@
     <h2 id="antitle">Análisis</h2>
     <div id="anmeta" class="muted"></div>
     <div id="annotes" class="notes"></div>
-    <div id="anmetrics" class="metrics"></div>
+    <div class="row" id="anactions" hidden>
+      <button id="anplay" class="small primary">▶ Reproducir a cámara lenta</button>
+      <button id="anref" class="small">★ Fijar como referencia</button>
+    </div>
+    <table class="mtable" id="anmetrics"></table>
     <img id="anpng" alt="figura del análisis">
+  </section>
+
+  <section class="card wide" id="playercard" hidden>
+    <h2 id="ptitle">Reproducción</h2>
+    <canvas id="pcanvas"></canvas>
+    <div class="row" style="margin-top:8px">
+      <button id="pplay" class="primary">▶</button>
+      <select id="pspeed">
+        <option value="1">1×</option><option value="0.5">½×</option><option value="0.25" selected>¼×</option>
+        <option value="0.1">1/10×</option><option value="0.05">1/20×</option>
+      </select>
+      <button id="pprev" class="small" title="fotograma anterior">⏮</button>
+      <button id="pnext" class="small" title="fotograma siguiente">⏭</button>
+      <input type="range" id="pslider" min="0" max="1" step="0.001" value="0">
+      <span id="ptime" class="muted" style="min-width:150px"></span>
+    </div>
+    <div class="row">
+      <button id="ptop" class="small">ir al top</button>
+      <button id="pimpact" class="small">ir al impacto</button>
+      <span class="muted">|</span>
+      <button id="pmarktop" class="small">marcar top aquí</button>
+      <button id="pmarkimpact" class="small">marcar impacto aquí</button>
+      <button id="preset" class="small">restablecer marcas</button>
+      <span id="pinfo" class="muted"></span>
+    </div>
   </section>
 </main>
 
@@ -116,40 +191,60 @@
 
 <script>
 const $ = (id) => document.getElementById(id);
-const SETTINGS_KEY = "wiigolf.settings";
 const HX = 21.65, HY = 11.4;          // mitad de la distancia entre sensores (cm)
-const TRAIL_S = 1.5;                   // segundos de estela
+const TRAIL_S = 1.5;                   // segundos de estela en vivo
+const dpr = window.devicePixelRatio || 1;
 
-let settings = Object.assign({handed:"right", flip_x:false, flip_y:false},
-                             JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}"));
+let settings = {handed: "right", flip_x: false, flip_y: false, audio: false, video: false, audio_device: null, camera: 0};
 let latest = null, trail = [], bw = null, bwFixed = false, status = {}, ws = null, selected = null;
-let recentTotals = [];
+let recentTotals = [], settingsBusy = false, lastAnalysis = null;
 
 // ---------- utilidades ----------
 async function api(path, body, method) {
-  const r = await fetch(path, {method: method || (body ? "POST" : "GET"),
-    headers: body ? {"Content-Type": "application/json"} : {}, body: body ? JSON.stringify(body) : undefined});
+  const opts = {method: method || (body ? "POST" : "GET")};
+  if (body instanceof FormData) opts.body = body;
+  else if (body) { opts.headers = {"Content-Type": "application/json"}; opts.body = JSON.stringify(body); }
+  const r = await fetch(path, opts);
   if (!r.ok) { let m = r.statusText; try { m = (await r.json()).detail || m; } catch (e) {} throw new Error(m); }
   return r.json();
 }
 let toastTimer;
-function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.opacity = 1;
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.opacity = 0, 2800); }
+function toast(msg, ms) { const t = $("toast"); t.textContent = msg; t.style.opacity = 1;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.style.opacity = 0, ms || 2800); }
 function flash() { const f = $("flash"); f.style.opacity = 1; setTimeout(() => f.style.opacity = 0, 250); }
 function setPill(text, cls) { const p = $("pill"); p.textContent = text; p.className = "pill " + (cls || ""); }
 function fmtDate(ts) { const d = new Date(ts * 1000); return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}); }
+function fmt(v, d) { return (v == null || isNaN(v)) ? "–" : Number(v).toFixed(d == null ? 1 : d); }
 
 // ---------- ajustes ----------
 function applySettingsToUI() {
-  $("handed").value = settings.handed; $("flipx").checked = settings.flip_x; $("flipy").checked = settings.flip_y;
+  $("handed").value = settings.handed; $("flipx").checked = !!settings.flip_x; $("flipy").checked = !!settings.flip_y;
+  $("audio").checked = !!settings.audio; $("video").checked = !!settings.video;
+  $("camera").value = settings.camera || 0; $("audiodev").value = settings.audio_device == null ? "" : String(settings.audio_device);
 }
-function saveSettings() {
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-  api("/api/settings", settings).catch(e => toast("Ajustes: " + e.message));
+async function pushSettings(patch) {
+  Object.assign(settings, patch); settingsBusy = true;
+  try { const r = await api("/api/settings", settings); status = r.status; renderStatus(); }
+  catch (e) { toast("Ajustes: " + e.message); }
+  finally { settingsBusy = false; }
 }
-$("handed").onchange = () => { settings.handed = $("handed").value; saveSettings(); };
-$("flipx").onchange = () => { settings.flip_x = $("flipx").checked; saveSettings(); };
-$("flipy").onchange = () => { settings.flip_y = $("flipy").checked; saveSettings(); };
+$("handed").onchange = () => pushSettings({handed: $("handed").value});
+$("flipx").onchange = () => pushSettings({flip_x: $("flipx").checked});
+$("flipy").onchange = () => pushSettings({flip_y: $("flipy").checked});
+$("audio").onchange = () => pushSettings({audio: $("audio").checked});
+$("video").onchange = () => pushSettings({video: $("video").checked});
+$("camera").onchange = () => pushSettings({camera: parseInt($("camera").value) || 0});
+$("audiodev").onchange = () => pushSettings({audio_device: $("audiodev").value === "" ? null : parseInt($("audiodev").value)});
+
+async function loadAudioInputs() {
+  try {
+    const s = await api("/api/status");
+    const sel = $("audiodev"); const cur = sel.value;
+    sel.innerHTML = '<option value="">micro por defecto</option>';
+    for (const d of (s.audio_inputs || [])) { const o = document.createElement("option"); o.value = d.index; o.textContent = d.name + (d.default ? " (predeterminado)" : ""); sel.appendChild(o); }
+    sel.value = cur;
+  } catch (e) {}
+}
 
 // ---------- websocket ----------
 function connect() {
@@ -169,7 +264,7 @@ function connect() {
     else if (m.type === "auto_saved") {
       loadSwings();
       if (m.analysis) { toast("Guardado y analizado: " + m.name); showAnalysis(m.analysis); }
-      else toast("Guardado " + m.name + (m.error ? " (error en el análisis: " + m.error + ")" : ""));
+      else toast("Guardado " + m.name + (m.error ? " (error en el análisis: " + m.error + ")" : ""), 6000);
     }
   };
   ws.onclose = () => { setPill("Sin conexión con el servidor", "bad"); setTimeout(connect, 1500); };
@@ -198,11 +293,23 @@ function renderStatus() {
   }
   $("auto").checked = !!(s.auto && s.auto.armed);
   $("autocount").textContent = (s.auto && s.auto.armed) ? `armada · ${s.auto.count} capturas` : "";
-  if (s.settings && JSON.stringify(s.settings) !== JSON.stringify(settings)) {
-    // el servidor manda por defecto sus ajustes; el navegador manda los suyos la primera vez
-    if (!renderStatus.synced) { renderStatus.synced = true; saveSettings(); }
-    else { settings = Object.assign({}, s.settings); localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); applySettingsToUI(); }
-  } else renderStatus.synced = true;
+  if (s.settings && !settingsBusy) { settings = Object.assign({}, settings, s.settings); applySettingsToUI(); }
+  const md = s.media || {};
+  if (md.audio) {
+    const a = md.audio;
+    $("audiolevel").style.width = Math.min(100, Math.sqrt(a.level || 0) * 100) + "%";
+    $("audioinfo").textContent = a.running ? (a.device || "micro activo") : (settings.audio ? (a.error || "arrancando…") : (a.available ? "" : "sounddevice no disponible"));
+  }
+  if (md.video) {
+    const v = md.video;
+    $("videoinfo").textContent = v.running ? `${v.size ? v.size.join("×") : ""} · ${v.fps} fps` : (settings.video ? (v.error || "arrancando…") : (v.available ? "" : "opencv no disponible"));
+  }
+  renderRefLine(s.reference);
+}
+function renderRefLine(ref) {
+  $("refline").innerHTML = ref ? `Referencia para comparar: <b>${ref}</b> <button class="small" id="clearref">quitar</button>`
+                               : "Sin swing de referencia: usa ★ en un swing para comparar los siguientes con él.";
+  const b = $("clearref"); if (b) b.onclick = async () => { await api("/api/reference", null, "DELETE"); toast("Referencia quitada"); loadSwings(); };
 }
 
 // ---------- lectura en vivo ----------
@@ -221,7 +328,6 @@ function renderLive() {
   $("fixbw").textContent = bwFixed ? "Soltar peso" : "Fijar peso";
 }
 setInterval(renderLive, 50);
-
 $("fixbw").onclick = () => {
   if (bwFixed) { bwFixed = false; return; }
   if (recentTotals.length < 10) { toast("Súbete a la tabla y quédate quieto un momento"); return; }
@@ -229,26 +335,36 @@ $("fixbw").onclick = () => {
   toast(`Peso corporal fijado: ${bw.toFixed(1)} kg`);
 };
 
-// ---------- canvas ----------
+// ---------- canvas en vivo ----------
 const cv = $("board"), ctx = cv.getContext("2d");
-function resize() { const w = cv.clientWidth || 600; cv.width = w * devicePixelRatio; cv.height = w * 0.62 * devicePixelRatio; }
+function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * 0.62 * dpr; }
 window.addEventListener("resize", resize); resize();
 
+function drawBoard(c, ox, oy, bwid, bhei, opts) {
+  // silueta de la tabla con rejilla y etiquetas; opts: {labels:bool, alpha}
+  c.fillStyle = "#121820"; c.fillRect(ox, oy, bwid, bhei);
+  c.strokeStyle = "#2a3038"; c.lineWidth = 1;
+  for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox + bwid * i / 4, oy); c.lineTo(ox + bwid * i / 4, oy + bhei); c.stroke(); }
+  c.beginPath(); c.moveTo(ox, oy + bhei / 2); c.lineTo(ox + bwid, oy + bhei / 2); c.stroke();
+  c.strokeStyle = "#55606d"; c.lineWidth = 3 * dpr; c.strokeRect(ox, oy, bwid, bhei);
+  if (opts && opts.labels) {
+    c.fillStyle = "#9aa4b2"; c.font = `${(opts.font || 13) * dpr}px system-ui`; c.textAlign = "center";
+    const trailRight = settings.handed === "right";
+    c.fillText(trailRight ? "LEAD" : "TRAIL", ox + bwid * 0.12, oy + bhei + 20 * dpr);
+    c.fillText(trailRight ? "TRAIL" : "LEAD", ox + bwid * 0.88, oy + bhei + 20 * dpr);
+    c.fillText("punta", ox + bwid / 2, oy - 8 * dpr);
+    c.fillText("talón", ox + bwid / 2, oy + bhei + 20 * dpr);
+  }
+}
 function draw() {
-  const dpr = devicePixelRatio, W = cv.width, H = cv.height;
+  const W = cv.width, H = cv.height;
   ctx.clearRect(0, 0, W, H);
   const pad = 0.09 * W, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
   const toPx = (x, y) => {
     const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y;
     return [ox + bwid / 2 + sx * bwid / 2, oy + bhei / 2 - sy * bhei / 2];
   };
-  // tabla
-  ctx.fillStyle = "#121820"; ctx.fillRect(ox, oy, bwid, bhei);
-  ctx.strokeStyle = "#2a3038"; ctx.lineWidth = 1;
-  for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(ox + bwid * i / 4, oy); ctx.lineTo(ox + bwid * i / 4, oy + bhei); ctx.stroke(); }
-  for (let i = 1; i < 2; i++) { ctx.beginPath(); ctx.moveTo(ox, oy + bhei * i / 2); ctx.lineTo(ox + bwid, oy + bhei * i / 2); ctx.stroke(); }
-  ctx.strokeStyle = "#55606d"; ctx.lineWidth = 3 * dpr; ctx.strokeRect(ox, oy, bwid, bhei);
-  // estela
+  drawBoard(ctx, ox, oy, bwid, bhei, {labels: true});
   if (trail.length > 1) {
     const t1 = trail[trail.length - 1].t;
     ctx.lineCap = "round"; ctx.lineWidth = 3.5 * dpr;
@@ -261,7 +377,6 @@ function draw() {
       ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
     }
   }
-  // punto actual (tamaño y color según la fuerza vertical)
   if (latest && latest.tot >= 2) {
     const [x, y] = toPx(latest.x, latest.y);
     const f = bw ? latest.tot / bw : 1;
@@ -270,19 +385,12 @@ function draw() {
     ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = "#0f1318"; ctx.lineWidth = 2 * dpr; ctx.stroke();
   }
-  // etiquetas
-  ctx.fillStyle = "#9aa4b2"; ctx.font = `${13 * dpr}px system-ui`; ctx.textAlign = "center";
-  const trailRight = settings.handed === "right";
-  ctx.fillText(trailRight ? "LEAD" : "TRAIL", ox + bwid * 0.12, oy + bhei + 20 * dpr);
-  ctx.fillText(trailRight ? "TRAIL" : "LEAD", ox + bwid * 0.88, oy + bhei + 20 * dpr);
-  ctx.fillText("punta", ox + bwid / 2, oy - 8 * dpr);
-  ctx.fillText("talón", ox + bwid / 2, oy + bhei + 20 * dpr);
   requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
 
 // ---------- controles ----------
-function resetBw() { if (!bwFixed) { bw = null; recentTotals = []; } }  // la tara cambia la escala: reestimar el peso
+function resetBw() { if (!bwFixed) { bw = null; recentTotals = []; } }
 $("tare").onclick = async () => {
   try { const r = await api("/api/tare", null, "POST"); status = r.status; renderStatus(); resetBw(); toast("Tara aplicada"); }
   catch (e) { toast("Tara: " + e.message); }
@@ -294,12 +402,12 @@ $("untare").onclick = async () => {
 $("rec").onclick = async () => {
   try {
     if (status.recording) {
-      $("rec").disabled = true;
+      $("rec").disabled = true; toast("Guardando y analizando…", 10000);
       const r = await api("/api/record/stop", {analyze: true});
       status = r.status; renderStatus();
       toast(`Guardado ${r.recording.name} (${r.recording.samples} muestras, ${r.recording.duration} s)`);
       loadSwings();
-      if (r.analysis) showAnalysis(r.analysis); else if (r.analysis_error) toast("Análisis: " + r.analysis_error);
+      if (r.analysis) showAnalysis(r.analysis); else if (r.analysis_error) toast("Análisis: " + r.analysis_error, 6000);
     } else {
       const r = await api("/api/record/start", {name: $("recname").value.trim()});
       status = r.status; renderStatus(); toast("Grabando " + r.name);
@@ -313,23 +421,46 @@ $("auto").onchange = async () => {
   catch (e) { toast("Auto: " + e.message); }
 };
 
-// ---------- swings y análisis ----------
+// vista previa de la cámara
+$("showcam").onchange = () => { $("campreview").style.display = $("showcam").checked ? "" : "none"; };
+setInterval(() => {
+  if (!$("showcam").checked || !(status.media && status.media.video && status.media.video.running)) return;
+  $("campreview").src = "/api/camera/snapshot.jpg?t=" + Date.now();
+}, 200);
+
+// ---------- swings, referencia, importar/exportar ----------
 async function loadSwings() {
   const list = await api("/api/swings");
   const tb = $("swings"); tb.innerHTML = "";
   $("noswings").style.display = list.length ? "none" : "";
   for (const s of list) {
     const tr = document.createElement("tr"); if (s.name === selected) tr.className = "sel";
-    tr.innerHTML = `<td>${s.name}${s.analyzed ? "" : ' <span class="muted">(sin analizar)</span>'}</td><td class="muted">${fmtDate(s.mtime)}</td><td style="text-align:right;white-space:nowrap"></td>`;
+    const badges = (s.is_reference ? '<span class="badge ref">★ referencia</span>' : "") +
+      (s.video ? '<span class="badge" title="con vídeo">🎥</span>' : "") + (s.audio ? '<span class="badge" title="con audio">🎤</span>' : "") +
+      (s.impact_source === "audio" ? '<span class="badge" title="impacto detectado en el audio">impacto audio</span>' : "") +
+      (s.analyzed ? "" : '<span class="badge">sin analizar</span>');
+    tr.innerHTML = `<td>${s.name}${badges}</td><td class="muted">${fmtDate(s.mtime)}${s.duration ? " · " + s.duration.toFixed(1) + " s" : ""}</td><td style="text-align:right;white-space:nowrap"></td>`;
     const cell = tr.lastElementChild;
-    const bA = document.createElement("button"); bA.className = "small"; bA.textContent = "Analizar";
-    bA.onclick = async () => { bA.disabled = true; try { showAnalysis(await api("/api/analyze/" + s.name, {})); loadSwings(); } catch (e) { toast(e.message); } finally { bA.disabled = false; } };
-    const bD = document.createElement("button"); bD.className = "small"; bD.textContent = "Borrar"; bD.style.marginLeft = "6px";
-    bD.onclick = async () => { if (!confirm(`¿Borrar ${s.name}?`)) return; try { await api("/api/swings/" + s.name, null, "DELETE"); if (selected === s.name) clearAnalysis(); loadSwings(); } catch (e) { toast(e.message); } };
-    cell.append(bA, bD);
+    const mk = (txt, title, fn) => { const b = document.createElement("button"); b.className = "small"; b.textContent = txt; b.title = title || ""; b.style.marginLeft = "4px"; b.onclick = fn; cell.appendChild(b); return b; };
+    mk("▶", "reproducir", () => openPlayer(s.name));
+    mk("Analizar", "analizar con los ajustes actuales", async (ev) => { const b = ev.target; b.disabled = true; try { showAnalysis(await api("/api/analyze/" + s.name, {})); loadSwings(); } catch (e) { toast(e.message); } finally { b.disabled = false; } });
+    mk(s.is_reference ? "★" : "☆", "fijar como referencia", async () => { try { if (s.is_reference) await api("/api/reference", null, "DELETE"); else await api("/api/reference/" + s.name, null, "POST"); loadSwings(); toast(s.is_reference ? "Referencia quitada" : "Referencia: " + s.name); } catch (e) { toast(e.message); } });
+    mk("⤓", "exportar (zip con CSV, audio, vídeo y figura)", () => { window.location.href = "/api/swings/" + s.name + "/export"; });
+    mk("✕", "borrar", async () => { if (!confirm(`¿Borrar ${s.name}?`)) return; try { await api("/api/swings/" + s.name, null, "DELETE"); if (selected === s.name) clearAnalysis(); loadSwings(); } catch (e) { toast(e.message); } });
     tb.appendChild(tr);
   }
 }
+$("importbtn").onclick = () => $("importfile").click();
+$("importfile").onchange = async () => {
+  const f = $("importfile").files[0]; if (!f) return;
+  const fd = new FormData(); fd.append("file", f);
+  toast("Importando…", 10000);
+  try { const r = await api("/api/swings/import", fd); toast("Importado: " + r.imported.join(", ")); loadSwings(); const a = r.analyses.find(x => !x.error); if (a) showAnalysis(a); }
+  catch (e) { toast("Importar: " + e.message, 6000); }
+  $("importfile").value = "";
+};
+
+// ---------- análisis ----------
 const LABELS = {
   peso_corporal_kg: "Peso corporal (kg)", trail_pct_en_top: "% trail en el top", lead_pct_en_impacto: "% lead en el impacto",
   pico_fuerza_pct_bw: "Pico de fuerza (% peso)", fuerza_en_impacto_pct_bw: "Fuerza en impacto (% peso)",
@@ -341,25 +472,234 @@ const ORDER = ["peso_corporal_kg", "trail_pct_en_top", "lead_pct_en_impacto", "p
                "fuerza_en_impacto_pct_bw", "t_top_s", "t_impacto_s", "t_pico_fuerza_s", "trail_pct_min_max",
                "cop_x_rango_cm", "cop_y_rango_cm", "cop_longitud_trazo_cm"];
 function showAnalysis(a) {
-  selected = a.name;
+  lastAnalysis = a; selected = a.name;
   $("antitle").textContent = "Análisis · " + a.name;
-  $("anmeta").textContent = `${a.samples} muestras · ${a.duration} s · ${a.hz} Hz`;
-  $("annotes").textContent = (a.notes || []).join(" ");
+  const ev = a.events || {};
+  const src = {audio: "impacto por audio" + (a.impact_audio && a.impact_audio.snr ? ` (SNR ${a.impact_audio.snr})` : ""), manual: "impacto marcado a mano", heuristic: "impacto estimado (pico de fuerza)"}[ev.impact_source] || "";
+  $("anmeta").textContent = `${a.samples} muestras · ${a.duration} s · ${a.hz} Hz` + (src ? " · " + src : "") +
+    (a.media ? (a.media.video ? " · 🎥" : "") + (a.media.audio ? " · 🎤" : "") : "");
+  let notes = (a.notes || []).join(" ");
+  if (a.impact_audio && a.impact_audio.t == null && a.media && a.media.audio) notes += " No se detectó el golpe en el audio (nivel " + fmt(a.impact_audio.peak, 3) + ", SNR " + fmt(a.impact_audio.snr, 0) + ").";
+  $("annotes").textContent = notes;
+  $("anactions").hidden = false;
+  $("anref").textContent = (status.reference === a.name) ? "★ Es la referencia" : "☆ Fijar como referencia";
   const m = $("anmetrics"); m.innerHTML = "";
+  const ref = a.reference && a.reference.metrics ? a.reference : null;
+  const head = document.createElement("tr");
+  head.innerHTML = `<th>Métrica</th><th>${a.name}</th>` + (ref ? `<th>${ref.name} (ref.)</th><th>Δ</th>` : "");
+  m.appendChild(head);
   for (const k of ORDER) {
     if (!(k in a.metrics) || a.metrics[k] == null) continue;
     let v = a.metrics[k]; if (Array.isArray(v)) v = v.join(" / ");
-    const d = document.createElement("div"); d.innerHTML = `<b>${LABELS[k] || k}</b>${v}`; m.appendChild(d);
+    const tr = document.createElement("tr");
+    let cells = `<td>${LABELS[k] || k}</td><td>${v}</td>`;
+    if (ref) {
+      let rv = ref.metrics[k]; if (Array.isArray(rv)) rv = rv.join(" / ");
+      const d = a.deltas ? a.deltas[k] : null;
+      cells += `<td class="muted">${rv == null ? "–" : rv}</td><td class="delta ${d > 0 ? "pos" : d < 0 ? "neg" : ""}">${d == null ? "" : (d > 0 ? "+" : "") + d}</td>`;
+    }
+    tr.innerHTML = cells; m.appendChild(tr);
   }
   const img = $("anpng"); img.src = a.png; img.style.display = "";
   document.querySelectorAll("#swings tr").forEach(tr => tr.className = tr.firstElementChild.textContent.startsWith(a.name) ? "sel" : "");
 }
-function clearAnalysis() { selected = null; $("antitle").textContent = "Análisis"; $("anmeta").textContent = ""; $("annotes").textContent = ""; $("anmetrics").innerHTML = ""; $("anpng").style.display = "none"; }
+function clearAnalysis() { lastAnalysis = null; selected = null; $("antitle").textContent = "Análisis"; $("anmeta").textContent = ""; $("annotes").textContent = ""; $("anmetrics").innerHTML = ""; $("anpng").style.display = "none"; $("anactions").hidden = true; }
+$("anplay").onclick = () => { if (lastAnalysis) openPlayer(lastAnalysis.name); };
+$("anref").onclick = async () => {
+  if (!lastAnalysis) return;
+  try {
+    if (status.reference === lastAnalysis.name) { await api("/api/reference", null, "DELETE"); toast("Referencia quitada"); }
+    else { await api("/api/reference/" + lastAnalysis.name, null, "POST"); toast("Referencia: " + lastAnalysis.name); }
+    status.reference = (status.reference === lastAnalysis.name) ? null : lastAnalysis.name;
+    $("anref").textContent = (status.reference === lastAnalysis.name) ? "★ Es la referencia" : "☆ Fijar como referencia";
+    loadSwings();
+  } catch (e) { toast(e.message); }
+};
+
+// ---------- reproductor a cámara lenta ----------
+const P = {name: null, track: null, frames: [], loaded: 0, playing: false, t: 0, dur: 0, t0: 0, speed: 0.25, raf: null, lastTs: null};
+const pc = $("pcanvas"), pctx = pc.getContext("2d");
+function bsearch(arr, t) { let lo = 0, hi = arr.length - 1; if (t <= arr[0]) return 0; if (t >= arr[hi]) return hi; while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (arr[mid] <= t) lo = mid; else hi = mid - 1; } return lo; }
+function frameIndexAt(t) { const v = P.track && P.track.video; if (!v || t < v.t[0]) return -1; return bsearch(v.t, t); }
+function stopPlayer() { P.playing = false; if (P.raf) cancelAnimationFrame(P.raf); P.raf = null; P.lastTs = null; $("pplay").textContent = "▶"; }
+async function openPlayer(name) {
+  stopPlayer();
+  P.name = name; P.frames = []; P.loaded = 0; P.track = null;
+  $("playercard").hidden = false; $("ptitle").textContent = "Reproducción · " + name; $("pinfo").textContent = "cargando…";
+  try { P.track = await api(`/api/swings/${name}/track`); }
+  catch (e) { $("pinfo").textContent = "error: " + e.message; return; }
+  const T = P.track.t; P.t0 = T[0]; P.dur = T[T.length - 1];
+  const ev = P.track.events || {};
+  P.t = ev.t_top != null ? Math.max(P.t0, ev.t_top - 0.6) : P.t0;
+  const sl = $("pslider"); sl.min = P.t0; sl.max = P.dur; sl.value = P.t;
+  resizePlayer();
+  $("pinfo").textContent = P.track.video ? `vídeo 0/${P.track.video.n}` : "sin vídeo: se reproduce solo el trazo del CoP";
+  drawPlayer();
+  if (P.track.video) loadFrames(name, P.track.video.n);
+  $("playercard").scrollIntoView({behavior: "smooth", block: "start"});
+}
+async function loadFrames(name, n) {
+  const frames = new Array(n); P.frames = frames; let next = 0;
+  const worker = async () => {
+    while (next < n && P.name === name) {
+      const i = next++;
+      try { const r = await fetch(`/api/swings/${name}/frame/${i}`); frames[i] = await createImageBitmap(await r.blob()); } catch (e) {}
+      P.loaded++;
+      if (P.loaded % 10 === 0 || P.loaded === n) { $("pinfo").textContent = `vídeo ${P.loaded}/${n}`; if (!P.playing) drawPlayer(); }
+    }
+  };
+  await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
+}
+function resizePlayer() {
+  const w = pc.clientWidth || 800; const v = P.track && P.track.video;
+  const aspect = v ? v.height / v.width : 0.5;
+  pc.width = w * dpr; pc.height = Math.round(w * Math.max(0.42, Math.min(0.8, aspect))) * dpr;
+}
+window.addEventListener("resize", () => { if (P.track) { resizePlayer(); drawPlayer(); } });
+function drawPlayer() {
+  if (!P.track) return;
+  const W = pc.width, H = pc.height, T = P.track;
+  pctx.fillStyle = "#000"; pctx.fillRect(0, 0, W, H);
+  // fotograma
+  const fi = frameIndexAt(P.t);
+  const img = fi >= 0 ? P.frames[fi] : null;
+  if (img) {
+    const s = Math.min(W / img.width, H / img.height), dw = img.width * s, dh = img.height * s;
+    pctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  } else if (T.video) {
+    pctx.fillStyle = "#9aa4b2"; pctx.font = `${14 * dpr}px system-ui`; pctx.textAlign = "center";
+    pctx.fillText(fi < 0 ? "sin fotograma en este instante" : "cargando fotograma…", W / 2, H / 2);
+  }
+  // recuadro de la tabla (abajo a la izquierda)
+  const iw = W * (T.video ? 0.40 : 0.62), ih = iw * (HY / HX), ix = 14 * dpr, iy = H - ih - 30 * dpr;
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * dpr, iy - 24 * dpr, iw + 20 * dpr, ih + 52 * dpr);
+  drawBoard(pctx, ix, iy, iw, ih, {labels: true, font: 11});
+  const toPx = (xcm, ycm) => {
+    const sx = settings.flip_x ? -xcm : xcm, sy = settings.flip_y ? -ycm : ycm;
+    return [ix + iw / 2 + (sx / HX) * iw / 2, iy + ih / 2 - (sy / HY) * ih / 2];
+  };
+  const drawPath = (tr, tEnd, color, width, full) => {
+    const n = tr.t.length; let started = false;
+    pctx.strokeStyle = color; pctx.lineWidth = width * dpr; pctx.lineCap = "round"; pctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      if (!full && tr.t[i] > tEnd) break;
+      const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
+      if (x == null || y == null) { started = false; continue; }
+      const [px, py] = toPx(x, y);
+      if (!started) { pctx.moveTo(px, py); started = true; } else pctx.lineTo(px, py);
+    }
+    pctx.stroke();
+  };
+  const dotAt = (tr, t, color, rad) => {
+    const i = bsearch(tr.t, t); const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
+    if (x == null || y == null) return;
+    const [px, py] = toPx(x, y);
+    pctx.fillStyle = color; pctx.beginPath(); pctx.arc(px, py, rad * dpr, 0, Math.PI * 2); pctx.fill();
+    pctx.strokeStyle = "#0f1318"; pctx.lineWidth = 1.5 * dpr; pctx.stroke();
+  };
+  // referencia alineada en el impacto (o en el top)
+  const R = T.reference && T.reference.t ? T.reference : null; let shift = 0;
+  if (R) {
+    const e = T.events || {}, re = R.events || {};
+    if (e.t_impact != null && re.t_impact != null) shift = e.t_impact - re.t_impact;
+    else if (e.t_top != null && re.t_top != null) shift = e.t_top - re.t_top;
+    else shift = T.t[T.segment[0]] - R.t[R.segment[0]];
+    drawPath(R, 0, "rgba(160,170,180,0.35)", 2, true);
+    drawPath(R, P.t - shift, "rgba(200,210,220,0.9)", 2.5, false);
+    dotAt(R, P.t - shift, "#c9d1d9", 6);
+  }
+  drawPath(T, 0, "rgba(80,200,255,0.25)", 2, true);
+  drawPath(T, P.t, "#50c8ff", 3, false);
+  const i = bsearch(T.t, P.t); const f = T.force_pct[i];
+  dotAt(T, P.t, (f != null && f > 115) ? "#ff7a59" : "#ffd166", 7 + Math.max(0, Math.min(2, (f || 100) / 100)) * 4);
+  // barra de tiempo con marcas
+  const bx = 14 * dpr, by = 12 * dpr, bwd = W - 28 * dpr, bh = 8 * dpr;
+  pctx.fillStyle = "rgba(255,255,255,0.18)"; pctx.fillRect(bx, by, bwd, bh);
+  const xOf = (t) => bx + (t - P.t0) / Math.max(1e-6, P.dur - P.t0) * bwd;
+  const ev = T.events || {};
+  const mark = (t, color, label) => { if (t == null) return; const x = xOf(t); pctx.fillStyle = color; pctx.fillRect(x - 1.5 * dpr, by - 4 * dpr, 3 * dpr, bh + 8 * dpr);
+    pctx.font = `${11 * dpr}px system-ui`; pctx.textAlign = "left"; pctx.fillText(label, x + 4 * dpr, by + bh + 14 * dpr); };
+  mark(ev.t_top, "#ffa040", "top"); mark(ev.t_impact, "#ff5050", ev.impact_source === "audio" ? "impacto (audio)" : ev.impact_source === "manual" ? "impacto (manual)" : "impacto ≈");
+  if (T.impact_audio && T.impact_audio.t != null && ev.impact_source !== "audio") mark(T.impact_audio.t, "#ff9ad0", "golpe (audio)");
+  pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * dpr, by - 6 * dpr, 3 * dpr, bh + 12 * dpr);
+  // trail % y fuerza a la derecha
+  const tp = T.trail_pct[i];
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 190 * dpr, H - 62 * dpr, 176 * dpr, 50 * dpr);
+  pctx.fillStyle = "#e6edf3"; pctx.font = `${13 * dpr}px system-ui`; pctx.textAlign = "left";
+  pctx.fillText(`trail ${tp == null ? "–" : tp.toFixed(0) + " %"}   lead ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, W - 180 * dpr, H - 42 * dpr);
+  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 180 * dpr, H - 22 * dpr);
+  $("ptime").textContent = `t = ${P.t.toFixed(3)} s` + (ev.t_impact != null ? `  (${((P.t - ev.t_impact) * 1000).toFixed(0)} ms ${P.t >= ev.t_impact ? "tras" : "antes del"} impacto)` : "");
+}
+function tick(ts) {
+  if (!P.playing) return;
+  if (P.lastTs != null) { P.t += (ts - P.lastTs) / 1000 * P.speed; if (P.t >= P.dur) { P.t = P.dur; stopPlayer(); } }
+  P.lastTs = ts; $("pslider").value = P.t; drawPlayer();
+  if (P.playing) P.raf = requestAnimationFrame(tick);
+}
+$("pplay").onclick = () => { if (!P.track) return; if (P.playing) { stopPlayer(); return; } if (P.t >= P.dur - 0.001) P.t = P.t0; P.playing = true; P.lastTs = null; $("pplay").textContent = "⏸"; P.raf = requestAnimationFrame(tick); };
+$("pspeed").onchange = () => { P.speed = parseFloat($("pspeed").value); };
+$("pslider").oninput = () => { stopPlayer(); P.t = parseFloat($("pslider").value); drawPlayer(); };
+function step(dir) {
+  if (!P.track) return; stopPlayer();
+  const v = P.track.video;
+  if (v) { let i = frameIndexAt(P.t); i = Math.max(0, Math.min(v.t.length - 1, (i < 0 ? 0 : i) + dir)); P.t = v.t[i]; }
+  else P.t = Math.max(P.t0, Math.min(P.dur, P.t + dir * 0.01));
+  $("pslider").value = P.t; drawPlayer();
+}
+$("pprev").onclick = () => step(-1); $("pnext").onclick = () => step(1);
+$("ptop").onclick = () => { const t = P.track && P.track.events && P.track.events.t_top; if (t != null) { stopPlayer(); P.t = t; $("pslider").value = t; drawPlayer(); } };
+$("pimpact").onclick = () => { const t = P.track && P.track.events && P.track.events.t_impact; if (t != null) { stopPlayer(); P.t = t; $("pslider").value = t; drawPlayer(); } };
+async function remark(body) {
+  if (!P.name) return;
+  try { const a = await api("/api/analyze/" + P.name, body); showAnalysis(a); const t = P.t; await openPlayer(P.name); P.t = t; $("pslider").value = t; drawPlayer(); loadSwings(); toast("Marcas actualizadas"); }
+  catch (e) { toast(e.message); }
+}
+$("pmarktop").onclick = () => remark({top: P.t});
+$("pmarkimpact").onclick = () => remark({impact: P.t});
+$("preset").onclick = () => remark({reset: true});
+document.addEventListener("keydown", (e) => {
+  if ($("playercard").hidden || !P.track || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+  if (e.code === "Space") { e.preventDefault(); $("pplay").click(); }
+  else if (e.code === "ArrowLeft") { e.preventDefault(); step(-1); }
+  else if (e.code === "ArrowRight") { e.preventDefault(); step(1); }
+});
+
+// ---------- tabla / bluetooth ----------
+$("boardbtn").onclick = () => { const p = $("boardpanel"); p.hidden = !p.hidden; if (!p.hidden) loadBt(); };
+async function loadBt() {
+  $("btinfo").textContent = "Consultando…";
+  try {
+    const b = await api("/api/bluetooth/status");
+    if (!b.available) { $("btinfo").textContent = "Bluetooth no disponible: " + (b.error || ""); return; }
+    let html = `Adaptador: <b>${b.radio.name}</b> [${b.radio.address}]. `;
+    if (!b.boards.length) html += "Windows no conoce ninguna tabla todavía.";
+    for (const d of b.boards) {
+      html += `<div>Tabla <b>${d.name}</b> [${d.address}] — ${d.connected ? "<span style='color:var(--ok)'>conectada</span>" : "no conectada"}, ${d.authenticated ? "emparejada de forma permanente" : d.remembered ? "recordada sin emparejar" : "desconocida"} <button class="small" data-addr="${d.address}">olvidar</button></div>`;
+    }
+    $("btinfo").innerHTML = html;
+    $("btinfo").querySelectorAll("button[data-addr]").forEach(btn => btn.onclick = async () => {
+      if (!confirm("¿Olvidar el emparejado de " + btn.dataset.addr + "? Tendrás que emparejar de nuevo con SYNC.")) return;
+      try { const r = await api("/api/bluetooth/forget", {address: btn.dataset.addr}); toast(r.ok ? "Emparejado olvidado" : "No se pudo: " + r.code); loadBt(); } catch (e) { toast(e.message); }
+    });
+  } catch (e) { $("btinfo").textContent = "Error: " + e.message; }
+}
+$("btrefresh").onclick = loadBt;
+$("reconnect").onclick = async () => { try { await api("/api/board/reconnect", null, "POST"); toast("Reintentando la conexión con la tabla…"); } catch (e) { toast(e.message); } };
+$("pair").onclick = async () => {
+  const b = $("pair"); b.disabled = true; const log = $("btlog"); log.hidden = false; log.textContent = "Buscando la tabla (~10 s)… mantén el LED parpadeando.\n";
+  try {
+    const r = await api("/api/bluetooth/pair", {seconds: 10, forget_first: $("forgetfirst").checked});
+    log.textContent += (r.log || []).join("\n") + "\n\n" + (r.ok ? "✔ " : "✖ ") + r.message;
+    toast(r.message, 8000); loadBt();
+  } catch (e) { log.textContent += "\nError: " + e.message; toast("Emparejar: " + e.message, 8000); }
+  finally { b.disabled = false; }
+};
 
 // ---------- arranque ----------
 applySettingsToUI();
 connect();
 loadSwings();
+loadAudioInputs();
 </script>
 </body>
 </html>
