@@ -29,9 +29,11 @@ import datetime as dt
 import io
 import json
 import math
+import os
 import queue
 import random
 import re
+import sys
 import threading
 import time
 import zipfile
@@ -48,7 +50,20 @@ from .. import bt_win, media
 from ..analysis import HALF_X_CM, HALF_Y_CM, SwingAnalysis, analyze, load_csv, plot
 from ..balance_board import MIN_LOAD_KG, SENSORS, BalanceBoard
 
-ROOT = Path(__file__).resolve().parents[2]
+
+
+def _base_dir() -> Path:
+    """Carpeta de trabajo (data/, out/): la raíz del repo al ejecutar los scripts,
+    la carpeta del .exe si va empaquetado con PyInstaller. WIIGOLF_HOME la fuerza."""
+    env = os.environ.get("WIIGOLF_HOME")
+    if env:
+        return Path(env).expanduser().resolve()
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parents[2]
+
+
+ROOT = _base_dir()
 DATA_DIR = ROOT / "data"
 OUT_DIR = ROOT / "out"
 STATIC_DIR = Path(__file__).parent / "static"

@@ -1,0 +1,40 @@
+WII GOLF - instrucciones rapidas
+=================================
+
+Que es: un programa que lee una Wii Balance Board por Bluetooth y muestra en el
+navegador como repartes el peso durante el swing (centro de presion, % en cada
+pie, fuerza vertical), graba cada swing (con audio y video si quieres) y lo
+analiza. No hace falta instalar Python ni nada mas.
+
+1) Descomprime la carpeta WiiGolf donde quieras (por ejemplo en el Escritorio).
+
+2) Doble clic en WiiGolf.exe.
+   - Se abre una ventana negra: es el servidor. DEJALA ABIERTA mientras uses la
+     tabla (cerrarla para el programa).
+   - Se abre el navegador en http://localhost:8000. Si no, abrelo tu.
+   - Si Windows pregunta por el firewall, permite el acceso: hace falta para
+     verla desde una tablet o movil en la misma WiFi (la ventana negra muestra
+     la direccion, tipo http://192.168.1.20:8000).
+
+3) Conectar la tabla (solo la primera vez):
+   - Pon pilas, abre el compartimento y pulsa el boton rojo SYNC: el LED de la
+     tabla parpadea.
+   - En la web, boton "Tabla / Bluetooth" (arriba a la derecha) -> "Emparejar".
+   - A partir de entonces basta con encender la tabla (boton de delante) y el
+     programa la detecta solo en unos segundos.
+
+4) Colocate a lo ancho de la tabla (un pie en cada mitad, como en el swing).
+   Carga el peso en el pie derecho: si eres diestro debe subir "TRAIL"; si sube
+   "LEAD", marca "invertir izq/der". Con "Fijar peso" quieto se calibra el %.
+
+5) Para grabar swings marca "Captura automatica de swings" (y "Microfono" /
+   "Camara" si quieres el golpe y el video) y haz swings normales: cada uno se
+   guarda y analiza solo. Con "▶" en la lista lo ves a camara lenta con el
+   trazo del peso encima del video; con "☆" fijas uno como referencia para
+   comparar los siguientes; con la flecha lo exportas a un zip para enviarlo.
+
+Los datos quedan en la carpeta "data" junto al exe (y las figuras en "out").
+
+Si algo no va: abre una ventana de comandos en la carpeta y ejecuta
+    WiiGolf.exe --check
+para ver si detecta la tabla, el Bluetooth, el microfono y la camara.

@@ -197,6 +197,32 @@ sola cuando el servidor vuelve.
 Para desarrollar sin la tabla: `python scripts/04_web.py --sim` reproduce en
 bucle un swing simulado (el micro y la cámara sí son reales).
 
+## Repartirlo como .exe (sin instalar Python)
+
+Para que otra persona lo use en su PC con Windows sin instalar nada:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\build_exe.ps1
+```
+
+Genera con PyInstaller la carpeta `dist\WiiGolf\` (`WiiGolf.exe` + `_internal\`
+con Python y todas las dependencias + `LEEME.txt`) y la comprime en
+`dist\WiiGolf-win64.zip` (~150 MB). Quien lo reciba solo descomprime y hace
+doble clic en `WiiGolf.exe`: se abre la ventana del servidor y el navegador.
+Los datos quedan en `data\` junto al exe. El zip no se versiona (`dist/` está
+en `.gitignore`); se envía o se sube como *release* de GitHub.
+
+- `WiiGolf.exe --check` muestra qué detecta ese PC (tabla, Bluetooth, micro,
+  cámara) y dónde guarda los datos. Admite las mismas opciones que
+  `04_web.py` (`--port`, `--sim`, `--no-browser`).
+- El emparejado de la tabla se hace desde la propia web (botón *Tabla /
+  Bluetooth* → *Emparejar*), así que en el otro PC no hace falta nada más.
+- La receta está en `packaging\wiigolf.spec` (imports ocultos de uvicorn, la
+  carpeta `static` de la web) y `packaging\launcher.py`; el texto para el
+  usuario, en `packaging\LEEME.txt`.
+- Windows SmartScreen/Defender puede avisar la primera vez porque el exe no va
+  firmado: *Más información → Ejecutar de todas formas*.
+
 ## Orientación sobre la tabla
 
 - Colócate con los pies **a lo ancho** de la tabla: el eje x es el lateral
