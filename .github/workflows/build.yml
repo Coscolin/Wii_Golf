@@ -1,0 +1,187 @@
+# Construye los ejecutables de Wii Golf sin necesitar un Mac ni Xcode a mano:
+#   - Wii Golf para macOS (Apple Silicon e Intel) con PyInstaller, con prueba de humo
+#   - WiimotePair parcheado para que acepte la Wii Balance Board (RVL-WBC-01)
+#   - Wii Golf para Windows
+# Se ejecuta en cada push a main y a mano (Actions > build > Run workflow). Los zips
+# quedan como artefactos del run; si se empuja una etiqueta v* se publica una release
+# con todos ellos adjuntos.
+#
+# Cada job guarda ademas su log completo en la rama ci-logs/<job> del repo
+# (git fetch origin ci-logs/macos-arm64 && git show FETCH_HEAD:build.log), para
+# poder leerlo sin token aunque el repo sea privado.
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  LOG_REPO: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+jobs:
+  macos:
+    name: Wii Golf macOS (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    env:
+      ARCH: ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Construir y probar
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            set -euxo pipefail
+            sw_vers; uname -m; python --version
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt pyinstaller
+            python -m PyInstaller packaging/wiigolf.spec --noconfirm --clean
+            cp packaging/macos/LEEME_MAC.txt dist/WiiGolf/
+            cp "packaging/macos/Wii Golf.command" dist/WiiGolf/
+            chmod +x "dist/WiiGolf/Wii Golf.command" dist/WiiGolf/WiiGolf
+            mkdir -p dist/WiiGolf/data
+            codesign --force --sign - dist/WiiGolf/WiiGolf
+            (cd dist && ditto -c -k --keepParent WiiGolf "WiiGolf-macos-${ARCH}.zip")
+            ls -la dist/*.zip
+            # --- prueba de humo del ejecutable empaquetado ---
+            cd dist/WiiGolf
+            ./WiiGolf --check
+            python ../../scripts/make_synthetic_swing.py data/synthetic_swing.csv
+            ./WiiGolf --sim --no-browser --host 127.0.0.1 --port 8020 > server.log 2>&1 &
+            SERVER=$!
+            for i in $(seq 1 30); do curl -sf http://127.0.0.1:8020/api/status -o /dev/null && break; sleep 1; done
+            curl -sf http://127.0.0.1:8020/api/status -o r1.json && head -c 300 r1.json && echo
+            curl -sf -X POST -H "Content-Type: application/json" -d '{}' http://127.0.0.1:8020/api/analyze/synthetic_swing -o r2.json && head -c 300 r2.json && echo
+            curl -sf http://127.0.0.1:8020/api/swings/synthetic_swing/track -o r3.json && head -c 120 r3.json && echo
+            curl -sf http://127.0.0.1:8020/api/bluetooth/status && echo
+            curl -sfo /dev/null -w "index.html HTTP %{http_code} (%{size_download} bytes)\n" http://127.0.0.1:8020/
+            test -f out/synthetic_swing.png
+            kill $SERVER || true
+            sleep 1; cat server.log || true
+            rm -rf data/* out server.log r1.json r2.json r3.json
+          } 2>&1 | tee build.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WiiGolf-macos-${{ matrix.arch }}
+          path: dist/WiiGolf-macos-${{ matrix.arch }}.zip
+      - name: Guardar el log en la rama ci-logs/macos-${{ matrix.arch }}
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/cilog
+          cp build.log /tmp/cilog/build.log 2>/dev/null || echo "(sin build.log)" > /tmp/cilog/build.log
+          cd /tmp/cilog
+          echo "== job macos ${ARCH} | run ${{ github.run_id }} | status ${{ job.status }} ==" >> build.log
+          git init -q && git add build.log
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ci log"
+          git push -fq "$LOG_REPO" HEAD:refs/heads/ci-logs/macos-${ARCH}
+
+  wiimotepair:
+    name: WiimotePair (Balance Board)
+    runs-on: macos-15
+    steps:
+      - name: Clonar, parchear el filtro (RVL-CNT-01 -> RVL-*) y compilar
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            set -euxo pipefail
+            git clone --depth 1 https://github.com/dolphin-emu/WiimotePair.git
+            cd WiimotePair
+            grep -n 'Nintendo RVL-CNT-01' WiimotePair/ViewController.m
+            sed -i '' 's/containsString:@"Nintendo RVL-CNT-01"/containsString:@"Nintendo RVL-"/' WiimotePair/ViewController.m
+            grep -n 'Nintendo RVL-' WiimotePair/ViewController.m
+            xcodebuild -version
+            xcodebuild -project WiimotePair.xcodeproj -target WiimotePair -configuration Release \
+              -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+            APP=$(find build -name "WiimotePair.app" -type d | head -1)
+            test -n "$APP"
+            codesign --force --deep --sign - "$APP"
+            ditto -c -k --keepParent "$APP" ../WiimotePair-BalanceBoard.zip
+            ls -la ../WiimotePair-BalanceBoard.zip
+          } 2>&1 | tee build.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WiimotePair-BalanceBoard
+          path: WiimotePair-BalanceBoard.zip
+      - name: Guardar el log en la rama ci-logs/wiimotepair
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/cilog
+          cp build.log /tmp/cilog/build.log 2>/dev/null || echo "(sin build.log)" > /tmp/cilog/build.log
+          cd /tmp/cilog
+          echo "== job wiimotepair | run ${{ github.run_id }} | status ${{ job.status }} ==" >> build.log
+          git init -q && git add build.log
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ci log"
+          git push -fq "$LOG_REPO" HEAD:refs/heads/ci-logs/wiimotepair
+
+  windows:
+    name: Wii Golf Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Construir y probar
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            set -euxo pipefail
+            python --version
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt pyinstaller
+            python -m PyInstaller packaging/wiigolf.spec --noconfirm --clean
+            cp packaging/LEEME.txt dist/WiiGolf/LEEME.txt
+            mkdir -p dist/WiiGolf/data
+            ./dist/WiiGolf/WiiGolf.exe --check
+            python -c "import shutil; shutil.make_archive('dist/WiiGolf-win64', 'zip', 'dist', 'WiiGolf')"
+            ls -la dist/*.zip
+          } 2>&1 | tee build.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WiiGolf-win64
+          path: dist/WiiGolf-win64.zip
+      - name: Guardar el log en la rama ci-logs/windows
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p /tmp/cilog
+          cp build.log /tmp/cilog/build.log 2>/dev/null || echo "(sin build.log)" > /tmp/cilog/build.log
+          cd /tmp/cilog
+          echo "== job windows | run ${{ github.run_id }} | status ${{ job.status }} ==" >> build.log
+          git init -q && git add build.log
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "ci log"
+          git push -fq "$LOG_REPO" HEAD:refs/heads/ci-logs/windows
+
+  release:
+    name: Release
+    if: always() && startsWith(github.ref, 'refs/tags/v')
+    needs: [macos, wiimotepair, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.zip
+          generate_release_notes: true

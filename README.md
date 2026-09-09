@@ -223,6 +223,45 @@ en `.gitignore`); se envía o se sube como *release* de GitHub.
 - Windows SmartScreen/Defender puede avisar la primera vez porque el exe no va
   firmado: *Más información → Ejecutar de todas formas*.
 
+## macOS (sin instalar Python)
+
+No hace falta un Mac para construirlo: el workflow `.github/workflows/build.yml`
+compila en GitHub Actions (runners de macOS con Xcode) en cada push a `main` y
+deja los zips como artefactos (pestaña *Actions* → el run → *Artifacts*):
+
+| Artefacto | Qué es |
+|---|---|
+| `WiiGolf-macos-arm64` | Wii Golf para Macs con chip Apple (M1 o posterior) |
+| `WiiGolf-macos-x86_64` | Wii Golf para Macs Intel |
+| `WiimotePair-BalanceBoard` | `WiimotePair.app` de Dolphin con el filtro de nombre ampliado a `RVL-*` para que acepte la Balance Board (GPL-2.0; se compila desde el original con un `sed` de una línea) |
+| `WiiGolf-win64` | el exe de Windows, por si acaso |
+
+Al empujar una etiqueta (`git tag v0.2.0 && git push --tags`) se publica una
+*release* con los cuatro zips adjuntos, que es lo cómodo para enviar el enlace.
+En un repo privado los minutos de macOS cuentan ×10 (unos 200 al mes gratis);
+en uno público son ilimitados.
+
+En el Mac (detallado en `packaging/macos/LEEME_MAC.txt`, que va en el zip):
+
+1. Descomprimir; quitar la cuarentena de la descarga (`xattr -dr
+   com.apple.quarantine <carpeta>` en Terminal, o *Privacidad y seguridad → Abrir
+   de todos modos*) y doble clic en `Wii Golf.command`: abre Terminal con el
+   servidor y el navegador. Aceptar los permisos de Bluetooth, micro y cámara
+   que pida (van a Terminal).
+2. **Emparejar la tabla**: la tabla exige un PIN de 6 bytes binarios (la
+   dirección Bluetooth del Mac invertida) que Ajustes no puede escribir; por eso
+   Ajustes la deja "conectada" sin exponer el HID. Nuestra app lo hace con
+   `IOBluetoothDevicePair` (PyObjC, `wiigolf/bt_mac.py`) desde el panel *Tabla /
+   Bluetooth → Emparejar* o con `./WiiGolf --pair`, y como plan B está
+   `WiimotePair.app` (mismo método, en Objective-C). Con SYNC pulsado (LED
+   parpadeando); después basta con encender la tabla.
+3. `./WiiGolf --check` muestra qué detecta ese Mac.
+
+Todo esto se ha escrito desde Windows: la app se prueba sola en el runner
+(arranca, sirve la web, analiza), pero el emparejado real solo se puede validar
+con la tabla en un Mac. Si falla, lo que hace falta es la salida de
+`./WiiGolf --pair` y de `./WiiGolf --check`.
+
 ## Orientación sobre la tabla
 
 - Colócate con los pies **a lo ancho** de la tabla: el eje x es el lateral

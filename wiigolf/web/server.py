@@ -33,6 +33,7 @@ import os
 import queue
 import random
 import re
+import subprocess
 import sys
 import threading
 import time
@@ -46,7 +47,15 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-from .. import bt_win, media
+from .. import media
+
+# Emparejado Bluetooth de la tabla: una implementación por sistema con la misma API
+if sys.platform == "win32":
+    from .. import bt_win as bt
+elif sys.platform == "darwin":
+    from .. import bt_mac as bt
+else:
+    bt = None
 from ..analysis import HALF_X_CM, HALF_Y_CM, SwingAnalysis, analyze, load_csv, plot
 from ..balance_board import MIN_LOAD_KG, SENSORS, BalanceBoard
 
@@ -813,7 +822,40 @@ def create_app(sim: bool = False) -> FastAPI:
     bt_lock = threading.Lock()
 
     def full_status() -> dict:
-        return {**reader.status(), "media": media_mgr.status(), "reference": get_reference()}
+        return {**reader.status(), "media": media_mgr.status(), "reference": get_reference(),
+                "platform": sys.platform}
+
+    def bt_subprocess(flag: str, timeout: float) -> subprocess.CompletedProcess:
+        """macOS: IOBluetooth necesita el run loop del hilo principal y el permiso de
+        Bluetooth puede matar al proceso que lo pide, así que el estado y el emparejado
+        corren en un proceso aparte (`WiiGolf --bt-status` / `--pair`)."""
+        if getattr(sys, "frozen", False):
+            cmd = [sys.executable, flag]
+        else:
+            cmd = [sys.executable, "-m", "wiigolf.app", flag]
+        return subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=str(ROOT))
+
+    def status_subprocess() -> dict:
+        try:
+            p = bt_subprocess("--bt-status", 30)
+            line = [ln for ln in p.stdout.splitlines() if ln.startswith("{")]
+            if line:
+                return json.loads(line[-1])
+            return {"available": False, "radio": None, "boards": [],
+                    "error": (p.stderr.strip().splitlines() or [f"salida {p.returncode}"])[-1]}
+        except Exception as exc:
+            return {"available": False, "radio": None, "boards": [], "error": str(exc)}
+
+    def pair_subprocess(seconds: float) -> dict:
+        try:
+            p = bt_subprocess("--pair", seconds + 100)
+        except subprocess.TimeoutExpired:
+            return {"ok": False, "board": None, "log": [], "message": "El emparejado no ha respondido a tiempo"}
+        lines = [ln for ln in (p.stdout + p.stderr).splitlines() if ln.strip()]
+        last = lines[-1] if lines else ""
+        ok = p.returncode == 0 and last.startswith("OK:")
+        msg = last.split(":", 1)[1].strip() if ":" in last else (last or f"salida {p.returncode}")
+        return {"ok": ok, "board": None, "log": lines[:-1], "message": msg}
 
     async def send_all(msg: dict) -> None:
         dead = []
@@ -1097,15 +1139,25 @@ def create_app(sim: bool = False) -> FastAPI:
 
     @app.get("/api/bluetooth/status")
     async def api_bt_status():
-        return await asyncio.to_thread(bt_win.status)
+        if bt is None:
+            return {"available": False, "error": f"Sin soporte de emparejado en {sys.platform}",
+                    "radio": None, "boards": [], "platform": sys.platform}
+        fn = status_subprocess if sys.platform == "darwin" else bt.status
+        return {**(await asyncio.to_thread(fn)), "platform": sys.platform}
 
     @app.post("/api/bluetooth/pair")
     async def api_bt_pair(body: PairBody):
+        if bt is None:
+            raise HTTPException(501, f"Sin soporte de emparejado en {sys.platform}")
         if not bt_lock.acquire(blocking=False):
             raise HTTPException(409, "Ya hay un emparejado en curso")
         log: list[str] = []
         try:
-            res = await asyncio.to_thread(bt_win.pair, log.append, body.seconds, body.forget_first)
+            if sys.platform == "darwin":
+                res = await asyncio.to_thread(pair_subprocess, body.seconds)
+                log = res.pop("log", [])
+            else:
+                res = await asyncio.to_thread(bt.pair, log.append, body.seconds, body.forget_first)
         except Exception as exc:
             raise HTTPException(500, f"{exc} | " + " / ".join(log))
         finally:
@@ -1116,8 +1168,10 @@ def create_app(sim: bool = False) -> FastAPI:
 
     @app.post("/api/bluetooth/forget")
     async def api_bt_forget(body: ForgetBody):
+        if bt is None:
+            raise HTTPException(501, f"Sin soporte de emparejado en {sys.platform}")
         try:
-            return await asyncio.to_thread(bt_win.forget, body.address)
+            return await asyncio.to_thread(bt.forget, body.address)
         except Exception as exc:
             raise HTTPException(500, str(exc))
 

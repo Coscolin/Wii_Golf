@@ -16,3 +16,8 @@ python-multipart>=0.0.9
 # si faltan, la web sigue funcionando sin audio/vídeo.
 sounddevice>=0.5
 opencv-python>=4.10
+
+# macOS: emparejar la tabla con el PIN binario por IOBluetooth (bt_mac.py).
+pyobjc-core>=10; sys_platform == "darwin"
+pyobjc-framework-Cocoa>=10; sys_platform == "darwin"
+pyobjc-framework-IOBluetooth>=10; sys_platform == "darwin"

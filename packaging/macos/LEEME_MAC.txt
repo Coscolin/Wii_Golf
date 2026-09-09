@@ -1,0 +1,57 @@
+WII GOLF para macOS - instrucciones rapidas
+============================================
+
+Que es: un programa que lee una Wii Balance Board por Bluetooth y muestra en el
+navegador como repartes el peso durante el swing (centro de presion, % en cada
+pie, fuerza vertical), graba cada swing (con audio y video si quieres) y lo
+analiza. No hace falta instalar Python ni nada mas.
+
+1) Descomprime la carpeta WiiGolf donde quieras (por ejemplo en Documentos).
+
+2) Primera vez: macOS bloquea programas descargados que no vienen de la App
+   Store. La forma mas sencilla de desbloquearlo es abrir la app Terminal
+   (Aplicaciones > Utilidades) y escribir, cambiando la ruta por la de tu carpeta:
+
+       xattr -dr com.apple.quarantine ~/Documents/WiiGolf
+
+   (Alternativa: intenta abrir "Wii Golf.command", y cuando lo bloquee ve a
+   Ajustes del Sistema > Privacidad y seguridad y pulsa "Abrir de todos modos".)
+
+3) Doble clic en "Wii Golf.command".
+   - Se abre una ventana de Terminal: es el servidor. DEJALA ABIERTA mientras
+     uses la tabla (cerrarla para el programa).
+   - Se abre el navegador en http://localhost:8000. Si no, abrelo tu.
+   - macOS pedira permisos (Bluetooth, y microfono/camara si los activas):
+     acepta. Si en algun momento los denegaste, se cambian en Ajustes del
+     Sistema > Privacidad y seguridad (Bluetooth / Microfono / Camara > Terminal).
+
+4) Conectar la tabla (solo la primera vez). La tabla pide un PIN especial que
+   Ajustes no puede escribir, por eso se hace desde el programa:
+   - Si la tabla aparece ya en Ajustes > Bluetooth de intentos anteriores,
+     eliminala primero ("i" > Olvidar este dispositivo).
+   - Pon pilas, abre el compartimento y pulsa el boton rojo SYNC: el LED
+     parpadea.
+   - En la web, boton "Tabla / Bluetooth" (arriba a la derecha) -> "Emparejar"
+     y espera el mensaje de conectada.
+   - Si esto fallara, hay una segunda herramienta: WiimotePair.app (esta en la
+     descarga "WiimotePair-BalanceBoard"). Abrela, pulsa SYNC en la tabla,
+     espera "Connected" y cierrala. Luego vuelve a Wii Golf.
+   A partir de entonces basta con encender la tabla (boton de delante) y el
+   programa la detecta solo en unos segundos.
+
+5) Colocate a lo ancho de la tabla (un pie en cada mitad, como en el swing).
+   Carga el peso en el pie derecho: si eres diestra debe subir "TRAIL"; si sube
+   "LEAD", marca "invertir izq/der". Con "Fijar peso" quieta se calibra el %.
+
+6) Para grabar swings marca "Captura automatica de swings" (y "Microfono" /
+   "Camara" si quieres el golpe y el video) y haz swings normales: cada uno se
+   guarda y analiza solo. Con el boton de reproducir lo ves a camara lenta con
+   el trazo del peso encima del video; con la estrella fijas uno como referencia
+   para comparar los siguientes; con la flecha lo exportas a un zip para enviarlo.
+
+Los datos quedan en la carpeta "data" junto al programa (y las figuras en "out").
+
+Si algo no va, en Terminal, dentro de la carpeta:
+    ./WiiGolf --check      muestra si detecta la tabla, el Bluetooth, el micro y la camara
+    ./WiiGolf --pair       empareja la tabla mostrando cada paso (pulsa SYNC antes)
+y envia lo que salga.

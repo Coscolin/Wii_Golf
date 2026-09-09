@@ -5,6 +5,7 @@
 #
 # o simplemente scripts\build_exe.ps1, que ademas genera dist\WiiGolf-win64.zip.
 import os
+import sys
 
 from PyInstaller.utils.hooks import collect_submodules
 
@@ -16,6 +17,8 @@ hidden = collect_submodules("uvicorn") + [
     "multipart", "python_multipart", "websockets", "httptools",
     "anyio._backends._asyncio", "hid",
 ]
+if sys.platform == "darwin":  # emparejado por IOBluetooth (bt_mac.py)
+    hidden += ["objc", "Foundation", "IOBluetooth", "IOBluetooth._metadata"]
 
 # La interfaz web se sirve desde wiigolf/web/static (server.py la localiza
 # relativa a su propio archivo, tambien dentro del paquete).
