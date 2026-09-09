@@ -38,7 +38,6 @@
   .bar::after{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed #55606d}
   .meter{height:8px;background:#232b35;border-radius:4px;overflow:hidden;width:110px;display:inline-block;vertical-align:middle}
   .meter>div{height:100%;background:var(--ok)}
-  #campreview{width:160px;border-radius:6px;background:#000;display:none}
   table{width:100%;border-collapse:collapse;font-size:14px}
   td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
   th{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase}
@@ -49,7 +48,11 @@
   .delta.pos{color:var(--ok)} .delta.neg{color:var(--bad)}
   .notes{color:var(--warn);font-size:13px;margin:8px 0}
   img#anpng{width:100%;border-radius:8px;margin-top:10px;background:#fff;display:none}
-  #pcanvas{width:100%;background:#000;border-radius:8px;display:block}
+  #pcanvas{background:#000;border-radius:8px;display:block}
+  .modal{position:fixed;inset:0;background:rgba(6,8,11,.96);z-index:20;display:flex;flex-direction:column;padding:10px 16px 12px;gap:4px}
+  .modal-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .modal-head h2{margin:0}
+  .modal-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
   input[type=range]{flex:1;min-width:180px}
   pre.log{background:#0f1318;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;max-height:220px;overflow:auto;white-space:pre-wrap;margin:8px 0 0}
   #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#232b35;border:1px solid #2f3945;
@@ -132,8 +135,7 @@
       <label><input type="checkbox" id="video"> Cámara (vídeo del swing)</label>
       <input type="number" id="camera" min="0" max="9" value="0" title="índice de la cámara">
       <span id="videoinfo" class="muted"></span>
-      <label><input type="checkbox" id="showcam"> ver</label>
-      <img id="campreview" alt="">
+      <label title="muestra la imagen de la cámara de fondo en el recuadro de la tabla, para encuadrar"><input type="checkbox" id="showcam" checked> ver de fondo</label>
     </div>
   </section>
 
@@ -160,31 +162,35 @@
     <img id="anpng" alt="figura del análisis">
   </section>
 
-  <section class="card wide" id="playercard" hidden>
-    <h2 id="ptitle">Reproducción</h2>
-    <canvas id="pcanvas"></canvas>
-    <div class="row" style="margin-top:8px">
-      <button id="pplay" class="primary">▶</button>
-      <select id="pspeed">
-        <option value="1">1×</option><option value="0.5">½×</option><option value="0.25" selected>¼×</option>
-        <option value="0.1">1/10×</option><option value="0.05">1/20×</option>
-      </select>
-      <button id="pprev" class="small" title="fotograma anterior">⏮</button>
-      <button id="pnext" class="small" title="fotograma siguiente">⏭</button>
-      <input type="range" id="pslider" min="0" max="1" step="0.001" value="0">
-      <span id="ptime" class="muted" style="min-width:150px"></span>
-    </div>
-    <div class="row">
-      <button id="ptop" class="small">ir al top</button>
-      <button id="pimpact" class="small">ir al impacto</button>
-      <span class="muted">|</span>
-      <button id="pmarktop" class="small">marcar top aquí</button>
-      <button id="pmarkimpact" class="small">marcar impacto aquí</button>
-      <button id="preset" class="small">restablecer marcas</button>
-      <span id="pinfo" class="muted"></span>
-    </div>
-  </section>
 </main>
+
+<div id="player" class="modal" hidden>
+  <div class="modal-head">
+    <h2 id="ptitle">Reproducción</h2>
+    <span id="pinfo" class="muted"></span>
+    <span style="flex:1"></span>
+    <button id="pclose" class="small" title="cerrar (Esc)">✕ cerrar</button>
+  </div>
+  <div id="pwrap" class="modal-body"><canvas id="pcanvas"></canvas></div>
+  <div class="row" style="margin:4px 0 0">
+    <button id="pplay" class="primary">▶</button>
+    <select id="pspeed">
+      <option value="1">1×</option><option value="0.5">½×</option><option value="0.25" selected>¼×</option>
+      <option value="0.1">1/10×</option><option value="0.05">1/20×</option>
+    </select>
+    <button id="pprev" class="small" title="fotograma anterior">⏮</button>
+    <button id="pnext" class="small" title="fotograma siguiente">⏭</button>
+    <input type="range" id="pslider" min="0" max="1" step="0.001" value="0">
+    <span id="ptime" class="muted" style="min-width:150px"></span>
+    <span class="muted">|</span>
+    <button id="ptop" class="small">ir al top</button>
+    <button id="pimpact" class="small">ir al impacto</button>
+    <span class="muted">|</span>
+    <button id="pmarktop" class="small">marcar top aquí</button>
+    <button id="pmarkimpact" class="small">marcar impacto aquí</button>
+    <button id="preset" class="small">restablecer marcas</button>
+  </div>
+</div>
 
 <div id="flash"></div>
 <div id="toast"></div>
@@ -305,6 +311,16 @@ function renderStatus() {
     $("videoinfo").textContent = v.running ? `${v.size ? v.size.join("×") : ""} · ${v.fps} fps` : (settings.video ? (v.error || "arrancando…") : (v.available ? "" : "opencv no disponible"));
   }
   renderRefLine(s.reference);
+  syncBoardPanel(s);
+}
+// El panel Tabla/Bluetooth se despliega solo cuando la tabla no está conectada
+// (y se recoge al conectar), salvo que el usuario lo haya abierto o cerrado a mano.
+let panelAuto = false, panelUserClosed = false;
+function syncBoardPanel(s) {
+  const p = $("boardpanel");
+  const disconnected = !s.connected && !s.sim;
+  if (disconnected && p.hidden && !panelUserClosed) { p.hidden = false; panelAuto = true; loadBt(); }
+  else if (!disconnected) { panelUserClosed = false; if (panelAuto && !p.hidden) { p.hidden = true; panelAuto = false; } }
 }
 function renderRefLine(ref) {
   $("refline").innerHTML = ref ? `Referencia para comparar: <b>${ref}</b> <button class="small" id="clearref">quitar</button>`
@@ -336,13 +352,15 @@ $("fixbw").onclick = () => {
 };
 
 // ---------- canvas en vivo ----------
+// imagen de la cámara de fondo (se rellena más abajo); declarada aquí porque resize() la usa
+let camImg = null, camBusy = false, camAspect = null;
 const cv = $("board"), ctx = cv.getContext("2d");
-function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * 0.62 * dpr; }
+function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * (camAspect || 0.62) * dpr; }
 window.addEventListener("resize", resize); resize();
 
 function drawBoard(c, ox, oy, bwid, bhei, opts) {
-  // silueta de la tabla con rejilla y etiquetas; opts: {labels:bool, alpha}
-  c.fillStyle = "#121820"; c.fillRect(ox, oy, bwid, bhei);
+  // silueta de la tabla con rejilla y etiquetas; opts: {labels, font, translucent}
+  c.fillStyle = (opts && opts.translucent) ? "rgba(18,24,32,0.45)" : "#121820"; c.fillRect(ox, oy, bwid, bhei);
   c.strokeStyle = "#2a3038"; c.lineWidth = 1;
   for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox + bwid * i / 4, oy); c.lineTo(ox + bwid * i / 4, oy + bhei); c.stroke(); }
   c.beginPath(); c.moveTo(ox, oy + bhei / 2); c.lineTo(ox + bwid, oy + bhei / 2); c.stroke();
@@ -359,12 +377,21 @@ function drawBoard(c, ox, oy, bwid, bhei, opts) {
 function draw() {
   const W = cv.width, H = cv.height;
   ctx.clearRect(0, 0, W, H);
+  if (camImg) {
+    // fondo: la cámara atenuada y desaturada, para que destaquen la silueta y el puntero
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    try { ctx.filter = "grayscale(40%) brightness(1.05)"; } catch (e) {}
+    const s = Math.min(W / camImg.width, H / camImg.height), dw = camImg.width * s, dh = camImg.height * s;
+    ctx.drawImage(camImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    ctx.restore();
+  }
   const pad = 0.09 * W, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
   const toPx = (x, y) => {
     const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y;
     return [ox + bwid / 2 + sx * bwid / 2, oy + bhei / 2 - sy * bhei / 2];
   };
-  drawBoard(ctx, ox, oy, bwid, bhei, {labels: true});
+  drawBoard(ctx, ox, oy, bwid, bhei, {labels: true, translucent: !!camImg});
   if (trail.length > 1) {
     const t1 = trail[trail.length - 1].t;
     ctx.lineCap = "round"; ctx.lineWidth = 3.5 * dpr;
@@ -421,12 +448,25 @@ $("auto").onchange = async () => {
   catch (e) { toast("Auto: " + e.message); }
 };
 
-// vista previa de la cámara
-$("showcam").onchange = () => { $("campreview").style.display = $("showcam").checked ? "" : "none"; };
+// Imagen de la cámara de fondo en el recuadro de la tabla (para encuadrar): se
+// pide la última captura a ~10 fps mientras la cámara esté activa.
 setInterval(() => {
-  if (!$("showcam").checked || !(status.media && status.media.video && status.media.video.running)) return;
-  $("campreview").src = "/api/camera/snapshot.jpg?t=" + Date.now();
-}, 200);
+  const running = status.media && status.media.video && status.media.video.running;
+  if (!running || !$("showcam").checked) {
+    if (camImg) { camImg = null; camAspect = null; resize(); }
+    return;
+  }
+  if (camBusy) return;
+  camBusy = true;
+  const im = new Image();
+  im.onload = () => {
+    camImg = im; camBusy = false;
+    const a = im.height / im.width;
+    if (a !== camAspect) { camAspect = a; resize(); }
+  };
+  im.onerror = () => { camBusy = false; };
+  im.src = "/api/camera/snapshot.jpg?t=" + Date.now();
+}, 100);
 
 // ---------- swings, referencia, importar/exportar ----------
 async function loadSwings() {
@@ -525,7 +565,8 @@ function stopPlayer() { P.playing = false; if (P.raf) cancelAnimationFrame(P.raf
 async function openPlayer(name) {
   stopPlayer();
   P.name = name; P.frames = []; P.loaded = 0; P.track = null;
-  $("playercard").hidden = false; $("ptitle").textContent = "Reproducción · " + name; $("pinfo").textContent = "cargando…";
+  $("player").hidden = false; document.body.style.overflow = "hidden";
+  $("ptitle").textContent = "Reproducción · " + name; $("pinfo").textContent = "cargando…";
   try { P.track = await api(`/api/swings/${name}/track`); }
   catch (e) { $("pinfo").textContent = "error: " + e.message; return; }
   const T = P.track.t; P.t0 = T[0]; P.dur = T[T.length - 1];
@@ -536,8 +577,9 @@ async function openPlayer(name) {
   $("pinfo").textContent = P.track.video ? `vídeo 0/${P.track.video.n}` : "sin vídeo: se reproduce solo el trazo del CoP";
   drawPlayer();
   if (P.track.video) loadFrames(name, P.track.video.n);
-  $("playercard").scrollIntoView({behavior: "smooth", block: "start"});
 }
+function closePlayer() { stopPlayer(); P.name = null; $("player").hidden = true; document.body.style.overflow = ""; }
+$("pclose").onclick = closePlayer;
 async function loadFrames(name, n) {
   const frames = new Array(n); P.frames = frames; let next = 0;
   const worker = async () => {
@@ -551,14 +593,21 @@ async function loadFrames(name, n) {
   await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
 }
 function resizePlayer() {
-  const w = pc.clientWidth || 800; const v = P.track && P.track.video;
-  const aspect = v ? v.height / v.width : 0.5;
-  pc.width = w * dpr; pc.height = Math.round(w * Math.max(0.42, Math.min(0.8, aspect))) * dpr;
+  // ocupa el máximo del modal manteniendo la proporción del vídeo (16:9 si no hay vídeo)
+  const wrap = $("pwrap"); const W = wrap.clientWidth || 800, H = wrap.clientHeight || 450;
+  const v = P.track && P.track.video;
+  const aspect = v ? v.height / v.width : 0.5625;
+  let w = W, h = w * aspect;
+  if (h > H) { h = H; w = h / aspect; }
+  w = Math.floor(w); h = Math.floor(h);
+  pc.style.width = w + "px"; pc.style.height = h + "px";
+  pc.width = w * dpr; pc.height = h * dpr;
 }
-window.addEventListener("resize", () => { if (P.track) { resizePlayer(); drawPlayer(); } });
+window.addEventListener("resize", () => { if (!$("player").hidden && P.track) { resizePlayer(); drawPlayer(); } });
 function drawPlayer() {
   if (!P.track) return;
   const W = pc.width, H = pc.height, T = P.track;
+  const u = Math.max(dpr, W / 900);  // escala de textos/trazos según el tamaño
   pctx.fillStyle = "#000"; pctx.fillRect(0, 0, W, H);
   // fotograma
   const fi = frameIndexAt(P.t);
@@ -567,12 +616,12 @@ function drawPlayer() {
     const s = Math.min(W / img.width, H / img.height), dw = img.width * s, dh = img.height * s;
     pctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
   } else if (T.video) {
-    pctx.fillStyle = "#9aa4b2"; pctx.font = `${14 * dpr}px system-ui`; pctx.textAlign = "center";
+    pctx.fillStyle = "#9aa4b2"; pctx.font = `${14 * u}px system-ui`; pctx.textAlign = "center";
     pctx.fillText(fi < 0 ? "sin fotograma en este instante" : "cargando fotograma…", W / 2, H / 2);
   }
   // recuadro de la tabla (abajo a la izquierda)
-  const iw = W * (T.video ? 0.40 : 0.62), ih = iw * (HY / HX), ix = 14 * dpr, iy = H - ih - 30 * dpr;
-  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * dpr, iy - 24 * dpr, iw + 20 * dpr, ih + 52 * dpr);
+  const iw = W * (T.video ? 0.40 : 0.62), ih = iw * (HY / HX), ix = 14 * u, iy = H - ih - 30 * u;
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * u, iy - 24 * u, iw + 20 * u, ih + 52 * u);
   drawBoard(pctx, ix, iy, iw, ih, {labels: true, font: 11});
   const toPx = (xcm, ycm) => {
     const sx = settings.flip_x ? -xcm : xcm, sy = settings.flip_y ? -ycm : ycm;
@@ -580,7 +629,7 @@ function drawPlayer() {
   };
   const drawPath = (tr, tEnd, color, width, full) => {
     const n = tr.t.length; let started = false;
-    pctx.strokeStyle = color; pctx.lineWidth = width * dpr; pctx.lineCap = "round"; pctx.beginPath();
+    pctx.strokeStyle = color; pctx.lineWidth = width * u; pctx.lineCap = "round"; pctx.beginPath();
     for (let i = 0; i < n; i++) {
       if (!full && tr.t[i] > tEnd) break;
       const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
@@ -594,8 +643,8 @@ function drawPlayer() {
     const i = bsearch(tr.t, t); const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
     if (x == null || y == null) return;
     const [px, py] = toPx(x, y);
-    pctx.fillStyle = color; pctx.beginPath(); pctx.arc(px, py, rad * dpr, 0, Math.PI * 2); pctx.fill();
-    pctx.strokeStyle = "#0f1318"; pctx.lineWidth = 1.5 * dpr; pctx.stroke();
+    pctx.fillStyle = color; pctx.beginPath(); pctx.arc(px, py, rad * u, 0, Math.PI * 2); pctx.fill();
+    pctx.strokeStyle = "#0f1318"; pctx.lineWidth = 1.5 * u; pctx.stroke();
   };
   // referencia alineada en el impacto (o en el top)
   const R = T.reference && T.reference.t ? T.reference : null; let shift = 0;
@@ -613,21 +662,21 @@ function drawPlayer() {
   const i = bsearch(T.t, P.t); const f = T.force_pct[i];
   dotAt(T, P.t, (f != null && f > 115) ? "#ff7a59" : "#ffd166", 7 + Math.max(0, Math.min(2, (f || 100) / 100)) * 4);
   // barra de tiempo con marcas
-  const bx = 14 * dpr, by = 12 * dpr, bwd = W - 28 * dpr, bh = 8 * dpr;
+  const bx = 14 * u, by = 12 * u, bwd = W - 28 * u, bh = 8 * u;
   pctx.fillStyle = "rgba(255,255,255,0.18)"; pctx.fillRect(bx, by, bwd, bh);
   const xOf = (t) => bx + (t - P.t0) / Math.max(1e-6, P.dur - P.t0) * bwd;
   const ev = T.events || {};
-  const mark = (t, color, label) => { if (t == null) return; const x = xOf(t); pctx.fillStyle = color; pctx.fillRect(x - 1.5 * dpr, by - 4 * dpr, 3 * dpr, bh + 8 * dpr);
-    pctx.font = `${11 * dpr}px system-ui`; pctx.textAlign = "left"; pctx.fillText(label, x + 4 * dpr, by + bh + 14 * dpr); };
+  const mark = (t, color, label) => { if (t == null) return; const x = xOf(t); pctx.fillStyle = color; pctx.fillRect(x - 1.5 * u, by - 4 * u, 3 * u, bh + 8 * u);
+    pctx.font = `${11 * u}px system-ui`; pctx.textAlign = "left"; pctx.fillText(label, x + 4 * u, by + bh + 14 * u); };
   mark(ev.t_top, "#ffa040", "top"); mark(ev.t_impact, "#ff5050", ev.impact_source === "audio" ? "impacto (audio)" : ev.impact_source === "manual" ? "impacto (manual)" : "impacto ≈");
   if (T.impact_audio && T.impact_audio.t != null && ev.impact_source !== "audio") mark(T.impact_audio.t, "#ff9ad0", "golpe (audio)");
-  pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * dpr, by - 6 * dpr, 3 * dpr, bh + 12 * dpr);
+  pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * u, by - 6 * u, 3 * u, bh + 12 * u);
   // trail % y fuerza a la derecha
   const tp = T.trail_pct[i];
-  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 190 * dpr, H - 62 * dpr, 176 * dpr, 50 * dpr);
-  pctx.fillStyle = "#e6edf3"; pctx.font = `${13 * dpr}px system-ui`; pctx.textAlign = "left";
-  pctx.fillText(`trail ${tp == null ? "–" : tp.toFixed(0) + " %"}   lead ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, W - 180 * dpr, H - 42 * dpr);
-  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 180 * dpr, H - 22 * dpr);
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 190 * u, H - 62 * u, 176 * u, 50 * u);
+  pctx.fillStyle = "#e6edf3"; pctx.font = `${13 * u}px system-ui`; pctx.textAlign = "left";
+  pctx.fillText(`trail ${tp == null ? "–" : tp.toFixed(0) + " %"}   lead ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, W - 180 * u, H - 42 * u);
+  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 180 * u, H - 22 * u);
   $("ptime").textContent = `t = ${P.t.toFixed(3)} s` + (ev.t_impact != null ? `  (${((P.t - ev.t_impact) * 1000).toFixed(0)} ms ${P.t >= ev.t_impact ? "tras" : "antes del"} impacto)` : "");
 }
 function tick(ts) {
@@ -658,14 +707,20 @@ $("pmarktop").onclick = () => remark({top: P.t});
 $("pmarkimpact").onclick = () => remark({impact: P.t});
 $("preset").onclick = () => remark({reset: true});
 document.addEventListener("keydown", (e) => {
-  if ($("playercard").hidden || !P.track || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+  if ($("player").hidden) return;
+  if (e.code === "Escape") { e.preventDefault(); closePlayer(); return; }
+  if (!P.track || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
   if (e.code === "Space") { e.preventDefault(); $("pplay").click(); }
   else if (e.code === "ArrowLeft") { e.preventDefault(); step(-1); }
   else if (e.code === "ArrowRight") { e.preventDefault(); step(1); }
 });
 
 // ---------- tabla / bluetooth ----------
-$("boardbtn").onclick = () => { const p = $("boardpanel"); p.hidden = !p.hidden; if (!p.hidden) loadBt(); };
+$("boardbtn").onclick = () => {
+  const p = $("boardpanel"); p.hidden = !p.hidden;
+  panelAuto = false; panelUserClosed = p.hidden;
+  if (!p.hidden) loadBt();
+};
 async function loadBt() {
   $("btinfo").textContent = "Consultando…";
   try {

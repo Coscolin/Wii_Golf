@@ -141,7 +141,8 @@ tablet.
 - **Tarar** con la tabla vacía (o con la alfombra encima); *quitar tara* deshace.
 - **Micrófono** y **cámara**: se activan con sus casillas y capturan en continuo
   (buffer de 20 s) con el mismo reloj que la tabla. El medidor muestra el nivel
-  del micro; *ver* enseña la cámara para encuadrar.
+  del micro; con *ver de fondo* la imagen de la cámara aparece atenuada detrás
+  de la silueta de la tabla, para encuadrar antes de grabar.
 
 **Grabar swings**
 
@@ -159,7 +160,8 @@ tablet.
 ≥ 8× la mediana y nivel ≥ 0,02) en la ventana [top − 0,2 s, top + 1,2 s] y esa
 marca sustituye a la estimación por fuerza. La lista muestra `impacto audio`.
 
-**Reproductor a cámara lenta** (▶ en la lista o en el análisis): vídeo
+**Reproductor a cámara lenta** (▶ en la lista o en el análisis; se abre a
+pantalla completa y se cierra con Esc): vídeo
 fotograma a fotograma con el trazo del CoP superpuesto (recuadro de la tabla),
 barra de tiempo con top / impacto / golpe, velocidades de 1× a 1/20×, avance
 por fotograma (⏮ ⏭ o flechas, espacio = reproducir), *ir al top / impacto*, y
@@ -175,7 +177,8 @@ su trazo y su punto a la vez que el del swing actual.
 audio, vídeo, figura); *Importar zip* lo carga en otro PC (si el nombre ya
 existe se renombra) y lo analiza.
 
-**Tabla / Bluetooth** (botón de la cabecera): estado del adaptador y de la
+**Tabla / Bluetooth** (botón de la cabecera; el panel se despliega solo
+mientras la tabla no está conectada): estado del adaptador y de la
 tabla (conectada / emparejada), *Reconectar* y **Emparejar**: pulsa el botón
 SYNC rojo de la tabla y luego el botón; se empareja con el PIN que espera la
 tabla (la dirección del adaptador) y se activa su servicio HID, como hace
@@ -210,7 +213,9 @@ con Python y todas las dependencias + `LEEME.txt`) y la comprime en
 `dist\WiiGolf-win64.zip` (~150 MB). Quien lo reciba solo descomprime y hace
 doble clic en `WiiGolf.exe`: se abre la ventana del servidor y el navegador.
 Los datos quedan en `data\` junto al exe. El zip no se versiona (`dist/` está
-en `.gitignore`); se envía o se sube como *release* de GitHub.
+en `.gitignore`); las descargas listas para usar (Windows y macOS) están en
+**https://github.com/Coscolin/Wii_Golf/releases/latest**, que genera el
+workflow de GitHub Actions al etiquetar (ver la sección de macOS).
 
 - `WiiGolf.exe --check` muestra qué detecta ese PC (tabla, Bluetooth, micro,
   cámara) y dónde guarda los datos. Admite las mismas opciones que
@@ -237,9 +242,9 @@ deja los zips como artefactos (pestaña *Actions* → el run → *Artifacts*):
 | `WiiGolf-win64` | el exe de Windows, por si acaso |
 
 Al empujar una etiqueta (`git tag v0.2.0 && git push --tags`) se publica una
-*release* con los cuatro zips adjuntos, que es lo cómodo para enviar el enlace.
-En un repo privado los minutos de macOS cuentan ×10 (unos 200 al mes gratis);
-en uno público son ilimitados.
+*release* con los cuatro zips adjuntos: la última está siempre en
+**https://github.com/Coscolin/Wii_Golf/releases/latest**. El repo es público,
+así que las builds de macOS no consumen cuota.
 
 En el Mac (detallado en `packaging/macos/LEEME_MAC.txt`, que va en el zip):
 
