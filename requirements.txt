@@ -21,3 +21,4 @@ opencv-python>=4.10
 pyobjc-core>=10; sys_platform == "darwin"
 pyobjc-framework-Cocoa>=10; sys_platform == "darwin"
 pyobjc-framework-IOBluetooth>=10; sys_platform == "darwin"
+pyobjc-framework-CoreBluetooth>=10; sys_platform == "darwin"

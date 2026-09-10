@@ -18,7 +18,8 @@ hidden = collect_submodules("uvicorn") + [
     "anyio._backends._asyncio", "hid",
 ]
 if sys.platform == "darwin":  # emparejado por IOBluetooth (bt_mac.py)
-    hidden += ["objc", "Foundation", "IOBluetooth", "IOBluetooth._metadata"]
+    hidden += ["objc", "Foundation", "IOBluetooth", "IOBluetooth._metadata",
+               "CoreBluetooth", "CoreBluetooth._metadata"]
 
 # La interfaz web se sirve desde wiigolf/web/static (server.py la localiza
 # relativa a su propio archivo, tambien dentro del paquete).

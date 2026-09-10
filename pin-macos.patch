@@ -1,0 +1,126 @@
+diff -ru a/packaging/wiigolf.spec b/packaging/wiigolf.spec
+--- a/packaging/wiigolf.spec	2026-09-09 19:39:36.000000000 +0000
++++ b/packaging/wiigolf.spec	2026-09-10 08:08:03.727135451 +0000
+@@ -18,7 +18,8 @@
+     "anyio._backends._asyncio", "hid",
+ ]
+ if sys.platform == "darwin":  # emparejado por IOBluetooth (bt_mac.py)
+-    hidden += ["objc", "Foundation", "IOBluetooth", "IOBluetooth._metadata"]
++    hidden += ["objc", "Foundation", "IOBluetooth", "IOBluetooth._metadata",
++               "CoreBluetooth", "CoreBluetooth._metadata"]
+ 
+ # La interfaz web se sirve desde wiigolf/web/static (server.py la localiza
+ # relativa a su propio archivo, tambien dentro del paquete).
+diff -ru a/requirements.txt b/requirements.txt
+--- a/requirements.txt	2026-09-09 19:39:36.000000000 +0000
++++ b/requirements.txt	2026-09-10 08:08:03.727059754 +0000
+@@ -21,3 +21,4 @@
+ pyobjc-core>=10; sys_platform == "darwin"
+ pyobjc-framework-Cocoa>=10; sys_platform == "darwin"
+ pyobjc-framework-IOBluetooth>=10; sys_platform == "darwin"
++pyobjc-framework-CoreBluetooth>=10; sys_platform == "darwin"
+Only in b/wiigolf: __pycache__
+diff -ru a/wiigolf/bt_mac.py b/wiigolf/bt_mac.py
+--- a/wiigolf/bt_mac.py	2026-09-09 19:39:36.000000000 +0000
++++ b/wiigolf/bt_mac.py	2026-09-10 08:08:03.726851174 +0000
+@@ -21,6 +21,13 @@
+   4. Se espera a que macOS cree el dispositivo HID (hidapi lo ve como
+      VID 0x057E), que es lo que lee wiigolf.balance_board.
+ 
++Con la API pública sola, en macOS 12+ el callback de PIN nunca llega (bluetoothd
++solo sabe pedirlo por el diálogo de Ajustes) y el emparejado falla con
++"IOReturn 2, PIN enviado=False". Por eso, igual que Dolphin/WiimotePair, se usan
++dos llamadas privadas: -[IOBluetoothDevicePair setUserDefinedPincode:] antes de
++start, y la entrega de la clave con
++-[IOBluetoothCoreBluetoothCoordinator pairPeer:forType:withKey:].
++
+ Escrito desde Windows sin poder probarlo en un Mac: si falla, usar
+ WiimotePair.app (ver packaging/macos) y enviar la salida de `WiiGolf --pair`.
+ """
+@@ -46,6 +53,32 @@
+     return IOBluetooth, NSObject, NSRunLoop, NSDate
+ 
+ 
++_CENTRAL = None
++
++
++def _warm_up_corebluetooth(log):
++    """Crea un CBCentralManager: dispara el permiso de Bluetooth y asegura que la
++    pila esté lista antes de emparejar (WiimotePair hace lo mismo al arrancar)."""
++    global _CENTRAL
++    if _CENTRAL is not None:
++        return
++    try:
++        from CoreBluetooth import CBCentralManager
++        _CENTRAL = CBCentralManager.alloc().initWithDelegate_queue_(None, None)
++        log("CoreBluetooth inicializado (permiso de Bluetooth solicitado si hacía falta)")
++    except Exception as exc:  # sin pyobjc-framework-CoreBluetooth se sigue igual
++        log(f"  aviso: CoreBluetooth no disponible ({exc})")
++
++
++def _coordinator():
++    """Clase privada IOBluetoothCoreBluetoothCoordinator (entrega del PIN en macOS 12+)."""
++    import objc
++    try:
++        return objc.lookUpClass("IOBluetoothCoreBluetoothCoordinator")
++    except Exception:
++        return None
++
++
+ def is_board(name) -> bool:
+     name = str(name or "")
+     return any(name.startswith(n) for n in BOARD_NAMES)
+@@ -123,6 +156,7 @@
+     if not IS_MAC:
+         raise RuntimeError("Solo macOS")
+     IOB, NSObject, NSRunLoop, NSDate = _frameworks()
++    _warm_up_corebluetooth(log)
+     host, pin = _host_address(IOB)
+     log(f"Adaptador: {host}  (PIN de la tabla = dirección invertida)")
+     if forget_first:
+@@ -191,6 +225,23 @@
+                 log("  conectando...")
+ 
+             def devicePairingPINCodeRequest_(self, sender):
++                # En macOS 12+ replyPINCode: ya no surte efecto; la clave se entrega
++                # por la API privada IOBluetoothCoreBluetoothCoordinator (como Dolphin /
++                # WiimotePair). key = los 6 bytes del PIN en little-endian.
++                key = sum(b << (8 * i) for i, b in enumerate(pin))
++                Coord = _coordinator()
++                if Coord is not None:
++                    try:
++                        from Foundation import NSNumber
++                        dev = sender.device()
++                        Coord.sharedInstance().pairPeer_forType_withKey_(
++                            dev.classicPeer(), sender.currentPairingType(),
++                            NSNumber.numberWithUnsignedLongLong_(key))
++                        result["pin_sent"] = True
++                        log("  PIN entregado por IOBluetoothCoreBluetoothCoordinator")
++                        return
++                    except Exception as exc:
++                        log(f"  aviso: coordinador privado falló ({exc}); probando replyPINCode")
+                 data = tuple(list(pin) + [0] * (16 - len(pin)))
+                 try:
+                     code = IOB.BluetoothPINCode(data)
+@@ -199,7 +250,7 @@
+                     code.data = data
+                 sender.replyPINCode_PINCode_(len(pin), code)
+                 result["pin_sent"] = True
+-                log("  PIN enviado")
++                log("  PIN enviado (replyPINCode)")
+ 
+             def devicePairingUserConfirmationRequest_numericValue_(self, sender, value):
+                 sender.replyUserConfirmation_(True)
+@@ -214,6 +265,12 @@
+         pdel = PairDelegate.alloc().init()
+         pairer = IOB.IOBluetoothDevicePair.pairWithDevice_(device)
+         pairer.setDelegate_(pdel)
++        # Imprescindible en macOS 12+: sin esto bluetoothd nunca invoca
++        # devicePairingPINCodeRequest: y la tabla rechaza la autenticación.
++        try:
++            pairer.setUserDefinedPincode_(True)
++        except Exception as exc:
++            log(f"  aviso: setUserDefinedPincode no disponible ({exc})")
+         r = pairer.start()
+         if r != 0:
+             raise RuntimeError(f"No se pudo iniciar el emparejado (IOReturn {r})")
