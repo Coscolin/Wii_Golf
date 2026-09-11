@@ -1,0 +1,346 @@
++ sw_vers
+ProductName:		macOS
+ProductVersion:		15.7.9
+BuildVersion:		24G830
++ uname -m
+x86_64
++ python --version
+Python 3.12.10
++ python -m pip install --upgrade pip
+Requirement already satisfied: pip in /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages (26.2.1)
++ pip install -r requirements.txt pyinstaller
+Collecting pyinstaller
+  Downloading pyinstaller-6.22.2-py3-none-macosx_10_13_universal2.whl.metadata (8.5 kB)
+Collecting hidapi>=0.14.0 (from -r requirements.txt (line 4))
+  Downloading hidapi-0.15.0-cp312-cp312-macosx_10_13_x86_64.whl.metadata (3.7 kB)
+Collecting numpy>=1.24 (from -r requirements.txt (line 7))
+  Downloading numpy-2.5.3-cp312-cp312-macosx_14_0_x86_64.whl.metadata (6.6 kB)
+Collecting matplotlib>=3.7 (from -r requirements.txt (line 8))
+  Downloading matplotlib-3.11.2-cp312-cp312-macosx_10_13_x86_64.whl.metadata (80 kB)
+Collecting fastapi>=0.115 (from -r requirements.txt (line 11))
+  Downloading fastapi-0.141.1-py3-none-any.whl.metadata (27 kB)
+Collecting uvicorn>=0.30 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading uvicorn-0.52.4-py3-none-any.whl.metadata (6.6 kB)
+Collecting python-multipart>=0.0.9 (from -r requirements.txt (line 13))
+  Downloading python_multipart-0.0.32-py3-none-any.whl.metadata (2.1 kB)
+Collecting sounddevice>=0.5 (from -r requirements.txt (line 17))
+  Downloading sounddevice-0.5.6-py3-none-macosx_10_6_x86_64.macosx_10_6_universal2.whl.metadata (1.4 kB)
+Collecting opencv-python>=4.10 (from -r requirements.txt (line 18))
+  Downloading opencv_python-5.0.0.93-cp37-abi3-macosx_14_0_x86_64.whl.metadata (19 kB)
+Collecting pyobjc-core>=10 (from -r requirements.txt (line 21))
+  Downloading pyobjc_core-12.2.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (2.8 kB)
+Collecting pyobjc-framework-Cocoa>=10 (from -r requirements.txt (line 22))
+  Downloading pyobjc_framework_cocoa-12.2.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (2.6 kB)
+Collecting pyobjc-framework-IOBluetooth>=10 (from -r requirements.txt (line 23))
+  Downloading pyobjc_framework_iobluetooth-12.2.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (2.5 kB)
+Collecting pyobjc-framework-CoreBluetooth>=10 (from -r requirements.txt (line 24))
+  Downloading pyobjc_framework_corebluetooth-12.2.2-cp312-cp312-macosx_10_13_universal2.whl.metadata (2.6 kB)
+Collecting altgraph (from pyinstaller)
+  Downloading altgraph-0.17.5-py2.py3-none-any.whl.metadata (7.5 kB)
+Collecting macholib>=1.8 (from pyinstaller)
+  Downloading macholib-1.16.4-py2.py3-none-any.whl.metadata (12 kB)
+Collecting packaging>=22.0 (from pyinstaller)
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pyinstaller-hooks-contrib>=2026.6 (from pyinstaller)
+  Downloading pyinstaller_hooks_contrib-2026.7-py3-none-any.whl.metadata (16 kB)
+Collecting setuptools>=42.0.0 (from pyinstaller)
+  Downloading setuptools-84.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting contourpy>=1.0.1 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading contourpy-1.4.0-cp312-cp312-macosx_10_13_x86_64.whl.metadata (3.8 kB)
+Collecting cycler>=0.10 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.28.2 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading fonttools-4.65.0-cp312-cp312-macosx_10_13_x86_64.whl.metadata (125 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading kiwisolver-1.5.1-cp312-cp312-macosx_10_13_x86_64.whl.metadata (5.2 kB)
+Collecting pillow>=9 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading pillow-12.3.0-cp312-cp312-macosx_10_13_x86_64.whl.metadata (9.1 kB)
+Collecting pyparsing>=3 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting python-dateutil>=2.7 (from matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting starlette>=0.46.0 (from fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading starlette-1.6.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting pydantic>=2.9.0 (from fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading pydantic-2.13.5-py3-none-any.whl.metadata (110 kB)
+Collecting typing-extensions>=4.8.0 (from fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting typing-inspection>=0.4.2 (from fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+Collecting annotated-doc>=0.0.2 (from fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading annotated_doc-0.0.5-py3-none-any.whl.metadata (6.5 kB)
+Collecting click>=7.0 (from uvicorn>=0.30->uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading click-8.5.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting h11>=0.8 (from uvicorn>=0.30->uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting cffi (from sounddevice>=0.5->-r requirements.txt (line 17))
+  Downloading cffi-2.1.1-cp312-cp312-macosx_10_15_x86_64.whl.metadata (2.5 kB)
+Collecting annotated-types>=0.6.0 (from pydantic>=2.9.0->fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.5 (from pydantic>=2.9.0->fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading pydantic_core-2.46.5-cp312-cp312-macosx_10_12_x86_64.whl.metadata (6.6 kB)
+Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib>=3.7->-r requirements.txt (line 8))
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting anyio<5,>=3.6.2 (from starlette>=0.46.0->fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting idna>=2.8 (from anyio<5,>=3.6.2->starlette>=0.46.0->fastapi>=0.115->-r requirements.txt (line 11))
+  Downloading idna-3.19-py3-none-any.whl.metadata (9.2 kB)
+Collecting httptools>=0.8.0 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading httptools-0.8.0-cp312-cp312-macosx_10_13_universal2.whl.metadata (3.5 kB)
+Collecting python-dotenv>=0.13 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading python_dotenv-1.2.3-py3-none-any.whl.metadata (29 kB)
+Collecting pyyaml>=5.1 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading pyyaml-6.0.3-cp312-cp312-macosx_10_13_x86_64.whl.metadata (2.4 kB)
+Collecting uvloop>=0.15.1 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading uvloop-0.22.1-cp312-cp312-macosx_10_13_x86_64.whl.metadata (4.9 kB)
+Collecting watchfiles>=0.20 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading watchfiles-1.2.0-cp312-cp312-macosx_10_12_x86_64.whl.metadata (4.9 kB)
+Collecting websockets>=13.0 (from uvicorn[standard]>=0.30->-r requirements.txt (line 12))
+  Downloading websockets-17.1-cp312-cp312-macosx_10_13_x86_64.whl.metadata (6.3 kB)
+Collecting pycparser (from cffi->sounddevice>=0.5->-r requirements.txt (line 17))
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Downloading pyinstaller-6.22.2-py3-none-macosx_10_13_universal2.whl (1.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 36.4 MB/s  0:00:00
+Downloading hidapi-0.15.0-cp312-cp312-macosx_10_13_x86_64.whl (70 kB)
+Downloading numpy-2.5.3-cp312-cp312-macosx_14_0_x86_64.whl (6.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.8/6.8 MB 54.7 MB/s  0:00:00
+Downloading matplotlib-3.11.2-cp312-cp312-macosx_10_13_x86_64.whl (9.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.5/9.5 MB 47.9 MB/s  0:00:00
+Downloading fastapi-0.141.1-py3-none-any.whl (131 kB)
+Downloading uvicorn-0.52.4-py3-none-any.whl (79 kB)
+Downloading python_multipart-0.0.32-py3-none-any.whl (30 kB)
+Downloading sounddevice-0.5.6-py3-none-macosx_10_6_x86_64.macosx_10_6_universal2.whl (1.0 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 33.4 MB/s  0:00:00
+Downloading opencv_python-5.0.0.93-cp37-abi3-macosx_14_0_x86_64.whl (34.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.8/34.8 MB 32.5 MB/s  0:00:01
+Downloading pyobjc_core-12.2.2-cp312-cp312-macosx_10_13_universal2.whl (6.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.4/6.4 MB 29.0 MB/s  0:00:00
+Downloading pyobjc_framework_cocoa-12.2.2-cp312-cp312-macosx_10_13_universal2.whl (388 kB)
+Downloading pyobjc_framework_iobluetooth-12.2.2-cp312-cp312-macosx_10_13_universal2.whl (40 kB)
+Downloading pyobjc_framework_corebluetooth-12.2.2-cp312-cp312-macosx_10_13_universal2.whl (13 kB)
+Downloading annotated_doc-0.0.5-py3-none-any.whl (5.3 kB)
+Downloading click-8.5.0-py3-none-any.whl (125 kB)
+Downloading contourpy-1.4.0-cp312-cp312-macosx_10_13_x86_64.whl (297 kB)
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.65.0-cp312-cp312-macosx_10_13_x86_64.whl (2.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.6/2.6 MB 51.3 MB/s  0:00:00
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading kiwisolver-1.5.1-cp312-cp312-macosx_10_13_x86_64.whl (66 kB)
+Downloading macholib-1.16.4-py2.py3-none-any.whl (38 kB)
+Downloading altgraph-0.17.5-py2.py3-none-any.whl (21 kB)
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pillow-12.3.0-cp312-cp312-macosx_10_13_x86_64.whl (5.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.3/5.3 MB 77.8 MB/s  0:00:00
+Downloading pydantic-2.13.5-py3-none-any.whl (472 kB)
+Downloading pydantic_core-2.46.5-cp312-cp312-macosx_10_12_x86_64.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 56.2 MB/s  0:00:00
+Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+Downloading pyinstaller_hooks_contrib-2026.7-py3-none-any.whl (459 kB)
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading setuptools-84.0.0-py3-none-any.whl (818 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 818.2/818.2 kB 21.7 MB/s  0:00:00
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading starlette-1.6.0-py3-none-any.whl (75 kB)
+Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+Downloading idna-3.19-py3-none-any.whl (68 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+Downloading httptools-0.8.0-cp312-cp312-macosx_10_13_universal2.whl (208 kB)
+Downloading python_dotenv-1.2.3-py3-none-any.whl (22 kB)
+Downloading pyyaml-6.0.3-cp312-cp312-macosx_10_13_x86_64.whl (182 kB)
+Downloading uvloop-0.22.1-cp312-cp312-macosx_10_13_x86_64.whl (752 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 752.8/752.8 kB 24.4 MB/s  0:00:00
+Downloading watchfiles-1.2.0-cp312-cp312-macosx_10_12_x86_64.whl (400 kB)
+Downloading websockets-17.1-cp312-cp312-macosx_10_13_x86_64.whl (214 kB)
+Downloading cffi-2.1.1-cp312-cp312-macosx_10_15_x86_64.whl (184 kB)
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+Installing collected packages: hidapi, altgraph, websockets, uvloop, typing-extensions, six, setuptools, pyyaml, python-multipart, python-dotenv, pyparsing, pyobjc-core, pycparser, pillow, packaging, numpy, macholib, kiwisolver, idna, httptools, h11, fonttools, cycler, click, annotated-types, annotated-doc, uvicorn, typing-inspection, python-dateutil, pyobjc-framework-Cocoa, pyinstaller-hooks-contrib, pydantic-core, opencv-python, contourpy, cffi, anyio, watchfiles, starlette, sounddevice, pyobjc-framework-IOBluetooth, pyobjc-framework-CoreBluetooth, pyinstaller, pydantic, matplotlib, fastapi
+
+Successfully installed altgraph-0.17.5 annotated-doc-0.0.5 annotated-types-0.8.0 anyio-4.15.1 cffi-2.1.1 click-8.5.0 contourpy-1.4.0 cycler-0.12.1 fastapi-0.141.1 fonttools-4.65.0 h11-0.16.0 hidapi-0.15.0 httptools-0.8.0 idna-3.19 kiwisolver-1.5.1 macholib-1.16.4 matplotlib-3.11.2 numpy-2.5.3 opencv-python-5.0.0.93 packaging-26.3 pillow-12.3.0 pycparser-3.0 pydantic-2.13.5 pydantic-core-2.46.5 pyinstaller-6.22.2 pyinstaller-hooks-contrib-2026.7 pyobjc-core-12.2.2 pyobjc-framework-Cocoa-12.2.2 pyobjc-framework-CoreBluetooth-12.2.2 pyobjc-framework-IOBluetooth-12.2.2 pyparsing-3.3.2 python-dateutil-2.9.0.post0 python-dotenv-1.2.3 python-multipart-0.0.32 pyyaml-6.0.3 setuptools-84.0.0 six-1.17.0 sounddevice-0.5.6 starlette-1.6.0 typing-extensions-4.16.0 typing-inspection-0.4.4 uvicorn-0.52.4 uvloop-0.22.1 watchfiles-1.2.0 websockets-17.1
++ python -m PyInstaller packaging/wiigolf.spec --noconfirm --clean
+108 INFO: PyInstaller: 6.22.2, contrib hooks: 2026.7
+109 INFO: Python: 3.12.10
+139 INFO: Platform: macOS-15.7.9-x86_64-i386-64bit
+139 INFO: Python environment: /Library/Frameworks/Python.framework/Versions/3.12
+146 INFO: Removing temporary files and cleaning cache in /Users/runner/Library/Application Support/pyinstaller
+664 INFO: Module search paths (PYTHONPATH):
+['/Users/runner/work/Wii_Golf/Wii_Golf',
+ '/Library/Frameworks/Python.framework/Versions/3.12/lib/python312.zip',
+ '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12',
+ '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/lib-dynload',
+ '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages',
+ '/Users/runner/work/Wii_Golf/Wii_Golf/packaging',
+ '/Users/runner/work/Wii_Golf/Wii_Golf']
+1147 INFO: Appending 'datas' from .spec
+1147 INFO: checking Analysis
+1148 INFO: Building Analysis because Analysis-00.toc is non existent
+1148 INFO: Looking for Python shared library...
+1162 INFO: Using Python shared library: /Library/Frameworks/Python.framework/Versions/3.12/Python
+1162 INFO: Running Analysis Analysis-00.toc
+1162 INFO: Target bytecode optimization level: 0
+1163 INFO: Initializing module dependency graph...
+1166 INFO: Initializing module graph hook caches...
+1190 INFO: Analyzing modules for base_library.zip ...
+2835 INFO: Processing standard module hook 'hook-heapq.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+3094 INFO: Processing standard module hook 'hook-encodings.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+6547 INFO: Processing standard module hook 'hook-math.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+7263 INFO: Processing standard module hook 'hook-pickle.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+10910 INFO: Caching module dependency graph...
+11009 INFO: Analyzing /Users/runner/work/Wii_Golf/Wii_Golf/packaging/launcher.py
+11098 INFO: Processing standard module hook 'hook-webbrowser.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+11212 INFO: Processing standard module hook 'hook-_ctypes.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+11935 INFO: Processing standard module hook 'hook-xml.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+11977 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+15914 INFO: Processing standard module hook 'hook-platform.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+16550 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+18598 INFO: Processing standard module hook 'hook-anyio.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+19204 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_safe_import_module'
+19205 INFO: SetuptoolsInfo: initializing cached setuptools info...
+21401 INFO: Processing standard module hook 'hook-pydantic.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+22952 INFO: Processing standard module hook 'hook-zoneinfo.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+23019 INFO: Processing standard module hook 'hook-sysconfig.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+23045 INFO: Processing standard module hook 'hook-_osx_support.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+27455 INFO: Processing standard module hook 'hook-numpy.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+35279 INFO: Processing standard module hook 'hook-difflib.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+37460 INFO: Processing standard module hook 'hook-sounddevice.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+37677 INFO: Processing standard module hook 'hook-cv2.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+39083 INFO: Processing standard module hook 'hook-matplotlib.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+39785 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_safe_import_module'
+40968 INFO: Processing standard module hook 'hook-matplotlib.backend_bases.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+41369 INFO: Processing standard module hook 'hook-PIL.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+41701 INFO: Processing standard module hook 'hook-PIL.Image.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+42694 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+45036 INFO: Processing standard module hook 'hook-matplotlib.backends.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+45315 INFO: Processing standard module hook 'hook-matplotlib.pyplot.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+45765 INFO: Processing standard module hook 'hook-matplotlib.figure.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+47947 INFO: Processing standard module hook 'hook-dateutil.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+48217 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_safe_import_module'
+53258 INFO: Processing pre-safe-import-module hook 'hook-gi.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_safe_import_module'
+53267 INFO: Processing standard module hook 'hook-certifi.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+53299 INFO: Processing standard module hook 'hook-uvicorn.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+55847 INFO: Processing standard module hook 'hook-websockets.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+57207 INFO: Analyzing hidden import 'uvicorn.__main__'
+57208 INFO: Analyzing hidden import 'uvicorn.lifespan'
+57209 INFO: Analyzing hidden import 'uvicorn.lifespan.off'
+57212 INFO: Analyzing hidden import 'uvicorn.lifespan.on'
+57226 INFO: Analyzing hidden import 'uvicorn.loops'
+57227 INFO: Analyzing hidden import 'uvicorn.loops.asyncio'
+57229 INFO: Analyzing hidden import 'uvicorn.loops.auto'
+57248 INFO: Processing standard module hook 'hook-uvloop.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/_pyinstaller_hooks_contrib/stdhooks'
+57808 INFO: Analyzing hidden import 'uvicorn.protocols.http.auto'
+57811 INFO: Analyzing hidden import 'uvicorn.protocols.websockets.auto'
+57814 INFO: Analyzing hidden import 'uvicorn.workers'
+57827 INFO: Analyzing hidden import 'anyio._backends._asyncio'
+58153 INFO: Processing module hooks (post-graph stage)...
+59343 INFO: Processing pre-safe-import-module hook 'hook-tomli.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_safe_import_module'
+59344 INFO: Setuptools: 'tomli' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.tomli'!
+60916 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+61084 INFO: Processing standard module hook 'hook-matplotlib.backends.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+61085 INFO: Matplotlib backend selection method: automatic discovery of used backends
+61174 INFO: Discovered Matplotlib backend(s) via `matplotlib.use()` call in module 'wiigolf.analysis': ['Agg']
+61174 INFO: The following Matplotlib backends were discovered by scanning for `matplotlib.use()` calls: ['Agg']. If your backend of choice is not in this list, either add a `matplotlib.use()` call to your code, or configure the backend collection via hook options (see: https://pyinstaller.org/en/stable/hooks-config.html#matplotlib-hooks).
+61922 INFO: Selected matplotlib backends: ['Agg']
+61922 INFO: Extra dists for selected matplotlib backends: []
+62151 INFO: Performing binary vs. data reclassification (222 entries)
+62216 INFO: Looking for ctypes DLLs
+62306 WARNING: Library user32 required via ctypes not found
+62404 INFO: Analyzing run-time hooks ...
+62417 INFO: Including run-time hook 'pyi_rth_inspect.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+62423 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+62428 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+62434 INFO: Including run-time hook 'pyi_rth_mplconfig.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/rthooks'
+62437 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks/pre_find_module_path'
+62440 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/hooks'
+62514 INFO: Creating base_library.zip...
+62576 INFO: Looking for dynamic libraries
+64446 INFO: Warnings written to /Users/runner/work/Wii_Golf/Wii_Golf/build/wiigolf/warn-wiigolf.txt
+64633 INFO: Graph cross-reference written to /Users/runner/work/Wii_Golf/Wii_Golf/build/wiigolf/xref-wiigolf.html
+65352 INFO: checking PYZ
+65352 INFO: Building PYZ because PYZ-00.toc is non existent
+65352 INFO: Building PYZ (ZlibArchive) /Users/runner/work/Wii_Golf/Wii_Golf/build/wiigolf/PYZ-00.pyz
+67182 INFO: Building PYZ (ZlibArchive) /Users/runner/work/Wii_Golf/Wii_Golf/build/wiigolf/PYZ-00.pyz completed successfully.
+67238 INFO: EXE target arch: x86_64
+67238 INFO: Code signing identity: None
+67247 INFO: checking PKG
+67248 INFO: Building PKG because PKG-00.toc is non existent
+67248 INFO: Building PKG (CArchive) WiiGolf.pkg
+67281 INFO: Building PKG (CArchive) WiiGolf.pkg completed successfully.
+67282 INFO: Bootloader /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/PyInstaller/bootloader/Darwin-64bit/run
+67282 INFO: checking EXE
+67282 INFO: Building EXE because EXE-00.toc is non existent
+67282 INFO: Building EXE from EXE-00.toc
+67282 INFO: Copying bootloader EXE to /Users/runner/work/Wii_Golf/Wii_Golf/build/wiigolf/WiiGolf
+67284 INFO: Converting EXE to target arch (x86_64)
+69113 INFO: Removing signature(s) from EXE
+69171 INFO: Modifying Mach-O image UUID(s) in EXE
+69206 INFO: Appending PKG archive to EXE
+69226 INFO: Fixing EXE headers for code signing
+69278 INFO: Rewriting the executable's macOS SDK version (26.2.0) to match the SDK version of the Python library (12.1.0) in order to avoid inconsistent behavior and potential UI issues in the frozen application.
+69290 INFO: Re-signing the EXE
+69450 INFO: Building EXE from EXE-00.toc completed successfully.
+69466 INFO: checking COLLECT
+69466 INFO: Building COLLECT because COLLECT-00.toc is non existent
+69466 INFO: Building COLLECT COLLECT-00.toc
+94139 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+94167 INFO: Build complete! The results are available in: /Users/runner/work/Wii_Golf/Wii_Golf/dist
++ cp packaging/macos/LEEME_MAC.txt dist/WiiGolf/
++ cp 'packaging/macos/Wii Golf.command' dist/WiiGolf/
++ chmod +x 'dist/WiiGolf/Wii Golf.command' dist/WiiGolf/WiiGolf
++ mkdir -p dist/WiiGolf/data
++ codesign --force --sign - dist/WiiGolf/WiiGolf
+dist/WiiGolf/WiiGolf: replacing existing signature
++ cd dist
++ ditto -c -k --keepParent WiiGolf WiiGolf-macos-x86_64.zip
++ ls -la dist/WiiGolf-macos-x86_64.zip
+-rw-r--r--  1 runner  staff  72484892 Sep 11 20:10 dist/WiiGolf-macos-x86_64.zip
++ cd dist/WiiGolf
++ ./WiiGolf --check
+Wii Golf - comprobacion del equipo
+  Sistema: darwin  Python 3.12.10 (ejecutable empaquetado)
+  Carpeta de datos: /Users/runner/work/Wii_Golf/Wii_Golf/dist/WiiGolf/data
+  Tabla (HID): no encontrada (enciendela; si no aparece, emparejala con --pair o desde la web)
+  Bluetooth: adaptador Bluetooth [00:00:00:00:00:00]
+    el sistema no conoce ninguna tabla todavia
+  Microfono: disponible
+    [0] Null Audio Device (predeterminado)
+  Camara (OpenCV): disponible
++ python ../../scripts/make_synthetic_swing.py data/synthetic_swing.csv
+[+] 501 muestras -> data/synthetic_swing.csv  (top≈2.80 s, pico fuerza≈3.02 s)
++ SERVER=3710
++ ./WiiGolf --sim --no-browser --host 127.0.0.1 --port 8020
+++ seq 1 30
++ for i in '$(seq 1 30)'
++ curl -sf http://127.0.0.1:8020/api/status -o /dev/null
++ sleep 1
++ for i in '$(seq 1 30)'
++ curl -sf http://127.0.0.1:8020/api/status -o /dev/null
++ sleep 1
++ for i in '$(seq 1 30)'
++ curl -sf http://127.0.0.1:8020/api/status -o /dev/null
++ break
++ curl -sf http://127.0.0.1:8020/api/status -o r1.json
++ head -c 300 r1.json
+{"connected":true,"sim":true,"hz":0.0,"error":null,"tared":false,"recording":null,"auto":{"armed":false,"count":0},"settings":{"handed":"right","flip_x":false,"flip_y":false,"audio":false,"video":false,"audio_device":null,"camera":0,"body_weight_kg":null},"next_name":"swing_001","media":{"audio":{"a+ echo
+
++ curl -sf -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:8020/api/analyze/synthetic_swing -o r2.json
++ head -c 300 r2.json
+{"name":"synthetic_swing","metrics":{"peso_corporal_kg":79.8,"trail_pct_min_max":[11.7,72.0],"pico_fuerza_pct_bw":129.6,"t_pico_fuerza_s":3.019,"cop_x_rango_cm":26.1,"cop_y_rango_cm":5.1,"cop_longitud_trazo_cm":46.0,"t_top_s":2.79,"trail_pct_en_top":72.0,"t_impacto_s":3.019,"lead_pct_en_impacto":60.+ echo
+
++ curl -sf http://127.0.0.1:8020/api/swings/synthetic_swing/track -o r3.json
++ head -c 120 r3.json
+{"name":"synthetic_swing","t":[0.0,0.0104,0.02,0.0287,0.0404,0.0501,0.0593,0.0702,0.08,0.09,0.0997,0.1102,0.1191,0.1296,+ echo
+
++ curl -sf http://127.0.0.1:8020/api/bluetooth/status
+{"available":true,"error":null,"radio":{"name":"Bluetooth","address":"00:00:00:00:00:00"},"boards":[],"platform":"darwin"}+ echo
+
++ curl -sfo /dev/null -w 'index.html HTTP %{http_code} (%{size_download} bytes)\n' http://127.0.0.1:8020/
+index.html HTTP 200 (77952 bytes)
++ test -f out/synthetic_swing.png
++ kill 3710
++ sleep 1
+/Users/runner/work/_temp/760c6852-1542-4bfd-ab09-7f5a7b556b64.sh: line 31:  3710 Terminated: 15          ./WiiGolf --sim --no-browser --host 127.0.0.1 --port 8020 > server.log 2>&1
++ cat server.log
+Matplotlib is building the font cache; this may take a moment.
++ rm -rf data/synthetic_swing.csv data/synthetic_swing.json out server.log r1.json r2.json r3.json
+== job macos x86_64 | run 34642550479 | status success ==
