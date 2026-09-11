@@ -33,15 +33,24 @@ analiza. No hace falta instalar Python ni nada mas.
      parpadea.
    - En la web, boton "Tabla / Bluetooth" (arriba a la derecha) -> "Emparejar"
      y espera el mensaje de conectada. El programa reintenta el emparejado
-     hasta 4 veces (tarda hasta 1-2 minutos): si el LED deja de parpadear
+     hasta 6 veces (tarda hasta 2 minutos): si el LED deja de parpadear
      mientras tanto, pulsa SYNC otra vez.
    - Si esto fallara, hay una segunda herramienta: WiimotePair.app (esta en la
      descarga "WiimotePair-BalanceBoard"). Abrela (la primera vez: clic derecho
      > Abrir, y acepta el permiso de Bluetooth), pulsa SYNC en la tabla, espera
      "Wii Remote Connected" y cierrala. Luego vuelve a Wii Golf.
-   - Si tampoco: apaga y enciende el Bluetooth del Mac, quita y pon las pilas
-     de la tabla, y repite. Si la tabla sale en Ajustes > Bluetooth, eliminala
-     antes de cada intento.
+   - Si el panel dice "error 0x1f (os/kern) default set" y "PIN enviado=False":
+     es un fallo conocido del Bluetooth de macOS (Sonoma, Sequoia, Tahoe) con
+     los mandos de Wii; a otros usuarios les ha funcionado, por este orden:
+       a) Reiniciar el servicio Bluetooth: en Terminal escribe
+              sudo pkill bluetoothd
+          (pide tu contrasena; el raton/teclado Bluetooth se corta 2-3 s) o,
+          mas sencillo, reinicia el Mac. Empareja justo despues.
+       b) Si la tabla sale en Ajustes > Bluetooth, eliminala (i > Olvidar).
+       c) Pilas nuevas en la tabla.
+       d) Pulsa SYNC una sola vez (sin mantenerlo) y dale a "Emparejar" mientras
+          el LED parpadea. Suelen hacer falta varios intentos: el programa ya
+          reintenta 6 veces seguidas.
    A partir de entonces basta con encender la tabla (boton de delante) y el
    programa la detecta solo en unos segundos.
 

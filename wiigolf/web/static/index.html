@@ -731,7 +731,7 @@ async function loadBt() {
     for (const d of b.boards) {
       html += `<div>Tabla <b>${d.name}</b> [${d.address}] — ${d.connected ? "<span style='color:var(--ok)'>conectada</span>" : "no conectada"}, ${d.authenticated ? "emparejada de forma permanente" : d.remembered ? "recordada sin emparejar" : "desconocida"} <button class="small" data-addr="${d.address}">olvidar</button></div>`;
     }
-    if (b.platform === "darwin") html += `<div style="margin-top:6px">macOS: el emparejado usa el PIN binario por IOBluetooth y corre en un proceso aparte, con hasta 4 intentos (puede tardar 1-2 min; pulsa SYNC justo antes y otra vez si el LED deja de parpadear). Para olvidar la tabla: Ajustes del Sistema → Bluetooth. Si falla, usa WiimotePair.app (ver LEEME_MAC.txt).</div>`;
+    if (b.platform === "darwin") html += `<div style="margin-top:6px">macOS: el emparejado usa el PIN binario por IOBluetooth y corre en un proceso aparte, con hasta 6 intentos (puede tardar 2 min; pulsa SYNC justo antes y otra vez si el LED deja de parpadear). Si sale "0x1f (os/kern) default set", reinicia el Bluetooth (Terminal: sudo pkill bluetoothd) o el Mac y repite (ver LEEME_MAC.txt). Para olvidar la tabla: Ajustes del Sistema → Bluetooth. Si falla, usa WiimotePair.app (ver LEEME_MAC.txt).</div>`;
     $("btinfo").innerHTML = html;
     $("btinfo").querySelectorAll("button[data-addr]").forEach(btn => btn.onclick = async () => {
       if (!confirm("¿Olvidar el emparejado de " + btn.dataset.addr + "? Tendrás que emparejar de nuevo con SYNC.")) return;

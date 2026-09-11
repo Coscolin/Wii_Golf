@@ -52,10 +52,13 @@ BOARD_PID = 0x0306
 
 # Intentos de emparejado por llamada a pair() y pausa entre ellos (wiimacmote
 # reintenta cada 3 s indefinidamente; aquí se acota para que el panel web no
-# se quede colgado). La tabla permanece en modo SYNC ~20 s.
-PAIR_ATTEMPTS = 4
+# se quede colgado). En las incidencias de WiimotePair en Sonoma/Sequoia/Tahoe
+# la gente cuenta que "hacen falta varios intentos" y que el error 0x1f
+# "(os/kern) default set" desaparece tras reiniciar bluetoothd o el Mac.
+# La tabla permanece en modo SYNC ~20 s: si el LED se apaga, SYNC otra vez.
+PAIR_ATTEMPTS = 6
 PAIR_RETRY_DELAY_S = 3.0
-PAIR_ATTEMPT_TIMEOUT_S = 20.0
+PAIR_ATTEMPT_TIMEOUT_S = 15.0
 HID_WAIT_S = 20.0
 CB_WAIT_S = 8.0
 
@@ -117,6 +120,105 @@ def _describe_pair_error(code: int) -> str:
 _CENTRAL = None
 _CB_STATE = {"state": None}
 _KEEP: list = []  # delegados que deben seguir vivos mientras dure el proceso
+_CLS: dict = {}
+
+
+def _delegate_classes(NSObject) -> dict:
+    """Las clases Objective-C de los delegados se registran UNA sola vez por proceso.
+
+    Definirlas dentro de una función y volver a ejecutarla (p. ej. en el segundo
+    intento de emparejado) hace que PyObjC aborte con "PairDelegate is overriding
+    existing Objective-C class". Cada instancia recibe su estado por atributos
+    Python (`ctx`, `log`), no por clausuras."""
+    if _CLS:
+        return _CLS
+    try:
+        import objc
+        cb_kw = {"protocols": [objc.protocolNamed("CBCentralManagerDelegate")]}
+    except Exception:
+        cb_kw = {}
+
+    class WGCentralDelegate(NSObject, **cb_kw):
+        def centralManagerDidUpdateState_(self, central):
+            try:
+                _CB_STATE["state"] = int(central.state())
+            except Exception:
+                _CB_STATE["state"] = None
+
+    class WGInquiryDelegate(NSObject):
+        def deviceInquiryDeviceFound_device_(self, inquiry, dev):
+            name = str(dev.name() or "")
+            self.log(f"  visto: {name or '(sin nombre)'} [{_addr_norm(dev.addressString())}]")
+            if is_board(name) and self.ctx["dev"] is None:
+                self.ctx["dev"] = dev
+
+        def deviceInquiryDeviceNameUpdated_device_devicesRemaining_(self, inquiry, dev, remaining):
+            if is_board(dev.name()) and self.ctx["dev"] is None:
+                self.log(f"  nombre: {dev.name()} [{_addr_norm(dev.addressString())}]")
+                self.ctx["dev"] = dev
+
+        def deviceInquiryComplete_error_aborted_(self, inquiry, error, aborted):
+            self.ctx["done"] = True
+
+    class WGPairDelegate(NSObject):
+        def devicePairingStarted_(self, sender):
+            self.log(f"  [{self.attempt}] emparejado iniciado")
+
+        def devicePairingConnecting_(self, sender):
+            self.log(f"  [{self.attempt}] conectando...")
+
+        def devicePairingPINCodeRequest_(self, sender):
+            self.ctx["pin_requested"] = True
+            _deliver_pin(self.log, self.IOB, sender, self.pin, self.ctx, self.attempt)
+
+        def devicePairingUserConfirmationRequest_numericValue_(self, sender, value):
+            self.log(f"  [{self.attempt}] confirmación numérica {value}: aceptada")
+            sender.replyUserConfirmation_(True)
+
+        def devicePairingUserPasskeyNotification_passkey_(self, sender, passkey):
+            self.log(f"  [{self.attempt}] passkey {passkey}")
+
+        def devicePairingFinished_error_(self, sender, error):
+            self.ctx["error"] = int(error)
+            self.ctx["done"] = True
+
+    _CLS.update({"cb": WGCentralDelegate, "inquiry": WGInquiryDelegate, "pair": WGPairDelegate})
+    return _CLS
+
+
+def _deliver_pin(log, IOB, sender, pin: bytes, ctx: dict, attempt: int) -> None:
+    """Entrega el PIN binario. En macOS 12+ replyPINCode: ya no surte efecto; la
+    clave se entrega por la API privada IOBluetoothCoreBluetoothCoordinator (como
+    WiimotePair(Plus) y wiimacmote). key = los 6 bytes del PIN en little-endian
+    dentro de un uint64."""
+    key = sum(b << (8 * i) for i, b in enumerate(pin))
+    Coord = _coordinator()
+    if Coord is not None:
+        try:
+            from Foundation import NSNumber
+            dev = sender.device()
+            peer = dev.classicPeer()
+            if peer is None:
+                raise RuntimeError("classicPeer() es nil")
+            ptype = sender.currentPairingType()
+            Coord.sharedInstance().pairPeer_forType_withKey_(
+                peer, ptype, NSNumber.numberWithUnsignedLongLong_(key))
+            ctx["pin_sent"] = True
+            log(f"  [{attempt}] PIN entregado por IOBluetoothCoreBluetoothCoordinator (tipo {int(ptype)})")
+            return
+        except Exception as exc:
+            log(f"  [{attempt}] aviso: coordinador privado falló ({exc}); probando replyPINCode")
+    else:
+        log(f"  [{attempt}] aviso: IOBluetoothCoreBluetoothCoordinator no existe; probando replyPINCode")
+    data = tuple(list(pin) + [0] * (16 - len(pin)))
+    try:
+        code = IOB.BluetoothPINCode(data)
+    except Exception:
+        code = IOB.BluetoothPINCode()
+        code.data = data
+    sender.replyPINCode_PINCode_(len(pin), code)
+    ctx["pin_sent"] = True
+    log(f"  [{attempt}] PIN enviado (replyPINCode)")
 
 
 def _wait_corebluetooth(log, NSObject, NSRunLoop, NSDate) -> None:
@@ -129,27 +231,13 @@ def _wait_corebluetooth(log, NSObject, NSRunLoop, NSDate) -> None:
     if _CENTRAL is not None:
         return
     try:
-        import objc
         from CoreBluetooth import CBCentralManager
     except Exception as exc:  # sin pyobjc-framework-CoreBluetooth se sigue igual
         log(f"  aviso: CoreBluetooth no disponible ({exc})")
         return
 
     try:
-        proto = objc.protocolNamed("CBCentralManagerDelegate")
-        bases_kw = {"protocols": [proto]}
-    except Exception:
-        bases_kw = {}
-
-    class CBDelegate(NSObject, **bases_kw):
-        def centralManagerDidUpdateState_(self, central):
-            try:
-                _CB_STATE["state"] = int(central.state())
-            except Exception:
-                _CB_STATE["state"] = None
-
-    try:
-        delegate = CBDelegate.alloc().init()
+        delegate = _delegate_classes(NSObject)["cb"].alloc().init()
         _KEEP.append(delegate)  # que no lo recoja el GC
         _CENTRAL = CBCentralManager.alloc().initWithDelegate_queue_(delegate, None)
     except Exception as exc:
@@ -300,60 +388,9 @@ def forget(address: str) -> dict:
 
 def _pair_once(log, IOB, NSObject, NSRunLoop, NSDate, device, pin: bytes, attempt: int) -> tuple[int | None, bool, object]:
     """Un intento de emparejado. Devuelve (error, pin_sent, pairer). error None = no terminó."""
-    result = {"done": False, "error": None, "pin_sent": False}
-
-    class PairDelegate(NSObject):
-        def devicePairingStarted_(self, sender):
-            log(f"  [{attempt}] emparejado iniciado")
-
-        def devicePairingConnecting_(self, sender):
-            log(f"  [{attempt}] conectando...")
-
-        def devicePairingPINCodeRequest_(self, sender):
-            # En macOS 12+ replyPINCode: ya no surte efecto; la clave se entrega
-            # por la API privada IOBluetoothCoreBluetoothCoordinator (como
-            # WiimotePair(Plus) y wiimacmote). key = los 6 bytes del PIN en
-            # little-endian dentro de un uint64.
-            key = sum(b << (8 * i) for i, b in enumerate(pin))
-            Coord = _coordinator()
-            if Coord is not None:
-                try:
-                    from Foundation import NSNumber
-                    dev = sender.device()
-                    peer = dev.classicPeer()
-                    if peer is None:
-                        raise RuntimeError("classicPeer() es nil")
-                    ptype = sender.currentPairingType()
-                    Coord.sharedInstance().pairPeer_forType_withKey_(
-                        peer, ptype, NSNumber.numberWithUnsignedLongLong_(key))
-                    result["pin_sent"] = True
-                    log(f"  [{attempt}] PIN entregado por IOBluetoothCoreBluetoothCoordinator (tipo {int(ptype)})")
-                    return
-                except Exception as exc:
-                    log(f"  [{attempt}] aviso: coordinador privado falló ({exc}); probando replyPINCode")
-            else:
-                log(f"  [{attempt}] aviso: IOBluetoothCoreBluetoothCoordinator no existe; probando replyPINCode")
-            data = tuple(list(pin) + [0] * (16 - len(pin)))
-            try:
-                code = IOB.BluetoothPINCode(data)
-            except Exception:
-                code = IOB.BluetoothPINCode()
-                code.data = data
-            sender.replyPINCode_PINCode_(len(pin), code)
-            result["pin_sent"] = True
-            log(f"  [{attempt}] PIN enviado (replyPINCode)")
-
-        def devicePairingUserConfirmationRequest_numericValue_(self, sender, value):
-            sender.replyUserConfirmation_(True)
-
-        def devicePairingUserPasskeyNotification_passkey_(self, sender, passkey):
-            log(f"  [{attempt}] passkey {passkey}")
-
-        def devicePairingFinished_error_(self, sender, error):
-            result["error"] = int(error)
-            result["done"] = True
-
-    pdel = PairDelegate.alloc().init()
+    result = {"done": False, "error": None, "pin_sent": False, "pin_requested": False}
+    pdel = _delegate_classes(NSObject)["pair"].alloc().init()
+    pdel.ctx, pdel.log, pdel.IOB, pdel.pin, pdel.attempt = result, log, IOB, pin, attempt
     _KEEP.append(pdel)
     pairer = IOB.IOBluetoothDevicePair.pairWithDevice_(device)
     pairer.setDelegate_(pdel)
@@ -405,24 +442,10 @@ def pair(log=print, seconds: float = 12.0, forget_first: bool = False) -> dict:
     # 2) inquiry clásico (la tabla debe estar en modo SYNC)
     if device is None or not device.isPaired():
         found = {"dev": None, "done": False}
-
-        class InquiryDelegate(NSObject):
-            def deviceInquiryDeviceFound_device_(self, inquiry, dev):
-                name = str(dev.name() or "")
-                log(f"  visto: {name or '(sin nombre)'} [{_addr_norm(dev.addressString())}]")
-                if is_board(name) and found["dev"] is None:
-                    found["dev"] = dev
-
-            def deviceInquiryDeviceNameUpdated_device_devicesRemaining_(self, inquiry, dev, remaining):
-                if is_board(dev.name()) and found["dev"] is None:
-                    log(f"  nombre: {dev.name()} [{_addr_norm(dev.addressString())}]")
-                    found["dev"] = dev
-
-            def deviceInquiryComplete_error_aborted_(self, inquiry, error, aborted):
-                found["done"] = True
-
         log(f"Buscando la tabla durante ~{seconds:.0f} s: pulsa el botón SYNC rojo (LED parpadeando)...")
-        idel = InquiryDelegate.alloc().init()
+        idel = _delegate_classes(NSObject)["inquiry"].alloc().init()
+        idel.ctx, idel.log = found, log
+        _KEEP.append(idel)
         inq = IOB.IOBluetoothDeviceInquiry.inquiryWithDelegate_(idel)
         try:  # solo Bluetooth clásico, como WiimotePairPlus (la tabla no es BLE)
             inq.setSearchType_(getattr(IOB, "kIOBluetoothDeviceSearchClassic", 1))
@@ -462,13 +485,24 @@ def pair(log=print, seconds: float = 12.0, forget_first: bool = False) -> dict:
             if err is not None:
                 log(f"  [{attempt}] el emparejado ha fallado: {_describe_pair_error(err)} (PIN enviado={pin_sent})")
             if attempt < PAIR_ATTEMPTS:
+                # Un ACL a medio abrir del intento anterior estorba al siguiente:
+                # el fork de wiimacmote que empareja la tabla en Tahoe lo cierra
+                # explícitamente antes de reintentar ("Wiiuse-style disconnect").
+                try:
+                    if device.isConnected():
+                        rc = int(device.closeConnection())
+                        log(f"  conexión residual cerrada (IOReturn {rc})")
+                except Exception:
+                    pass
                 log(f"  reintento en {PAIR_RETRY_DELAY_S:.0f} s (si el LED ha dejado de parpadear, pulsa SYNC otra vez)...")
                 _pump(NSRunLoop, NSDate, lambda: False, PAIR_RETRY_DELAY_S)
         else:
             if not pin_sent:
-                hint = ("macOS no ha llegado a pedir el PIN: la tabla corta la conexión antes de autenticar. "
-                        "Si aparece en Ajustes > Bluetooth de intentos anteriores, elimínala; apaga y enciende "
-                        "el Bluetooth del Mac; quita y pon las pilas de la tabla, y repite con SYNC.")
+                hint = ("macOS no ha llegado a pedir el PIN (bluetoothd corta antes de autenticar). Es el fallo "
+                        "conocido de WiimotePair en Sonoma/Sequoia/Tahoe; lo que a otros les ha funcionado: "
+                        "1) en Terminal, 'sudo pkill bluetoothd' (o reiniciar el Mac) y emparejar justo después; "
+                        "2) si la tabla aparece en Ajustes > Bluetooth, eliminarla; 3) pilas nuevas; "
+                        "4) pulsar SYNC una vez (sin mantenerlo) y emparejar mientras parpadea.")
             else:
                 hint = ("El PIN se entregó pero la tabla no lo aceptó. Si aparece en Ajustes > Bluetooth, "
                         "elimínala y repite con SYNC; si sigue igual, prueba WiimotePair.app.")
