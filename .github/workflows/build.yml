@@ -1,6 +1,6 @@
 # Construye los ejecutables de Wii Golf sin necesitar un Mac ni Xcode a mano:
 #   - Wii Golf para macOS (Apple Silicon e Intel) con PyInstaller, con prueba de humo
-#   - WiimotePair parcheado para que acepte la Wii Balance Board (RVL-WBC-01)
+#   - WiimotePairPlus parcheado para que acepte la Wii Balance Board (RVL-WBC-01)
 #   - Wii Golf para Windows
 # Se ejecuta en cada push a main y a mano (Actions > build > Run workflow). Los zips
 # quedan como artefactos del run; si se empuja una etiqueta v* se publica una release
@@ -96,14 +96,19 @@ jobs:
     name: WiimotePair (Balance Board)
     runs-on: macos-15
     steps:
-      - name: Clonar, parchear el filtro (RVL-CNT-01 -> RVL-*) y compilar
+      - name: Clonar WiimotePairPlus, parchear el filtro (RVL-CNT-01 -> RVL-*) y compilar
         shell: bash
         run: |
           set -o pipefail
           {
             set -euxo pipefail
-            git clone --depth 1 https://github.com/dolphin-emu/WiimotePair.git
+            # WiimotePairPlus (fork de dolphin-emu/WiimotePair): mismo emparejado con PIN
+            # binario, pero espera al estado de CoreBluetooth, mantiene vivo el
+            # emparejado hasta que macOS crea el HID y lo inicializa por IOHID.
+            # Fijado a un commit para que la build sea reproducible.
+            git clone https://github.com/GabrielLascoskiFerraz/WiimotePairPlus.git WiimotePair
             cd WiimotePair
+            git checkout --quiet 8e7f9b12db2da520e4f868305c4861cdf58fa15f
             grep -n 'Nintendo RVL-CNT-01' WiimotePair/ViewController.m
             sed -i '' 's/containsString:@"Nintendo RVL-CNT-01"/containsString:@"Nintendo RVL-"/' WiimotePair/ViewController.m
             grep -n 'Nintendo RVL-' WiimotePair/ViewController.m
@@ -113,7 +118,9 @@ jobs:
               SYMROOT="$PWD/build" CODE_SIGNING_ALLOWED=NO build
             APP=$(find build -name "WiimotePair.app" -type d | head -1)
             test -n "$APP"
-            codesign --force --deep --sign - "$APP"
+            # firma ad hoc con el entitlement de Bluetooth, como Scripts/build.sh del fork
+            codesign --force --deep --sign - --entitlements WiimotePair/WiimotePair.entitlements "$APP"
+            codesign --verify --deep --strict --verbose=2 "$APP"
             ditto -c -k --keepParent "$APP" ../WiimotePair-BalanceBoard.zip
             ls -la ../WiimotePair-BalanceBoard.zip
           } 2>&1 | tee build.log

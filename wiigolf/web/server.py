@@ -848,7 +848,8 @@ def create_app(sim: bool = False) -> FastAPI:
 
     def pair_subprocess(seconds: float) -> dict:
         try:
-            p = bt_subprocess("--pair", seconds + 100)
+            # búsqueda + hasta 4 intentos de emparejado + espera del HID (ver bt_mac)
+            p = bt_subprocess("--pair", seconds + 200)
         except subprocess.TimeoutExpired:
             return {"ok": False, "board": None, "log": [], "message": "El emparejado no ha respondido a tiempo"}
         lines = [ln for ln in (p.stdout + p.stderr).splitlines() if ln.strip()]

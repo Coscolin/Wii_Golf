@@ -32,10 +32,16 @@ analiza. No hace falta instalar Python ni nada mas.
    - Pon pilas, abre el compartimento y pulsa el boton rojo SYNC: el LED
      parpadea.
    - En la web, boton "Tabla / Bluetooth" (arriba a la derecha) -> "Emparejar"
-     y espera el mensaje de conectada.
+     y espera el mensaje de conectada. El programa reintenta el emparejado
+     hasta 4 veces (tarda hasta 1-2 minutos): si el LED deja de parpadear
+     mientras tanto, pulsa SYNC otra vez.
    - Si esto fallara, hay una segunda herramienta: WiimotePair.app (esta en la
-     descarga "WiimotePair-BalanceBoard"). Abrela, pulsa SYNC en la tabla,
-     espera "Connected" y cierrala. Luego vuelve a Wii Golf.
+     descarga "WiimotePair-BalanceBoard"). Abrela (la primera vez: clic derecho
+     > Abrir, y acepta el permiso de Bluetooth), pulsa SYNC en la tabla, espera
+     "Wii Remote Connected" y cierrala. Luego vuelve a Wii Golf.
+   - Si tampoco: apaga y enciende el Bluetooth del Mac, quita y pon las pilas
+     de la tabla, y repite. Si la tabla sale en Ajustes > Bluetooth, eliminala
+     antes de cada intento.
    A partir de entonces basta con encender la tabla (boton de delante) y el
    programa la detecta solo en unos segundos.
 
