@@ -31,6 +31,7 @@ xwiimote, mucho más robusta).
 
 from __future__ import annotations
 
+import sys
 import time
 from dataclasses import dataclass
 
@@ -56,8 +57,10 @@ _OUT_READ_MEM = 0x17
 _CONTINUOUS = 0x04
 _MODE_EXT8 = 0x32  # botones + 8 bytes de extensión (suficiente para la tabla)
 
-# Longitud fija de los informes de salida del Wiimote (report id + 21 bytes)
+# Longitud máxima de los informes de salida del Wiimote (report id + 21 bytes).
+# Solo Windows exige enviar siempre el búfer completo (ver _write).
 _OUT_REPORT_LEN = 22
+_PAD_OUTPUT_REPORTS = sys.platform == "win32"
 
 # Registros
 _REG_EXT_INIT_A = 0xA400F0
@@ -144,8 +147,19 @@ class BalanceBoard:
     # Primitivas HID
     # ------------------------------------------------------------------ #
     def _write(self, data: list[int]) -> int:
-        """Envía un informe de salida (rellenado a la longitud fija)."""
-        buf = list(data) + [0x00] * (_OUT_REPORT_LEN - len(data))
+        """Envía un informe de salida.
+
+        En Windows el HID exige el búfer del tamaño máximo (22 bytes) y la pila
+        Bluetooth recorta cada informe a su longitud real antes de emitirlo. En
+        macOS (y Linux) bluetoothd/hidraw lo envían tal cual: un informe 0x11 de
+        22 bytes llega a la tabla malformado, que lo rechaza con un acuse 0x22 y
+        no manda ni calibración ni datos (visto en el log de bluetoothd de un
+        MacBook: 238 informes rellenos -> 238 acuses de 5 bytes, cero datos).
+        Por eso solo se rellena en Windows; en el resto va con su longitud exacta,
+        como hacen Dolphin (IOhidapi) y WiimotePairPlus."""
+        buf = list(data)
+        if _PAD_OUTPUT_REPORTS:
+            buf += [0x00] * (_OUT_REPORT_LEN - len(buf))
         return self.dev.write(buf)
 
     def _read_raw(self, timeout_ms: int = 200) -> list[int]:

@@ -342,15 +342,19 @@ def _hid_handshake(log, address: str | None) -> str:
         # Típico: el servidor de Wii Golf ya lo ha abierto (acceso exclusivo).
         return f"HID presente (no se pudo abrir desde aquí: {exc})"
     try:
-        pad = lambda data: list(data) + [0] * (22 - len(data))  # noqa: E731
-        dev.write(pad([0x11, 0x10]))   # LED 1 encendido
+        # Longitud EXACTA: en macOS bluetoothd envía el búfer tal cual y la tabla
+        # rechaza los informes rellenos a 22 bytes con un acuse 0x22 de 5 bytes.
+        dev.write([0x11, 0x10])   # LED 1 encendido
         time.sleep(0.2)
-        dev.write(pad([0x15, 0x00]))   # petición de estado -> informe 0x20
+        dev.write([0x15, 0x00])   # petición de estado -> informe 0x20 (7 bytes)
         deadline = time.time() + 3.0
         while time.time() < deadline:
             rpt = dev.read(22, 300)
             if rpt:
                 log(f"  HID responde: informe 0x{rpt[0]:02x} ({len(rpt)} bytes)")
+                if rpt[0] == 0x22:
+                    log(f"  aviso: la tabla devuelve acuse de error 0x22 (código {rpt[4] if len(rpt) > 4 else '?'})")
+                    continue
                 return "HID responde"
         return "HID abierto pero sin respuesta en 3 s"
     except Exception as exc:

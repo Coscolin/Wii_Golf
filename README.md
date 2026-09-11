@@ -241,7 +241,7 @@ deja los zips como artefactos (pestaña *Actions* → el run → *Artifacts*):
 | `WiimotePair-BalanceBoard` | `WiimotePair.app` compilado desde [WiimotePairPlus](https://github.com/GabrielLascoskiFerraz/WiimotePairPlus) (fork del WiimotePair de Dolphin para macOS 12+: espera al estado de CoreBluetooth, mantiene vivo el emparejado hasta que macOS crea el HID y lo inicializa por IOHID) con el filtro de nombre ampliado a `RVL-*` para que acepte la Balance Board (GPL-2.0; un `sed` de una línea sobre un commit fijado) |
 | `WiiGolf-win64` | el exe de Windows, por si acaso |
 
-Al empujar una etiqueta (`git tag v0.2.3` y luego `git push origin v0.2.3`) se publica una
+Al empujar una etiqueta (`git tag v0.2.4` y luego `git push origin v0.2.4`) se publica una
 *release* con los cuatro zips adjuntos: la última está siempre en
 **https://github.com/Coscolin/Wii_Golf/releases/latest**. El repo es público,
 así que las builds de macOS no consumen cuota.
