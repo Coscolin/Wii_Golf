@@ -10,7 +10,7 @@
   *{box-sizing:border-box}
   [hidden]{display:none !important}
   body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,"Segoe UI",Roboto,sans-serif}
-  header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
   h1{font-size:18px;margin:0 8px 0 0}
   h2{font-size:15px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .pill{padding:3px 10px;border-radius:999px;font-size:13px;background:#2a3038}
@@ -23,10 +23,13 @@
   .big{font-size:46px;font-weight:600;line-height:1}
   .big small{font-size:18px;color:var(--muted);font-weight:400}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0}
-  button{background:#232b35;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer}
-  button:hover{background:#2b3440} button:disabled{opacity:.5;cursor:default}
+  button,a.btn{background:#232b35;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block;line-height:1.2;font-family:inherit}
+  button:hover,a.btn:hover{background:#2b3440} button:disabled{opacity:.5;cursor:default}
   button.primary{background:#1c4d66;border-color:#2b7aa3} button.rec{background:#6b1f1f;border-color:#a33}
-  button.small{padding:4px 8px;font-size:13px}
+  button.small,a.btn.small{padding:4px 8px;font-size:13px}
+  button.bigbtn{width:100%;font-size:19px;padding:14px 20px;background:#1c4d66;border-color:#2b7aa3;margin:6px 0}
+  button.bigbtn:disabled{background:#232b35}
+  #helpbtn.on{background:#1c4d66;border-color:#2b7aa3}
   input[type=text]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 10px;font-size:14px;width:150px}
   input[type=number]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:6px 8px;font-size:14px;width:64px}
   select{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:7px 8px;font-size:14px;max-width:260px}
@@ -48,122 +51,215 @@
   .delta.pos{color:var(--ok)} .delta.neg{color:var(--bad)}
   .notes{color:var(--warn);font-size:13px;margin:8px 0}
   img#anpng{width:100%;border-radius:8px;margin-top:10px;background:#fff;display:none}
-  #pcanvas{background:#000;border-radius:8px;display:block}
-  .modal{position:fixed;inset:0;background:rgba(6,8,11,.96);z-index:20;display:flex;flex-direction:column;padding:10px 16px 12px;gap:4px}
-  .modal-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  .modal-head h2{margin:0}
-  .modal-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+  #pcanvas,#prcanvas{background:#000;border-radius:8px;display:block}
   input[type=range]{flex:1;min-width:180px}
   pre.log{background:#0f1318;border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12px;max-height:220px;overflow:auto;white-space:pre-wrap;margin:8px 0 0}
+  .modal{position:fixed;inset:0;background:rgba(6,8,11,.96);z-index:20;display:flex;flex-direction:column;padding:10px 16px 12px;gap:4px}
+  #player{z-index:30}
+  .modal-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .modal-head h2{margin:0}
+  .modal-body{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative}
+  /* asistente */
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 12px}
+  .step{padding:6px 12px;border-radius:999px;background:#232b35;color:var(--muted);font-size:13px;border:1px solid #2f3945}
+  .step.cur{background:#1c4d66;color:#fff;border-color:#2b7aa3} .step.done{background:#153d2e;color:var(--ok);border-color:#1f6b4c}
+  .wzmsg{font-size:22px;margin:6px 0;font-weight:600} .wzsub{color:var(--muted);margin-bottom:8px}
+  .progress{height:10px;background:#232b35;border-radius:5px;overflow:hidden;max-width:420px;margin:10px 0}
+  .progress>div{height:100%;background:var(--ok);transition:width .1s linear}
+  /* práctica */
+  .prbar{display:flex;align-items:center;gap:14px;font-size:24px;font-weight:700;padding:2px 0 6px}
+  .prbar .bar{flex:1;height:24px}
+  .prbar small{font-size:14px;color:var(--muted);font-weight:500}
+  .prstatus{font-size:19px;padding:6px 14px;border-radius:10px;background:#232b35;font-weight:600}
+  .prstatus.ok{background:#153d2e;color:var(--ok)} .prstatus.warn{background:#3d3416;color:var(--warn)} .prstatus.bad{background:#3d1a1a;color:var(--bad)}
+  .prresult{position:absolute;right:16px;top:16px;width:330px;background:rgba(23,28,35,.96);border:1px solid #2f3945;border-radius:12px;padding:12px;z-index:25;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+  .prresult canvas{width:100%;display:block;border-radius:8px;background:#121820}
+  .prresult .rm{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-top:8px;font-size:14px}
+  .prresult .rm b{display:block;font-size:11px;color:var(--muted);font-weight:500}
+  .prfoot{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:16px}
+  .prfoot b{font-size:22px}
+  /* ayuda contextual */
+  body.help [data-help]{outline:2px dashed rgba(80,200,255,.75);outline-offset:2px;cursor:help}
+  body.help{cursor:help}
+  .helppop{position:fixed;z-index:40;max-width:380px;background:#171c23;border:1px solid #2b7aa3;border-radius:12px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.6);font-size:14px;line-height:1.45}
+  .helppop b{display:block;margin-bottom:4px;color:var(--accent);font-size:15px}
+  .helppop a{color:var(--accent)}
+  .helppop .x{position:absolute;right:8px;top:6px;cursor:pointer;color:var(--muted)}
   #toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#232b35;border:1px solid #2f3945;
-         padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:90vw}
-  #flash{position:fixed;inset:0;background:rgba(80,200,255,.18);opacity:0;pointer-events:none;transition:opacity .15s}
-  @media(max-width:900px){main{grid-template-columns:1fr} .big{font-size:38px}}
+         padding:10px 16px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50;max-width:90vw}
+  #flash{position:fixed;inset:0;background:rgba(80,200,255,.18);opacity:0;pointer-events:none;transition:opacity .15s;z-index:45}
+  @media(max-width:900px){main{grid-template-columns:1fr} .big{font-size:38px} .prbar{font-size:18px}}
 </style>
 </head>
 <body>
 <header>
   <h1>⛳ Wii Golf</h1>
-  <span id="pill" class="pill">Conectando…</span>
-  <span id="hz" class="muted"></span>
+  <span id="pill" class="pill" data-help="estado">Conectando…</span>
+  <span id="hz" class="muted" data-help="hz"></span>
   <span id="err" class="muted" style="color:var(--bad)"></span>
   <span style="flex:1"></span>
-  <button id="boardbtn" class="small">Tabla / Bluetooth</button>
+  <button id="helpbtn" class="small" title="modo ayuda: pulsa sobre cualquier parte de la pantalla">? Ayuda</button>
+  <a class="btn small" href="/manual" target="_blank" data-help="manual">Manual</a>
+  <button id="wizardbtn" class="small" data-help="asistente">Asistente</button>
+  <button id="boardbtn" class="small" data-help="tabla-panel">Tabla / Bluetooth</button>
 </header>
 
 <main>
-  <section class="card wide" id="boardpanel" hidden>
+  <section class="card wide" id="boardpanel" hidden data-help="tabla-panel">
     <h2>Tabla y Bluetooth</h2>
     <div id="btinfo" class="muted">Consultando…</div>
     <div class="row">
-      <button id="reconnect">Reconectar tabla</button>
-      <button id="pair" class="primary">Emparejar: pulsa el botón SYNC rojo de la tabla y luego aquí</button>
+      <button id="reconnect" data-help="reconectar">Reconectar tabla</button>
+      <button id="pair" class="primary" data-help="emparejar">Emparejar: pulsa el botón SYNC rojo de la tabla y luego aquí</button>
       <label><input type="checkbox" id="forgetfirst"> olvidar el emparejado anterior</label>
       <button id="btrefresh" class="small">Actualizar</button>
     </div>
     <div class="muted">Una vez emparejada de forma permanente, basta con pulsar el botón de encendido de la tabla:
-      el servidor la detecta solo (reintenta cada 3 s). Sin necesidad de WiiBalanceWalker.</div>
+      el servidor la detecta solo (reintenta cada 3 s).</div>
     <pre id="btlog" class="log" hidden></pre>
   </section>
 
-  <section class="card">
+  <section class="card wide" id="wizard" hidden data-help="asistente">
+    <h2>Puesta en marcha <span class="muted" style="text-transform:none;letter-spacing:0">paso <b id="wzn">1</b> de 4</span>
+      <span style="flex:1"></span><button id="wzskip" class="small">saltar el asistente</button></h2>
+    <div class="steps">
+      <span class="step" data-s="1">1 · Tabla</span><span class="step" data-s="2">2 · Tara a 0 kg</span>
+      <span class="step" data-s="3">3 · Tu peso</span><span class="step" data-s="4">4 · Ajustes</span>
+    </div>
+    <div id="wz1" class="wzstep" data-help="wz-tabla">
+      <div class="wzmsg">Enciende la tabla</div>
+      <div class="wzsub">Pulsa su botón de delante. En unos segundos aparecerá como conectada. Si es la primera vez en este
+        equipo, usa <b>Emparejar</b> en el panel <i>Tabla / Bluetooth</i> con el botón SYNC rojo de la tabla pulsado.</div>
+      <div id="wz1msg" class="muted"></div>
+    </div>
+    <div id="wz2" class="wzstep" hidden data-help="wz-tara">
+      <div class="wzmsg" id="wz2msg">Deja la tabla vacía</div>
+      <div class="wzsub">Se fijará el cero (tara) cuando lleve 2 segundos sin nadie encima. Si tienes una alfombra sobre la tabla, déjala puesta.</div>
+      <div class="progress"><div id="wz2bar" style="width:0%"></div></div>
+      <div id="wz2w" class="muted"></div>
+    </div>
+    <div id="wz3" class="wzstep" hidden data-help="wz-peso">
+      <div class="wzmsg" id="wz3msg">Súbete a la tabla y quédate quieto</div>
+      <div class="wzsub">Con la ropa y el palo que vayas a usar. En 2 segundos quieto se fija tu peso, que será el 100 % de la fuerza vertical.</div>
+      <div class="big"><span id="wz3kg">0.0</span> <small>kg</small></div>
+      <div class="progress"><div id="wz3bar" style="width:0%"></div></div>
+    </div>
+    <div id="wz4" class="wzstep" hidden data-help="wz-ajustes">
+      <div class="wzmsg">Ajustes</div>
+      <div class="wzsub">Confirma si eres diestro o zurdo, y si quieres usar el micrófono (detecta el golpe a la bola y marca el impacto con precisión) y la cámara (vídeo del swing sincronizado con el trazo).</div>
+      <div id="wz4home"></div>
+      <div class="row"><button id="wzdone" class="primary">Terminar y empezar</button>
+        <span class="muted">Peso fijado: <b id="wz4bw">–</b> kg · tara aplicada</span></div>
+    </div>
+  </section>
+
+  <section class="card" data-help="en-vivo">
     <canvas id="board"></canvas>
   </section>
 
   <section class="card">
-    <div class="big"><span id="total">0.0</span> <small>kg</small>
-      <span class="muted" style="font-size:16px;margin-left:14px">fuerza <b id="force">–</b> % del peso</span></div>
-    <div class="row muted">Peso corporal: <span id="bw">–</span>
+    <div class="big" data-help="peso"><span id="total">0.0</span> <small>kg</small>
+      <span class="muted" style="font-size:16px;margin-left:14px" data-help="fuerza">fuerza <b id="force">–</b> % del peso</span></div>
+    <div class="row muted" data-help="peso-corporal">Peso corporal: <span id="bw">–</span>
       <button id="fixbw" class="small">Fijar peso</button></div>
 
-    <div class="bars">
+    <div class="bars" data-help="reparto">
       <div class="barlabels"><span>LEAD <b id="leadpct">–</b></span><span><b id="trailpct">–</b> TRAIL</span></div>
       <div class="bar"><div id="trailbar" style="width:0%"></div></div>
       <div class="muted" style="font-size:12px;margin-top:4px">la barra muestra el % de peso en el pie trail</div>
     </div>
 
-    <div class="row">
+    <button id="practice" class="bigbtn" data-help="practicar">▶ Practicar: captura automática de swings</button>
+
+    <div class="row" data-help="tara">
       <button id="tare">Tarar (tabla vacía)</button>
       <button id="untare" class="small" hidden>quitar tara</button>
       <span id="tared" class="muted"></span>
     </div>
 
-    <div class="row">
+    <div class="row" data-help="grabar">
       <input type="text" id="recname" placeholder="nombre">
       <button id="rec" class="primary">● Grabar</button>
       <span id="rectimer" class="muted"></span>
     </div>
 
-    <div class="row">
-      <label><input type="checkbox" id="auto"> Captura automática de swings</label>
-      <span id="autocount" class="muted"></span>
-    </div>
-
-    <div class="row">
-      <select id="handed"><option value="right">Diestro</option><option value="left">Zurdo</option></select>
-      <label><input type="checkbox" id="flipx"> invertir izq/der</label>
-      <label><input type="checkbox" id="flipy"> invertir punta/talón</label>
-    </div>
-
-    <div class="row">
-      <label><input type="checkbox" id="audio"> Micrófono (impacto)</label>
-      <select id="audiodev"><option value="">micro por defecto</option></select>
-      <span class="meter"><div id="audiolevel" style="width:0%"></div></span>
-      <span id="audioinfo" class="muted"></span>
-    </div>
-    <div class="row">
-      <label><input type="checkbox" id="video"> Cámara (vídeo del swing)</label>
-      <input type="number" id="camera" min="0" max="9" value="0" title="índice de la cámara">
-      <span id="videoinfo" class="muted"></span>
-      <label title="muestra la imagen de la cámara de fondo en el recuadro de la tabla, para encuadrar"><input type="checkbox" id="showcam" checked> ver de fondo</label>
+    <div id="settingshome"></div>
+    <div id="settingsblock">
+      <div class="row">
+        <select id="handed" data-help="diestro"><option value="right">Diestro</option><option value="left">Zurdo</option></select>
+        <label data-help="invertir-x"><input type="checkbox" id="flipx"> invertir izq/der</label>
+        <label data-help="invertir-y"><input type="checkbox" id="flipy"> invertir punta/talón</label>
+      </div>
+      <div class="row">
+        <label data-help="microfono"><input type="checkbox" id="audio"> Micrófono (impacto)</label>
+        <select id="audiodev" data-help="micro-dispositivo"><option value="">micro por defecto</option></select>
+        <span class="meter" data-help="micro-nivel"><div id="audiolevel" style="width:0%"></div></span>
+        <span id="audioinfo" class="muted"></span>
+      </div>
+      <div class="row">
+        <label data-help="camara"><input type="checkbox" id="video"> Cámara (vídeo del swing)</label>
+        <input type="number" id="camera" min="0" max="9" value="0" title="índice de la cámara" data-help="camara-indice">
+        <span id="videoinfo" class="muted"></span>
+        <label data-help="ver-fondo" title="muestra la imagen de la cámara de fondo en el recuadro de la tabla, para encuadrar"><input type="checkbox" id="showcam" checked> ver de fondo</label>
+      </div>
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" data-help="swings">
     <h2>Swings grabados
       <span style="flex:1"></span>
-      <label class="small" style="font-weight:400;text-transform:none;letter-spacing:0">
+      <label class="small" style="font-weight:400;text-transform:none;letter-spacing:0" data-help="importar">
         <input type="file" id="importfile" accept=".zip" hidden><button id="importbtn" class="small">Importar zip</button></label>
     </h2>
-    <div id="refline" class="muted" style="margin-bottom:8px"></div>
+    <div id="refline" class="muted" style="margin-bottom:8px" data-help="referencia"></div>
     <table><thead><tr><th>Nombre</th><th>Fecha</th><th></th></tr></thead><tbody id="swings"></tbody></table>
     <div id="noswings" class="muted">Todavía no hay grabaciones.</div>
   </section>
 
-  <section class="card">
+  <section class="card" data-help="analisis">
     <h2 id="antitle">Análisis</h2>
     <div id="anmeta" class="muted"></div>
     <div id="annotes" class="notes"></div>
     <div class="row" id="anactions" hidden>
-      <button id="anplay" class="small primary">▶ Reproducir a cámara lenta</button>
-      <button id="anref" class="small">★ Fijar como referencia</button>
+      <button id="anplay" class="small primary" data-help="reproducir">▶ Reproducir a cámara lenta</button>
+      <button id="anref" class="small" data-help="referencia">★ Fijar como referencia</button>
     </div>
     <table class="mtable" id="anmetrics"></table>
-    <img id="anpng" alt="figura del análisis">
+    <img id="anpng" alt="figura del análisis" data-help="figura">
   </section>
-
 </main>
 
+<!-- modo práctica: pantalla completa, captura automática -->
+<div id="practicemodal" class="modal" hidden>
+  <div class="modal-head">
+    <h2>Práctica</h2>
+    <span id="prstatus" class="prstatus" data-help="pr-estado">Súbete a la tabla</span>
+    <span style="flex:1"></span>
+    <span class="muted" data-help="pr-contador">swings: <b id="prcount" style="font-size:18px;color:var(--text)">0</b></span>
+    <label class="muted" data-help="pr-sonido"><input type="checkbox" id="prbeep" checked> sonido</label>
+    <button id="prclose" class="small" title="salir (Esc)">✕ salir</button>
+  </div>
+  <div class="prbar" data-help="pr-barra">
+    <span>LEAD <b id="prlead">–</b></span>
+    <div class="bar"><div id="prbarfill" style="width:0%"></div></div>
+    <span><b id="prtrail">–</b> TRAIL</span>
+  </div>
+  <div id="prwrap" class="modal-body">
+    <canvas id="prcanvas"></canvas>
+    <div id="prresult" class="prresult" hidden data-help="pr-resultado">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><b id="prrname" style="flex:1"></b><button id="prview" class="small">▶ ver</button></div>
+      <canvas id="prmini" width="300" height="160"></canvas>
+      <div class="rm" id="prrm"></div>
+    </div>
+  </div>
+  <div class="prfoot">
+    <span data-help="peso"><b id="prkg">0.0</b> kg</span>
+    <span data-help="fuerza">fuerza <b id="prforce">–</b> %</span>
+    <span id="prhint" class="muted" style="font-size:15px"></span>
+  </div>
+</div>
+
+<!-- reproductor a cámara lenta -->
 <div id="player" class="modal" hidden>
   <div class="modal-head">
     <h2 id="ptitle">Reproducción</h2>
@@ -171,27 +267,28 @@
     <span style="flex:1"></span>
     <button id="pclose" class="small" title="cerrar (Esc)">✕ cerrar</button>
   </div>
-  <div id="pwrap" class="modal-body"><canvas id="pcanvas"></canvas></div>
+  <div id="pwrap" class="modal-body"><canvas id="pcanvas" data-help="reproductor"></canvas></div>
   <div class="row" style="margin:4px 0 0">
-    <button id="pplay" class="primary">▶</button>
-    <select id="pspeed">
+    <button id="pplay" class="primary" data-help="pr-play">▶</button>
+    <select id="pspeed" data-help="velocidad">
       <option value="1">1×</option><option value="0.5">½×</option><option value="0.25" selected>¼×</option>
       <option value="0.1">1/10×</option><option value="0.05">1/20×</option>
     </select>
-    <button id="pprev" class="small" title="fotograma anterior">⏮</button>
-    <button id="pnext" class="small" title="fotograma siguiente">⏭</button>
-    <input type="range" id="pslider" min="0" max="1" step="0.001" value="0">
-    <span id="ptime" class="muted" style="min-width:150px"></span>
+    <button id="pprev" class="small" title="fotograma anterior" data-help="fotograma">⏮</button>
+    <button id="pnext" class="small" title="fotograma siguiente" data-help="fotograma">⏭</button>
+    <input type="range" id="pslider" min="0" max="1" step="0.001" value="0" data-help="linea-tiempo">
+    <span id="ptime" class="muted" style="min-width:150px" data-help="linea-tiempo"></span>
     <span class="muted">|</span>
-    <button id="ptop" class="small">ir al top</button>
-    <button id="pimpact" class="small">ir al impacto</button>
+    <button id="ptop" class="small" data-help="ir-eventos">ir al top</button>
+    <button id="pimpact" class="small" data-help="ir-eventos">ir al impacto</button>
     <span class="muted">|</span>
-    <button id="pmarktop" class="small">marcar top aquí</button>
-    <button id="pmarkimpact" class="small">marcar impacto aquí</button>
-    <button id="preset" class="small">restablecer marcas</button>
+    <button id="pmarktop" class="small" data-help="marcas">marcar top aquí</button>
+    <button id="pmarkimpact" class="small" data-help="marcas">marcar impacto aquí</button>
+    <button id="preset" class="small" data-help="marcas">restablecer marcas</button>
   </div>
 </div>
 
+<div id="helppop" class="helppop" hidden><span class="x" id="helpx">✕</span><b id="helptitle"></b><div id="helptext"></div><div style="margin-top:6px"><a id="helplink" href="/manual" target="_blank">Más en el manual →</a></div></div>
 <div id="flash"></div>
 <div id="toast"></div>
 
@@ -200,10 +297,14 @@ const $ = (id) => document.getElementById(id);
 const HX = 21.65, HY = 11.4;          // mitad de la distancia entre sensores (cm)
 const TRAIL_S = 1.5;                   // segundos de estela en vivo
 const dpr = window.devicePixelRatio || 1;
+const ON_BOARD_KG = 20;                // por encima hay alguien sobre la tabla
+const CENTER_TOL_X = 5.0, CENTER_TOL_Y = 3.5;   // cm: zona de "centrado" en modo práctica
 
-let settings = {handed: "right", flip_x: false, flip_y: false, audio: false, video: false, audio_device: null, camera: 0};
-let latest = null, trail = [], bw = null, bwFixed = false, status = {}, ws = null, selected = null;
+let settings = {handed: "right", flip_x: false, flip_y: false, audio: false, video: false, audio_device: null, camera: 0, body_weight_kg: null};
+let latest = null, trail = [], bwEma = null, status = {}, ws = null, selected = null;
 let recentTotals = [], settingsBusy = false, lastAnalysis = null;
+const bwFixed = () => settings.body_weight_kg != null;
+const bodyWeight = () => bwFixed() ? settings.body_weight_kg : bwEma;
 
 // ---------- utilidades ----------
 async function api(path, body, method) {
@@ -221,6 +322,23 @@ function flash() { const f = $("flash"); f.style.opacity = 1; setTimeout(() => f
 function setPill(text, cls) { const p = $("pill"); p.textContent = text; p.className = "pill " + (cls || ""); }
 function fmtDate(ts) { const d = new Date(ts * 1000); return d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}); }
 function fmt(v, d) { return (v == null || isNaN(v)) ? "–" : Number(v).toFixed(d == null ? 1 : d); }
+function boardConnected() { return !!(status.connected || status.sim); }
+function onBoard() { return !!latest && latest.tot >= Math.max(ON_BOARD_KG, 0.45 * (bodyWeight() || 0)); }
+function trailPct(s) {
+  if (!s || s.tot < 2) return null;
+  let right = s.tr + s.br, left = s.tl + s.bl;
+  if (settings.flip_x) [right, left] = [left, right];
+  return (settings.handed === "right" ? right : left) / s.tot * 100;
+}
+function beep(freq, ms) {
+  if (!$("prbeep").checked) return;
+  try {
+    const ac = beep.ctx || (beep.ctx = new (window.AudioContext || window.webkitAudioContext)());
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.value = freq || 880; g.gain.value = 0.12; o.connect(g); g.connect(ac.destination);
+    o.start(); o.stop(ac.currentTime + (ms || 120) / 1000);
+  } catch (e) {}
+}
 
 // ---------- ajustes ----------
 function applySettingsToUI() {
@@ -253,6 +371,7 @@ async function loadAudioInputs() {
 }
 
 // ---------- websocket ----------
+let firstStatus = true;
 function connect() {
   ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
   ws.onmessage = (e) => {
@@ -261,15 +380,22 @@ function connect() {
       latest = m;
       trail.push({x: m.x, y: m.y, t: m.t, tot: m.tot});
       while (trail.length && trail[0].t < m.t - TRAIL_S) trail.shift();
-      if (m.tot > 20) {
+      if (m.tot > ON_BOARD_KG) {
         recentTotals.push(m.tot); if (recentTotals.length > 100) recentTotals.shift();
-        if (!bwFixed) bw = bw == null ? m.tot : bw * 0.99 + m.tot * 0.01;
+        bwEma = bwEma == null ? m.tot : bwEma * 0.99 + m.tot * 0.01;
       }
-    } else if (m.type === "status") { status = m; renderStatus(); }
-    else if (m.type === "auto_trigger") { flash(); toast("Swing detectado, guardando…"); }
+    } else if (m.type === "status") {
+      status = m; renderStatus();
+      if (firstStatus) {
+        firstStatus = false;
+        // si el servidor quedó armado de una sesión anterior y no estamos practicando, desarmar
+        if (m.auto && m.auto.armed && $("practicemodal").hidden) api("/api/auto", {armed: false}).catch(() => {});
+      }
+    }
+    else if (m.type === "auto_trigger") { flash(); if (!PR.open) toast("Swing detectado, guardando…"); else setPrStatus("Swing detectado, guardando…", "ok"); }
     else if (m.type === "auto_saved") {
       loadSwings();
-      if (m.analysis) { toast("Guardado y analizado: " + m.name); showAnalysis(m.analysis); }
+      if (m.analysis) { showAnalysis(m.analysis); if (PR.open) showPracticeResult(m.analysis); else toast("Guardado y analizado: " + m.name); }
       else toast("Guardado " + m.name + (m.error ? " (error en el análisis: " + m.error + ")" : ""), 6000);
     }
   };
@@ -297,8 +423,6 @@ function renderStatus() {
     const v = $("recname").value.trim();
     if (!v || /^swing_\d+$/.test(v)) $("recname").value = s.next_name || "";
   }
-  $("auto").checked = !!(s.auto && s.auto.armed);
-  $("autocount").textContent = (s.auto && s.auto.armed) ? `armada · ${s.auto.count} capturas` : "";
   if (s.settings && !settingsBusy) { settings = Object.assign({}, settings, s.settings); applySettingsToUI(); }
   const md = s.media || {};
   if (md.audio) {
@@ -310,8 +434,14 @@ function renderStatus() {
     const v = md.video;
     $("videoinfo").textContent = v.running ? `${v.size ? v.size.join("×") : ""} · ${v.fps} fps` : (settings.video ? (v.error || "arrancando…") : (v.available ? "" : "opencv no disponible"));
   }
+  $("practice").disabled = !boardConnected();
   renderRefLine(s.reference);
   syncBoardPanel(s);
+}
+function renderRefLine(ref) {
+  $("refline").innerHTML = ref ? `Referencia para comparar: <b>${ref}</b> <button class="small" id="clearref">quitar</button>`
+                               : "Sin swing de referencia: usa ★ en un swing para comparar los siguientes con él.";
+  const b = $("clearref"); if (b) b.onclick = async () => { await api("/api/reference", null, "DELETE"); toast("Referencia quitada"); loadSwings(); };
 }
 // El panel Tabla/Bluetooth se despliega solo cuando la tabla no está conectada
 // (y se recoge al conectar), salvo que el usuario lo haya abierto o cerrado a mano.
@@ -322,108 +452,141 @@ function syncBoardPanel(s) {
   if (disconnected && p.hidden && !panelUserClosed) { p.hidden = false; panelAuto = true; loadBt(); }
   else if (!disconnected) { panelUserClosed = false; if (panelAuto && !p.hidden) { p.hidden = true; panelAuto = false; } }
 }
-function renderRefLine(ref) {
-  $("refline").innerHTML = ref ? `Referencia para comparar: <b>${ref}</b> <button class="small" id="clearref">quitar</button>`
-                               : "Sin swing de referencia: usa ★ en un swing para comparar los siguientes con él.";
-  const b = $("clearref"); if (b) b.onclick = async () => { await api("/api/reference", null, "DELETE"); toast("Referencia quitada"); loadSwings(); };
-}
 
 // ---------- lectura en vivo ----------
 function renderLive() {
   if (!latest) return;
+  const bw = bodyWeight();
   $("total").textContent = latest.tot.toFixed(1);
-  let right = latest.tr + latest.br, left = latest.tl + latest.bl;
-  if (settings.flip_x) [right, left] = [left, right];
-  const trailKg = settings.handed === "right" ? right : left;
-  const tp = latest.tot >= 2 ? trailKg / latest.tot * 100 : null;
+  const tp = trailPct(latest);
   $("trailbar").style.width = (tp ?? 0) + "%";
   $("trailpct").textContent = tp == null ? "–" : tp.toFixed(0) + " %";
   $("leadpct").textContent = tp == null ? "–" : (100 - tp).toFixed(0) + " %";
-  $("force").textContent = (bw && latest.tot >= 2) ? (latest.tot / bw * 100).toFixed(0) : "–";
-  $("bw").textContent = bw ? bw.toFixed(1) + " kg" + (bwFixed ? " (fijado)" : " (estimado)") : "–";
-  $("fixbw").textContent = bwFixed ? "Soltar peso" : "Fijar peso";
+  const force = (bw && latest.tot >= 2) ? (latest.tot / bw * 100) : null;
+  $("force").textContent = force == null ? "–" : force.toFixed(0);
+  $("bw").textContent = bw ? bw.toFixed(1) + " kg" + (bwFixed() ? " (fijado)" : " (estimado)") : "–";
+  $("fixbw").textContent = bwFixed() ? "Soltar peso" : "Fijar peso";
+  if (PR.open) {
+    $("prkg").textContent = latest.tot.toFixed(1);
+    $("prforce").textContent = force == null ? "–" : force.toFixed(0);
+    $("prbarfill").style.width = (tp ?? 0) + "%";
+    $("prlead").textContent = tp == null ? "–" : (100 - tp).toFixed(0) + " %";
+    $("prtrail").textContent = tp == null ? "–" : tp.toFixed(0) + " %";
+    practiceTick();
+  }
+  wizardTick();
 }
 setInterval(renderLive, 50);
 $("fixbw").onclick = () => {
-  if (bwFixed) { bwFixed = false; return; }
+  if (bwFixed()) { pushSettings({body_weight_kg: null}); toast("Peso corporal: se vuelve a estimar"); return; }
   if (recentTotals.length < 10) { toast("Súbete a la tabla y quédate quieto un momento"); return; }
-  const arr = [...recentTotals].sort((a, b) => a - b); bw = arr[Math.floor(arr.length / 2)]; bwFixed = true;
-  toast(`Peso corporal fijado: ${bw.toFixed(1)} kg`);
+  const arr = [...recentTotals].sort((a, b) => a - b); const bw = arr[Math.floor(arr.length / 2)];
+  pushSettings({body_weight_kg: Math.round(bw * 10) / 10}); toast(`Peso corporal fijado: ${bw.toFixed(1)} kg`);
 };
 
-// ---------- canvas en vivo ----------
-// imagen de la cámara de fondo (se rellena más abajo); declarada aquí porque resize() la usa
+// ---------- cámara de fondo + escena (tabla, estela, punto) ----------
+// imagen de la cámara de fondo (se pide a ~10 fps mientras la cámara esté activa)
 let camImg = null, camBusy = false, camAspect = null;
+setInterval(() => {
+  const running = status.media && status.media.video && status.media.video.running;
+  if (!running || !$("showcam").checked) {
+    if (camImg) { camImg = null; camAspect = null; resize(); if (PR.open) resizePractice(); }
+    return;
+  }
+  if (camBusy) return;
+  camBusy = true;
+  const im = new Image();
+  im.onload = () => {
+    camImg = im; camBusy = false;
+    const a = im.height / im.width;
+    if (a !== camAspect) { camAspect = a; resize(); if (PR.open) resizePractice(); }
+  };
+  im.onerror = () => { camBusy = false; };
+  im.src = "/api/camera/snapshot.jpg?t=" + Date.now();
+}, 100);
+
 const cv = $("board"), ctx = cv.getContext("2d");
 function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * (camAspect || 0.62) * dpr; }
 window.addEventListener("resize", resize); resize();
 
 function drawBoard(c, ox, oy, bwid, bhei, opts) {
-  // silueta de la tabla con rejilla y etiquetas; opts: {labels, font, translucent}
+  // silueta de la tabla con rejilla y etiquetas; opts: {labels, font, translucent, u}
+  const u = (opts && opts.u) || dpr;
   c.fillStyle = (opts && opts.translucent) ? "rgba(18,24,32,0.45)" : "#121820"; c.fillRect(ox, oy, bwid, bhei);
   c.strokeStyle = "#2a3038"; c.lineWidth = 1;
   for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox + bwid * i / 4, oy); c.lineTo(ox + bwid * i / 4, oy + bhei); c.stroke(); }
   c.beginPath(); c.moveTo(ox, oy + bhei / 2); c.lineTo(ox + bwid, oy + bhei / 2); c.stroke();
-  c.strokeStyle = "#55606d"; c.lineWidth = 3 * dpr; c.strokeRect(ox, oy, bwid, bhei);
+  c.strokeStyle = "#55606d"; c.lineWidth = 3 * u; c.strokeRect(ox, oy, bwid, bhei);
   if (opts && opts.labels) {
-    c.fillStyle = "#9aa4b2"; c.font = `${(opts.font || 13) * dpr}px system-ui`; c.textAlign = "center";
+    c.fillStyle = "#9aa4b2"; c.font = `${(opts.font || 13) * u}px system-ui`; c.textAlign = "center";
     const trailRight = settings.handed === "right";
-    c.fillText(trailRight ? "LEAD" : "TRAIL", ox + bwid * 0.12, oy + bhei + 20 * dpr);
-    c.fillText(trailRight ? "TRAIL" : "LEAD", ox + bwid * 0.88, oy + bhei + 20 * dpr);
-    c.fillText("punta", ox + bwid / 2, oy - 8 * dpr);
-    c.fillText("talón", ox + bwid / 2, oy + bhei + 20 * dpr);
+    c.fillText(trailRight ? "LEAD" : "TRAIL", ox + bwid * 0.12, oy + bhei + 20 * u);
+    c.fillText(trailRight ? "TRAIL" : "LEAD", ox + bwid * 0.88, oy + bhei + 20 * u);
+    c.fillText("punta", ox + bwid / 2, oy - 8 * u);
+    c.fillText("talón", ox + bwid / 2, oy + bhei + 20 * u);
   }
 }
-function draw() {
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
+// Escena en vivo: cámara de fondo, tabla, estela y punto. opts.target = objetivo de centrado (práctica)
+function drawScene(c, W, H, opts) {
+  opts = opts || {};
+  const u = Math.max(dpr, W / 900);
+  c.clearRect(0, 0, W, H);
   if (camImg) {
-    // fondo: la cámara atenuada y desaturada, para que destaquen la silueta y el puntero
-    ctx.save();
-    ctx.globalAlpha = 0.5;
-    try { ctx.filter = "grayscale(40%) brightness(1.05)"; } catch (e) {}
+    c.save(); c.globalAlpha = 0.5;
+    try { c.filter = "grayscale(40%) brightness(1.05)"; } catch (e) {}
     const s = Math.min(W / camImg.width, H / camImg.height), dw = camImg.width * s, dh = camImg.height * s;
-    ctx.drawImage(camImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
-    ctx.restore();
+    c.drawImage(camImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    c.restore();
   }
   const pad = 0.09 * W, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
   const toPx = (x, y) => {
     const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y;
     return [ox + bwid / 2 + sx * bwid / 2, oy + bhei / 2 - sy * bhei / 2];
   };
-  drawBoard(ctx, ox, oy, bwid, bhei, {labels: true, translucent: !!camImg});
+  drawBoard(c, ox, oy, bwid, bhei, {labels: true, translucent: !!camImg, u, font: opts.font || 13});
+  if (opts.target) {
+    // zona de centrado: rectángulo de tolerancia + cruz en el centro
+    const tx = CENTER_TOL_X / HX * bwid / 2, ty = CENTER_TOL_Y / HY * bhei / 2;
+    const [cx, cy] = toPx(0, 0);
+    c.strokeStyle = opts.centered ? "rgba(61,220,151,0.9)" : "rgba(255,209,102,0.9)"; c.lineWidth = 3 * u;
+    c.setLineDash([8 * u, 6 * u]); c.strokeRect(cx - tx, cy - ty, 2 * tx, 2 * ty); c.setLineDash([]);
+    c.beginPath(); c.moveTo(cx - 14 * u, cy); c.lineTo(cx + 14 * u, cy); c.moveTo(cx, cy - 14 * u); c.lineTo(cx, cy + 14 * u); c.stroke();
+  }
   if (trail.length > 1) {
     const t1 = trail[trail.length - 1].t;
-    ctx.lineCap = "round"; ctx.lineWidth = 3.5 * dpr;
+    c.lineCap = "round"; c.lineWidth = 3.5 * u;
     for (let i = 1; i < trail.length; i++) {
       const a = trail[i - 1], b = trail[i];
       if (a.tot < 2 || b.tot < 2) continue;
       const age = Math.min(1, (t1 - b.t) / TRAIL_S);
-      ctx.strokeStyle = `rgba(80,200,255,${(1 - age) * 0.9})`;
+      c.strokeStyle = `rgba(80,200,255,${(1 - age) * 0.9})`;
       const [x0, y0] = toPx(a.x, a.y), [x1, y1] = toPx(b.x, b.y);
-      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+      c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
     }
   }
   if (latest && latest.tot >= 2) {
     const [x, y] = toPx(latest.x, latest.y);
-    const f = bw ? latest.tot / bw : 1;
-    const r = (9 + 12 * Math.max(0, Math.min(2, f))) * dpr;
-    ctx.fillStyle = f > 1.15 ? "#ff7a59" : "#ffd166";
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#0f1318"; ctx.lineWidth = 2 * dpr; ctx.stroke();
+    const bw = bodyWeight(); const f = bw ? latest.tot / bw : 1;
+    const r = (9 + 12 * Math.max(0, Math.min(2, f))) * u;
+    c.fillStyle = f > 1.15 ? "#ff7a59" : "#ffd166";
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "#0f1318"; c.lineWidth = 2 * u; c.stroke();
   }
+}
+function draw() {
+  drawScene(ctx, cv.width, cv.height, {});
+  if (PR.open) drawScene(prc, prcv.width, prcv.height, {target: PR.state === "centering" || PR.state === "ready", centered: PR.state === "ready", font: 15});
   requestAnimationFrame(draw);
 }
 requestAnimationFrame(draw);
 
 // ---------- controles ----------
-function resetBw() { if (!bwFixed) { bw = null; recentTotals = []; } }
 $("tare").onclick = async () => {
-  try { const r = await api("/api/tare", null, "POST"); status = r.status; renderStatus(); resetBw(); toast("Tara aplicada"); }
+  try { const r = await api("/api/tare", null, "POST"); status = r.status; renderStatus(); bwEma = null; recentTotals = []; toast("Tara aplicada"); }
   catch (e) { toast("Tara: " + e.message); }
 };
 $("untare").onclick = async () => {
-  try { const r = await api("/api/tare/clear", null, "POST"); status = r.status; renderStatus(); resetBw(); toast("Tara quitada"); }
+  try { const r = await api("/api/tare/clear", null, "POST"); status = r.status; renderStatus(); bwEma = null; recentTotals = []; toast("Tara quitada"); }
   catch (e) { toast("Tara: " + e.message); }
 };
 $("rec").onclick = async () => {
@@ -442,31 +605,159 @@ $("rec").onclick = async () => {
   } catch (e) { toast("Error: " + e.message); }
   finally { $("rec").disabled = false; }
 };
-$("auto").onchange = async () => {
-  try { const r = await api("/api/auto", {armed: $("auto").checked}); status = r.status; renderStatus();
-        toast($("auto").checked ? "Captura automática armada: haz swings" : "Captura automática desactivada"); }
-  catch (e) { toast("Auto: " + e.message); }
-};
 
-// Imagen de la cámara de fondo en el recuadro de la tabla (para encuadrar): se
-// pide la última captura a ~10 fps mientras la cámara esté activa.
-setInterval(() => {
-  const running = status.media && status.media.video && status.media.video.running;
-  if (!running || !$("showcam").checked) {
-    if (camImg) { camImg = null; camAspect = null; resize(); }
-    return;
+// ---------- asistente de puesta en marcha ----------
+const WZ = {open: false, step: 1, emptySince: null, stillSince: null, samples: [], busy: false};
+function wizardShow(step) {
+  WZ.open = true; WZ.step = step; WZ.emptySince = null; WZ.stillSince = null; WZ.samples = []; WZ.busy = false;
+  $("wizard").hidden = false; $("wzn").textContent = step;
+  document.querySelectorAll("#wizard .step").forEach(el => { const n = +el.dataset.s; el.className = "step" + (n < step ? " done" : n === step ? " cur" : ""); });
+  for (let i = 1; i <= 4; i++) $("wz" + i).hidden = i !== step;
+  if (step === 4) { $("wz4home").appendChild($("settingsblock")); $("wz4bw").textContent = fmt(settings.body_weight_kg); }
+  else $("settingshome").appendChild($("settingsblock"));
+}
+function wizardClose(done) {
+  WZ.open = false; $("wizard").hidden = true; $("settingshome").appendChild($("settingsblock"));
+  if (done) { sessionStorage.setItem("wizardDone", "1"); toast("Todo listo. Pulsa «Practicar» y súbete a la tabla cuando quieras.", 5000); }
+}
+$("wzskip").onclick = () => wizardClose(true);
+$("wizardbtn").onclick = () => wizardShow(1);
+$("wzdone").onclick = () => wizardClose(true);
+function wizardTick() {
+  if (!WZ.open || WZ.busy) return;
+  const now = performance.now() / 1000;
+  if (WZ.step === 1) {
+    if (boardConnected()) { $("wz1msg").textContent = "Tabla conectada ✔"; WZ.busy = true; setTimeout(() => wizardShow(2), 700); }
+    else $("wz1msg").textContent = status.error ? "Estado: " + status.error : "Esperando a la tabla…";
+  } else if (WZ.step === 2) {
+    if (!latest) return;
+    const tot = latest.tot;
+    $("wz2w").textContent = `lectura actual: ${tot.toFixed(1)} kg`;
+    if (tot > 6) { WZ.emptySince = null; $("wz2msg").textContent = `Hay ${tot.toFixed(0)} kg sobre la tabla: bájate, por favor`; $("wz2bar").style.width = "0%"; return; }
+    $("wz2msg").textContent = "Tabla vacía: fijando el cero…";
+    if (WZ.emptySince == null) WZ.emptySince = now;
+    const p = Math.min(1, (now - WZ.emptySince) / 2.0); $("wz2bar").style.width = (p * 100) + "%";
+    if (p >= 1) {
+      WZ.busy = true;
+      api("/api/tare", null, "POST").then(r => { status = r.status; renderStatus(); bwEma = null; recentTotals = []; $("wz2msg").textContent = "Tara fijada a 0 kg ✔"; setTimeout(() => wizardShow(3), 700); })
+        .catch(e => { toast("Tara: " + e.message); WZ.busy = false; WZ.emptySince = null; });
+    }
+  } else if (WZ.step === 3) {
+    if (!latest) return;
+    const tot = latest.tot; $("wz3kg").textContent = tot.toFixed(1);
+    if (tot < ON_BOARD_KG) { WZ.stillSince = null; WZ.samples = []; $("wz3msg").textContent = "Súbete a la tabla y quédate quieto"; $("wz3bar").style.width = "0%"; return; }
+    WZ.samples.push({t: now, v: tot}); while (WZ.samples.length && WZ.samples[0].t < now - 2.0) WZ.samples.shift();
+    const vals = WZ.samples.map(s => s.v); const span = Math.max(...vals) - Math.min(...vals);
+    if (span > 2.5) { WZ.stillSince = null; $("wz3msg").textContent = "Quieto, por favor… (se detecta movimiento)"; $("wz3bar").style.width = "0%"; return; }
+    if (WZ.stillSince == null) WZ.stillSince = now;
+    $("wz3msg").textContent = "Midiendo tu peso…";
+    const p = Math.min(1, (now - WZ.stillSince) / 2.0); $("wz3bar").style.width = (p * 100) + "%";
+    if (p >= 1 && WZ.samples.length >= 20) {
+      WZ.busy = true;
+      const arr = [...vals].sort((a, b) => a - b); const bw = Math.round(arr[Math.floor(arr.length / 2)] * 10) / 10;
+      pushSettings({body_weight_kg: bw}).then(() => { $("wz3msg").textContent = `Peso fijado: ${bw.toFixed(1)} kg ✔`; setTimeout(() => wizardShow(4), 900); });
+    }
   }
-  if (camBusy) return;
-  camBusy = true;
-  const im = new Image();
-  im.onload = () => {
-    camImg = im; camBusy = false;
-    const a = im.height / im.width;
-    if (a !== camAspect) { camAspect = a; resize(); }
-  };
-  im.onerror = () => { camBusy = false; };
-  im.src = "/api/camera/snapshot.jpg?t=" + Date.now();
-}, 100);
+}
+
+// ---------- modo práctica (pantalla completa, captura automática) ----------
+const PR = {open: false, state: "waiting", armed: false, onSince: null, offSince: null, centeredSince: null, count: 0, resultTimer: null, lastName: null, busy: false};
+const prcv = $("prcanvas"), prc = prcv.getContext("2d");
+function resizePractice() {
+  const wrap = $("prwrap"); const W = wrap.clientWidth || 800, H = wrap.clientHeight || 450;
+  const aspect = camAspect || 0.62;
+  let w = W, h = w * aspect; if (h > H) { h = H; w = h / aspect; }
+  w = Math.floor(w); h = Math.floor(h);
+  prcv.style.width = w + "px"; prcv.style.height = h + "px"; prcv.width = w * dpr; prcv.height = h * dpr;
+}
+function setPrStatus(text, cls) { const el = $("prstatus"); el.textContent = text; el.className = "prstatus " + (cls || ""); }
+async function setArmed(v) {
+  if (PR.armed === v || PR.busy) return; PR.busy = true;
+  try { const r = await api("/api/auto", {armed: v}); status = r.status; PR.armed = v; } catch (e) { toast("Captura automática: " + e.message); }
+  finally { PR.busy = false; }
+}
+function openPractice() {
+  if (!boardConnected()) { toast("La tabla no está conectada"); return; }
+  if (WZ.open) wizardClose(false);
+  PR.open = true; PR.state = "waiting"; PR.count = 0; PR.onSince = PR.offSince = PR.centeredSince = null; PR.lastName = null;
+  $("prcount").textContent = "0"; $("prresult").hidden = true; $("prhint").textContent = "";
+  $("practicemodal").hidden = false; document.body.style.overflow = "hidden";
+  resizePractice(); setPrStatus("Súbete a la tabla", "warn");
+  beep(660, 80);
+}
+async function closePractice() {
+  if (!PR.open) return;
+  PR.open = false; $("practicemodal").hidden = true; document.body.style.overflow = "";
+  clearTimeout(PR.resultTimer); $("prresult").hidden = true;
+  await setArmed(false);
+  toast(PR.count ? `Práctica terminada: ${PR.count} swing${PR.count === 1 ? "" : "s"} guardado${PR.count === 1 ? "" : "s"}` : "Práctica terminada", 4000);
+}
+$("practice").onclick = openPractice;
+$("prclose").onclick = closePractice;
+function practiceTick() {
+  if (!PR.open || !latest) return;
+  const now = performance.now() / 1000;
+  if (onBoard()) {
+    PR.offSince = null;
+    if (PR.onSince == null) PR.onSince = now;
+    if (!PR.armed && now - PR.onSince > 0.8) setArmed(true);
+    const xcm = latest.x * HX, ycm = latest.y * HY;
+    const centered = Math.abs(xcm) <= CENTER_TOL_X && Math.abs(ycm) <= CENTER_TOL_Y;
+    if (centered) {
+      if (PR.centeredSince == null) PR.centeredSince = now;
+      if (now - PR.centeredSince > 0.8) {
+        if (PR.state !== "ready") { PR.state = "ready"; setPrStatus("¡Listo! Haz el swing", "ok"); beep(1046, 90); }
+        $("prhint").textContent = PR.armed ? "captura automática armada: el swing se guarda solo" : "armando la captura…";
+      } else { PR.state = "centering"; setPrStatus("Mantén el punto en el centro…", "warn"); }
+    } else {
+      PR.centeredSince = null; PR.state = "centering";
+      const dx = xcm, dy = ycm;
+      let hint = [];
+      if (Math.abs(dx) > CENTER_TOL_X) hint.push(dx > 0 === (settings.handed === "right") ? "pasa peso al pie lead" : "pasa peso al pie trail");
+      if (Math.abs(dy) > CENTER_TOL_Y) hint.push(dy > 0 ? "más hacia los talones" : "más hacia las puntas");
+      setPrStatus("Céntrate en la tabla antes de empezar: " + hint.join(" y "), "warn");
+      $("prhint").textContent = `desviación ${dx > 0 ? "+" : ""}${dx.toFixed(0)} cm lateral, ${dy > 0 ? "+" : ""}${dy.toFixed(0)} cm punta/talón`;
+    }
+  } else {
+    PR.onSince = null; PR.centeredSince = null;
+    if (PR.offSince == null) PR.offSince = now;
+    const off = now - PR.offSince;
+    if (PR.armed && off > 1.5) setArmed(false);
+    PR.state = "waiting";
+    if (off > 8) { closePractice(); return; }
+    setPrStatus(off < 2 ? "Súbete a la tabla" : `Súbete a la tabla (la práctica se cierra en ${Math.ceil(8 - off)} s)`, off < 5 ? "warn" : "bad");
+    $("prhint").textContent = "";
+  }
+}
+function showPracticeResult(a) {
+  PR.count += 1; $("prcount").textContent = PR.count; PR.lastName = a.name;
+  beep(880, 140);
+  $("prrname").textContent = a.name;
+  const m = a.metrics || {};
+  const cells = [["% trail en el top", fmt(m.trail_pct_en_top, 0) + " %"], ["% lead en el impacto", fmt(m.lead_pct_en_impacto, 0) + " %"],
+                 ["pico de fuerza", fmt(m.pico_fuerza_pct_bw, 0) + " % del peso"], ["top → impacto", m.top_a_impacto_ms != null ? m.top_a_impacto_ms + " ms" : "–"],
+                 ["recorrido lateral", fmt(m.cop_x_rango_cm, 1) + " cm"], ["impacto", {audio: "por audio", manual: "manual", heuristic: "estimado"}[(a.events || {}).impact_source] || "–"]];
+  $("prrm").innerHTML = cells.map(([k, v]) => `<div><b>${k}</b>${v}</div>`).join("");
+  drawMini($("prmini"), a.path);
+  $("prresult").hidden = false;
+  clearTimeout(PR.resultTimer); PR.resultTimer = setTimeout(() => { $("prresult").hidden = true; }, 8000);
+  setPrStatus(`Swing ${PR.count} guardado ✔ — céntrate para el siguiente`, "ok");
+}
+$("prview").onclick = () => { if (PR.lastName) openPlayer(PR.lastName); };
+function drawMini(c, path) {
+  const g = c.getContext("2d"); const W = c.width, H = c.height;
+  g.clearRect(0, 0, W, H);
+  const pad = 18, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
+  drawBoard(g, ox, oy, bwid, bhei, {labels: true, font: 10, u: 1});
+  if (!path || !path.x || path.x.length < 2) return;
+  const toPx = (x, y) => { const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y; return [ox + bwid / 2 + sx / HX * bwid / 2, oy + bhei / 2 - sy / HY * bhei / 2]; };
+  g.strokeStyle = "#50c8ff"; g.lineWidth = 2.5; g.lineCap = "round"; g.beginPath();
+  path.x.forEach((x, i) => { const [px, py] = toPx(x, path.y[i]); if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); });
+  g.stroke();
+  const mk = (pt, color) => { if (!pt) return; const [px, py] = toPx(pt[0], pt[1]); g.fillStyle = color; g.beginPath(); g.arc(px, py, 6, 0, Math.PI * 2); g.fill(); g.strokeStyle = "#0f1318"; g.lineWidth = 1.5; g.stroke(); };
+  const [sx, sy] = toPx(path.x[0], path.y[0]); g.fillStyle = "#3ddc97"; g.beginPath(); g.arc(sx, sy, 5, 0, Math.PI * 2); g.fill();
+  mk(path.marks && path.marks.top, "#ffa040"); mk(path.marks && path.marks.impact, "#ff5050");
+}
 
 // ---------- swings, referencia, importar/exportar ----------
 async function loadSwings() {
@@ -481,12 +772,12 @@ async function loadSwings() {
       (s.analyzed ? "" : '<span class="badge">sin analizar</span>');
     tr.innerHTML = `<td>${s.name}${badges}</td><td class="muted">${fmtDate(s.mtime)}${s.duration ? " · " + s.duration.toFixed(1) + " s" : ""}</td><td style="text-align:right;white-space:nowrap"></td>`;
     const cell = tr.lastElementChild;
-    const mk = (txt, title, fn) => { const b = document.createElement("button"); b.className = "small"; b.textContent = txt; b.title = title || ""; b.style.marginLeft = "4px"; b.onclick = fn; cell.appendChild(b); return b; };
-    mk("▶", "reproducir", () => openPlayer(s.name));
-    mk("Analizar", "analizar con los ajustes actuales", async (ev) => { const b = ev.target; b.disabled = true; try { showAnalysis(await api("/api/analyze/" + s.name, {})); loadSwings(); } catch (e) { toast(e.message); } finally { b.disabled = false; } });
-    mk(s.is_reference ? "★" : "☆", "fijar como referencia", async () => { try { if (s.is_reference) await api("/api/reference", null, "DELETE"); else await api("/api/reference/" + s.name, null, "POST"); loadSwings(); toast(s.is_reference ? "Referencia quitada" : "Referencia: " + s.name); } catch (e) { toast(e.message); } });
-    mk("⤓", "exportar (zip con CSV, audio, vídeo y figura)", () => { window.location.href = "/api/swings/" + s.name + "/export"; });
-    mk("✕", "borrar", async () => { if (!confirm(`¿Borrar ${s.name}?`)) return; try { await api("/api/swings/" + s.name, null, "DELETE"); if (selected === s.name) clearAnalysis(); loadSwings(); } catch (e) { toast(e.message); } });
+    const mk = (txt, title, help, fn) => { const b = document.createElement("button"); b.className = "small"; b.textContent = txt; b.title = title || ""; b.dataset.help = help; b.style.marginLeft = "4px"; b.onclick = fn; cell.appendChild(b); return b; };
+    mk("▶", "reproducir", "reproducir", () => openPlayer(s.name));
+    mk("Analizar", "analizar con los ajustes actuales", "analizar", async (ev) => { const b = ev.target; b.disabled = true; try { showAnalysis(await api("/api/analyze/" + s.name, {})); loadSwings(); } catch (e) { toast(e.message); } finally { b.disabled = false; } });
+    mk(s.is_reference ? "★" : "☆", "fijar como referencia", "referencia", async () => { try { if (s.is_reference) await api("/api/reference", null, "DELETE"); else await api("/api/reference/" + s.name, null, "POST"); loadSwings(); toast(s.is_reference ? "Referencia quitada" : "Referencia: " + s.name); } catch (e) { toast(e.message); } });
+    mk("⤓", "exportar (zip con CSV, audio, vídeo y figura)", "exportar", () => { window.location.href = "/api/swings/" + s.name + "/export"; });
+    mk("✕", "borrar", "borrar", async () => { if (!confirm(`¿Borrar ${s.name}?`)) return; try { await api("/api/swings/" + s.name, null, "DELETE"); if (selected === s.name) clearAnalysis(); loadSwings(); } catch (e) { toast(e.message); } });
     tb.appendChild(tr);
   }
 }
@@ -531,7 +822,7 @@ function showAnalysis(a) {
   for (const k of ORDER) {
     if (!(k in a.metrics) || a.metrics[k] == null) continue;
     let v = a.metrics[k]; if (Array.isArray(v)) v = v.join(" / ");
-    const tr = document.createElement("tr");
+    const tr = document.createElement("tr"); tr.dataset.help = "m_" + k;
     let cells = `<td>${LABELS[k] || k}</td><td>${v}</td>`;
     if (ref) {
       let rv = ref.metrics[k]; if (Array.isArray(rv)) rv = rv.join(" / ");
@@ -578,7 +869,7 @@ async function openPlayer(name) {
   drawPlayer();
   if (P.track.video) loadFrames(name, P.track.video.n);
 }
-function closePlayer() { stopPlayer(); P.name = null; $("player").hidden = true; document.body.style.overflow = ""; }
+function closePlayer() { stopPlayer(); P.name = null; $("player").hidden = true; if (!PR.open) document.body.style.overflow = ""; }
 $("pclose").onclick = closePlayer;
 async function loadFrames(name, n) {
   const frames = new Array(n); P.frames = frames; let next = 0;
@@ -593,7 +884,6 @@ async function loadFrames(name, n) {
   await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
 }
 function resizePlayer() {
-  // ocupa el máximo del modal manteniendo la proporción del vídeo (16:9 si no hay vídeo)
   const wrap = $("pwrap"); const W = wrap.clientWidth || 800, H = wrap.clientHeight || 450;
   const v = P.track && P.track.video;
   const aspect = v ? v.height / v.width : 0.5625;
@@ -603,13 +893,12 @@ function resizePlayer() {
   pc.style.width = w + "px"; pc.style.height = h + "px";
   pc.width = w * dpr; pc.height = h * dpr;
 }
-window.addEventListener("resize", () => { if (!$("player").hidden && P.track) { resizePlayer(); drawPlayer(); } });
+window.addEventListener("resize", () => { if (!$("player").hidden && P.track) { resizePlayer(); drawPlayer(); } if (PR.open) resizePractice(); });
 function drawPlayer() {
   if (!P.track) return;
   const W = pc.width, H = pc.height, T = P.track;
-  const u = Math.max(dpr, W / 900);  // escala de textos/trazos según el tamaño
+  const u = Math.max(dpr, W / 900);
   pctx.fillStyle = "#000"; pctx.fillRect(0, 0, W, H);
-  // fotograma
   const fi = frameIndexAt(P.t);
   const img = fi >= 0 ? P.frames[fi] : null;
   if (img) {
@@ -619,6 +908,16 @@ function drawPlayer() {
     pctx.fillStyle = "#9aa4b2"; pctx.font = `${14 * u}px system-ui`; pctx.textAlign = "center";
     pctx.fillText(fi < 0 ? "sin fotograma en este instante" : "cargando fotograma…", W / 2, H / 2);
   }
+  // reparto trail/lead arriba
+  const i = bsearch(T.t, P.t); const tp = T.trail_pct[i]; const f = T.force_pct[i];
+  const bx = 14 * u, by = 34 * u, bwd = W - 28 * u, bh = 14 * u;
+  pctx.fillStyle = "rgba(15,19,24,0.7)"; pctx.fillRect(bx, by - 22 * u, bwd, 46 * u);
+  pctx.fillStyle = "#232b35"; pctx.fillRect(bx, by, bwd, bh);
+  pctx.fillStyle = "#50c8ff"; pctx.fillRect(bx, by, bwd * ((tp == null ? 0 : tp) / 100), bh);
+  pctx.strokeStyle = "#8a94a3"; pctx.setLineDash([4 * u, 4 * u]); pctx.beginPath(); pctx.moveTo(bx + bwd / 2, by - 4 * u); pctx.lineTo(bx + bwd / 2, by + bh + 4 * u); pctx.stroke(); pctx.setLineDash([]);
+  pctx.fillStyle = "#e6edf3"; pctx.font = `bold ${15 * u}px system-ui`; pctx.textAlign = "left";
+  pctx.fillText(`LEAD ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, bx + 4 * u, by - 6 * u);
+  pctx.textAlign = "right"; pctx.fillText(`${tp == null ? "–" : tp.toFixed(0) + " %"} TRAIL`, bx + bwd - 4 * u, by - 6 * u);
   // recuadro de la tabla (abajo a la izquierda)
   const iw = W * (T.video ? 0.40 : 0.62), ih = iw * (HY / HX), ix = 14 * u, iy = H - ih - 30 * u;
   pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * u, iy - 24 * u, iw + 20 * u, ih + 52 * u);
@@ -630,9 +929,9 @@ function drawPlayer() {
   const drawPath = (tr, tEnd, color, width, full) => {
     const n = tr.t.length; let started = false;
     pctx.strokeStyle = color; pctx.lineWidth = width * u; pctx.lineCap = "round"; pctx.beginPath();
-    for (let i = 0; i < n; i++) {
-      if (!full && tr.t[i] > tEnd) break;
-      const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
+    for (let k = 0; k < n; k++) {
+      if (!full && tr.t[k] > tEnd) break;
+      const x = tr.cop_x_cm[k], y = tr.cop_y_cm[k];
       if (x == null || y == null) { started = false; continue; }
       const [px, py] = toPx(x, y);
       if (!started) { pctx.moveTo(px, py); started = true; } else pctx.lineTo(px, py);
@@ -640,13 +939,12 @@ function drawPlayer() {
     pctx.stroke();
   };
   const dotAt = (tr, t, color, rad) => {
-    const i = bsearch(tr.t, t); const x = tr.cop_x_cm[i], y = tr.cop_y_cm[i];
+    const k = bsearch(tr.t, t); const x = tr.cop_x_cm[k], y = tr.cop_y_cm[k];
     if (x == null || y == null) return;
     const [px, py] = toPx(x, y);
     pctx.fillStyle = color; pctx.beginPath(); pctx.arc(px, py, rad * u, 0, Math.PI * 2); pctx.fill();
     pctx.strokeStyle = "#0f1318"; pctx.lineWidth = 1.5 * u; pctx.stroke();
   };
-  // referencia alineada en el impacto (o en el top)
   const R = T.reference && T.reference.t ? T.reference : null; let shift = 0;
   if (R) {
     const e = T.events || {}, re = R.events || {};
@@ -659,24 +957,21 @@ function drawPlayer() {
   }
   drawPath(T, 0, "rgba(80,200,255,0.25)", 2, true);
   drawPath(T, P.t, "#50c8ff", 3, false);
-  const i = bsearch(T.t, P.t); const f = T.force_pct[i];
   dotAt(T, P.t, (f != null && f > 115) ? "#ff7a59" : "#ffd166", 7 + Math.max(0, Math.min(2, (f || 100) / 100)) * 4);
-  // barra de tiempo con marcas
-  const bx = 14 * u, by = 12 * u, bwd = W - 28 * u, bh = 8 * u;
-  pctx.fillStyle = "rgba(255,255,255,0.18)"; pctx.fillRect(bx, by, bwd, bh);
-  const xOf = (t) => bx + (t - P.t0) / Math.max(1e-6, P.dur - P.t0) * bwd;
+  // barra de tiempo con marcas (debajo del reparto)
+  const tbx = 14 * u, tby = 62 * u, tbw = W - 28 * u, tbh = 8 * u;
+  pctx.fillStyle = "rgba(255,255,255,0.18)"; pctx.fillRect(tbx, tby, tbw, tbh);
+  const xOf = (t) => tbx + (t - P.t0) / Math.max(1e-6, P.dur - P.t0) * tbw;
   const ev = T.events || {};
-  const mark = (t, color, label) => { if (t == null) return; const x = xOf(t); pctx.fillStyle = color; pctx.fillRect(x - 1.5 * u, by - 4 * u, 3 * u, bh + 8 * u);
-    pctx.font = `${11 * u}px system-ui`; pctx.textAlign = "left"; pctx.fillText(label, x + 4 * u, by + bh + 14 * u); };
+  const mark = (t, color, label) => { if (t == null) return; const x = xOf(t); pctx.fillStyle = color; pctx.fillRect(x - 1.5 * u, tby - 4 * u, 3 * u, tbh + 8 * u);
+    pctx.font = `${11 * u}px system-ui`; pctx.textAlign = "left"; pctx.fillText(label, x + 4 * u, tby + tbh + 14 * u); };
   mark(ev.t_top, "#ffa040", "top"); mark(ev.t_impact, "#ff5050", ev.impact_source === "audio" ? "impacto (audio)" : ev.impact_source === "manual" ? "impacto (manual)" : "impacto ≈");
   if (T.impact_audio && T.impact_audio.t != null && ev.impact_source !== "audio") mark(T.impact_audio.t, "#ff9ad0", "golpe (audio)");
-  pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * u, by - 6 * u, 3 * u, bh + 12 * u);
-  // trail % y fuerza a la derecha
-  const tp = T.trail_pct[i];
-  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 190 * u, H - 62 * u, 176 * u, 50 * u);
+  pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * u, tby - 6 * u, 3 * u, tbh + 12 * u);
+  // fuerza a la derecha
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 200 * u, H - 44 * u, 186 * u, 32 * u);
   pctx.fillStyle = "#e6edf3"; pctx.font = `${13 * u}px system-ui`; pctx.textAlign = "left";
-  pctx.fillText(`trail ${tp == null ? "–" : tp.toFixed(0) + " %"}   lead ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, W - 180 * u, H - 42 * u);
-  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 180 * u, H - 22 * u);
+  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 190 * u, H - 22 * u);
   $("ptime").textContent = `t = ${P.t.toFixed(3)} s` + (ev.t_impact != null ? `  (${((P.t - ev.t_impact) * 1000).toFixed(0)} ms ${P.t >= ev.t_impact ? "tras" : "antes del"} impacto)` : "");
 }
 function tick(ts) {
@@ -707,12 +1002,16 @@ $("pmarktop").onclick = () => remark({top: P.t});
 $("pmarkimpact").onclick = () => remark({impact: P.t});
 $("preset").onclick = () => remark({reset: true});
 document.addEventListener("keydown", (e) => {
-  if ($("player").hidden) return;
-  if (e.code === "Escape") { e.preventDefault(); closePlayer(); return; }
-  if (!P.track || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
-  if (e.code === "Space") { e.preventDefault(); $("pplay").click(); }
-  else if (e.code === "ArrowLeft") { e.preventDefault(); step(-1); }
-  else if (e.code === "ArrowRight") { e.preventDefault(); step(1); }
+  if (e.code === "Escape" && helpMode) { e.preventDefault(); setHelpMode(false); return; }
+  if (!$("player").hidden) {
+    if (e.code === "Escape") { e.preventDefault(); closePlayer(); return; }
+    if (!P.track || ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+    if (e.code === "Space") { e.preventDefault(); $("pplay").click(); }
+    else if (e.code === "ArrowLeft") { e.preventDefault(); step(-1); }
+    else if (e.code === "ArrowRight") { e.preventDefault(); step(1); }
+    return;
+  }
+  if (PR.open && e.code === "Escape") { e.preventDefault(); closePractice(); }
 });
 
 // ---------- tabla / bluetooth ----------
@@ -727,9 +1026,9 @@ async function loadBt() {
     const b = await api("/api/bluetooth/status");
     if (!b.available) { $("btinfo").textContent = "Bluetooth no disponible: " + (b.error || ""); return; }
     let html = `Adaptador: <b>${b.radio.name}</b> [${b.radio.address}]. `;
-    if (!b.boards.length) html += "Windows no conoce ninguna tabla todavía.";
+    if (!b.boards.length) html += "El sistema no conoce ninguna tabla todavía.";
     for (const d of b.boards) {
-      html += `<div>Tabla <b>${d.name}</b> [${d.address}] — ${d.connected ? "<span style='color:var(--ok)'>conectada</span>" : "no conectada"}, ${d.authenticated ? "emparejada de forma permanente" : d.remembered ? "recordada sin emparejar" : "desconocida"} <button class="small" data-addr="${d.address}">olvidar</button></div>`;
+      html += `<div>Tabla <b>${d.name}</b> [${d.address}] — ${d.connected ? "<span style='color:var(--ok)'>conectada</span>" : "no conectada"}, ${d.authenticated ? "emparejada de forma permanente" : d.remembered ? "recordada sin emparejar" : "desconocida"} <button class="small" data-addr="${d.address}" data-help="olvidar">olvidar</button></div>`;
     }
     if (b.platform === "darwin") html += `<div style="margin-top:6px">macOS: el emparejado usa el PIN binario por IOBluetooth y corre en un proceso aparte, con hasta 6 intentos (puede tardar 2 min; pulsa SYNC justo antes y otra vez si el LED deja de parpadear). Si sale "0x1f (os/kern) default set", reinicia el Bluetooth (Terminal: sudo pkill bluetoothd) o el Mac y repite (ver LEEME_MAC.txt). Para olvidar la tabla: Ajustes del Sistema → Bluetooth. Si falla, usa WiimotePair.app (ver LEEME_MAC.txt).</div>`;
     $("btinfo").innerHTML = html;
@@ -742,7 +1041,7 @@ async function loadBt() {
 $("btrefresh").onclick = loadBt;
 $("reconnect").onclick = async () => { try { await api("/api/board/reconnect", null, "POST"); toast("Reintentando la conexión con la tabla…"); } catch (e) { toast(e.message); } };
 $("pair").onclick = async () => {
-  const b = $("pair"); b.disabled = true; const log = $("btlog"); log.hidden = false; log.textContent = "Buscando la tabla (~10 s)… mantén el LED parpadeando.\n";
+  const b = $("pair"); b.disabled = true; const log = $("btlog"); log.hidden = false; log.textContent = "Buscando la tabla… mantén el LED parpadeando.\n";
   try {
     const r = await api("/api/bluetooth/pair", {seconds: 10, forget_first: $("forgetfirst").checked});
     log.textContent += (r.log || []).join("\n") + "\n\n" + (r.ok ? "✔ " : "✖ ") + r.message;
@@ -751,11 +1050,102 @@ $("pair").onclick = async () => {
   finally { b.disabled = false; }
 };
 
+// ---------- ayuda contextual ----------
+const HELP = {
+  estado: ["Estado de la tabla", "Verde: la tabla está conectada y enviando datos. Rojo: no se detecta (enciéndela con su botón de delante; si es la primera vez, emparéjala desde Tabla / Bluetooth). Amarillo: tabla simulada (modo de pruebas sin hardware)."],
+  hz: ["Frecuencia de muestreo", "Muestras por segundo que llegan de la tabla. Lo normal son ~100 Hz; si baja mucho, la conexión Bluetooth va mal (distancia, pilas)."],
+  manual: ["Manual", "Abre el manual de usuario completo en otra pestaña."],
+  asistente: ["Asistente de puesta en marcha", "Te guía en 4 pasos: tabla conectada, tara a 0 kg sin nadie encima, tu peso (2 s quieto) y ajustes. Puedes repetirlo cuando quieras con este botón; conviene hacerlo cada vez que arrancas."],
+  "tabla-panel": ["Tabla / Bluetooth", "Estado del adaptador Bluetooth y de la tabla, reconectar y emparejar (primera vez en cada equipo). Se despliega solo cuando la tabla no está conectada."],
+  reconectar: ["Reconectar", "Fuerza un nuevo intento de abrir la tabla ya emparejada (el servidor lo hace solo cada 3 s)."],
+  emparejar: ["Emparejar", "Solo la primera vez en cada equipo: pulsa el botón SYNC rojo del compartimento de pilas (el LED parpadea) y luego este botón. La tabla exige un PIN binario que los ajustes del sistema no pueden escribir; por eso se hace desde aquí. Después basta con encenderla."],
+  olvidar: ["Olvidar", "Elimina el emparejado guardado para volver a emparejar desde cero (en macOS se hace desde Ajustes del Sistema → Bluetooth)."],
+  "wz-tabla": ["Paso 1: tabla", "Se espera a que la tabla esté conectada. El paso se supera solo."],
+  "wz-tara": ["Paso 2: tara", "Con la tabla vacía (o solo con la alfombra) se fija el cero de las cuatro células. Si hay peso encima, el asistente pide bajarse; a los 2 s de tabla vacía la tara se aplica sola."],
+  "wz-peso": ["Paso 3: tu peso", "Súbete con la ropa y el palo con que vayas a jugar y quédate quieto 2 s: se fija tu peso, que será el 100 % de la fuerza vertical en todos los análisis (se guarda en los ajustes)."],
+  "wz-ajustes": ["Paso 4: ajustes", "Diestro/zurdo (define qué pie es trail y cuál lead), inversión de ejes si te colocas al revés, y micrófono/cámara opcionales."],
+  "en-vivo": ["Vista en vivo", "Silueta de la tabla vista desde arriba con el punto del centro de presión (CoP) y su estela de 1,5 s. El punto crece y se pone naranja cuando la fuerza vertical supera el 115 % de tu peso. Con la cámara activa, la imagen se ve atenuada de fondo para encuadrar."],
+  peso: ["Peso sobre la tabla", "Suma de las cuatro células en kg (tras la tara). Durante el swing sube por encima de tu peso (empuje) y baja después (descarga)."],
+  fuerza: ["Fuerza vertical", "Peso actual dividido por tu peso corporal, en %. 100 % = quieto; 120-190 % en el pico del downswing de un swing enérgico."],
+  "peso-corporal": ["Peso corporal", "Referencia del % de fuerza. Fijado por el asistente (o con «Fijar peso» estando quieto) se guarda en los ajustes y lo usan también los análisis; si no, se estima sobre la marcha."],
+  reparto: ["Reparto LEAD / TRAIL", "Porcentaje del peso sobre cada pie. TRAIL es el pie trasero (derecho para un diestro) y LEAD el delantero. La barra muestra el % del trail; la línea discontinua es el 50 %."],
+  practicar: ["Practicar", "Abre el modo práctica a pantalla completa: al subirte a la tabla se arma la captura automática, se te pide centrar el punto y cada swing se guarda y analiza solo, mostrando el trazo y las cifras clave. Al bajarte de la tabla, la práctica se cierra sola a los 8 s."],
+  tara: ["Tara", "Pone a cero la lectura con la tabla vacía (o con la alfombra encima). El asistente la hace automáticamente; «quitar tara» vuelve a la calibración de fábrica."],
+  grabar: ["Grabar a mano", "Alternativa a la captura automática: graba todo lo que pase hasta pulsar «Detener», y lo analiza. Útil para ejercicios largos; para swings sueltos es mejor «Practicar»."],
+  diestro: ["Diestro / zurdo", "Define qué pie es TRAIL (trasero) y cuál LEAD (delantero): para un diestro el trail es el derecho."],
+  "invertir-x": ["Invertir izquierda/derecha", "Actívalo si al cargar el pie derecho sube LEAD en vez de TRAIL (depende de hacia dónde mires al subirte a la tabla)."],
+  "invertir-y": ["Invertir punta/talón", "Actívalo si al ir a las puntas de los pies el punto baja hacia «talón»."],
+  microfono: ["Micrófono", "Graba el audio sincronizado con la tabla y busca el golpe a la bola: un transitorio muy fuerte y corto. Si lo encuentra, marca el impacto con precisión (en vez de estimarlo por el pico de fuerza)."],
+  "micro-dispositivo": ["Dispositivo de audio", "Qué micrófono usar. Comprueba con el medidor que el nivel se mueve al hablar."],
+  "micro-nivel": ["Nivel del micrófono", "Medidor del volumen captado; si no se mueve, ese micro está silenciado o sin permiso."],
+  camara: ["Cámara", "Graba vídeo (fotogramas con su instante exacto) sincronizado con el trazo, para verlo después a cámara lenta con el CoP superpuesto. Con poca luz la cámara baja a ~10 fps: conviene buena iluminación."],
+  "camara-indice": ["Índice de cámara", "0 es la cámara por defecto; si tienes varias, prueba 1, 2…"],
+  "ver-fondo": ["Ver la cámara de fondo", "Muestra la imagen en vivo, atenuada, detrás de la silueta de la tabla para encuadrar lo que se va a grabar."],
+  swings: ["Swings grabados", "Cada grabación: reproducir a cámara lenta (▶), analizar de nuevo con los ajustes actuales, fijar como referencia (☆), exportar a zip (⤓) o borrar (✕). Los iconos indican si tiene vídeo, audio o impacto detectado por audio."],
+  importar: ["Importar zip", "Carga un swing exportado en otro equipo (CSV + meta + audio + vídeo + figura) y lo analiza."],
+  exportar: ["Exportar", "Descarga un zip con todo el swing para enviarlo o guardarlo; se importa con «Importar zip»."],
+  borrar: ["Borrar", "Elimina la grabación y todos sus archivos."],
+  analizar: ["Analizar", "Vuelve a calcular métricas y figura con los ajustes actuales (diestro/zurdo, peso corporal, referencia)."],
+  reproducir: ["Reproducir", "Abre el reproductor a cámara lenta: vídeo (si lo hay) con el trazo del CoP superpuesto, reparto trail/lead y marcas de top e impacto."],
+  referencia: ["Swing de referencia", "Un swing modelo con el que comparar: sus métricas aparecen al lado de las de cada análisis con la diferencia (Δ), la figura lo superpone en gris y el reproductor dibuja su trazo alineado en el impacto."],
+  analisis: ["Análisis", "Métricas del swing seleccionado (pulsa sobre cada fila para ver qué significa) y figura con el trazo del CoP, el reparto trail/lead y la fuerza vertical en el tiempo."],
+  figura: ["Figura del análisis", "Izquierda: trazo del centro de presión sobre la tabla, del address (verde) al top (naranja) y al impacto (estrella). Derecha: % de peso en el trail y fuerza vertical a lo largo del tiempo, con las marcas de top e impacto; en gris, la referencia."],
+  m_peso_corporal_kg: ["Peso corporal (kg)", "Referencia del 100 % de fuerza: el fijado en el asistente o, si no, la mediana del peso mientras estás quieto en la grabación."],
+  m_trail_pct_en_top: ["% trail en el top", "Porcentaje del peso sobre el pie trasero al final del backswing. Orientativo: 60-80 % en un swing completo con driver; menos con hierros cortos."],
+  m_lead_pct_en_impacto: ["% lead en el impacto", "Porcentaje sobre el pie delantero en el impacto. Los buenos jugadores llegan al 70-90 %: la transferencia al lead es la clave de la potencia y del golpe descendente."],
+  m_pico_fuerza_pct_bw: ["Pico de fuerza (% peso)", "Máxima fuerza vertical contra el suelo en el downswing, en % de tu peso. Es el «empuje» que genera velocidad: 120-190 % en swings enérgicos."],
+  m_fuerza_en_impacto_pct_bw: ["Fuerza en el impacto", "Fuerza vertical justo en el instante del impacto (suele estar ya bajando desde el pico)."],
+  m_top_a_impacto_ms: ["Top → impacto (ms)", "Duración del downswing. Típico: 230-320 ms. Si es muy largo, el impacto estimado puede estar mal marcado: usa el micrófono o márcalo a mano en el reproductor."],
+  m_t_top_s: ["Top (s)", "Instante del final del backswing dentro de la grabación."],
+  m_t_impacto_s: ["Impacto (s)", "Instante del impacto: por audio (preciso), a mano, o estimado por el pico de fuerza."],
+  m_t_pico_fuerza_s: ["Pico de fuerza (s)", "Instante de la fuerza vertical máxima."],
+  m_trail_pct_min_max: ["% trail mín / máx", "Extremos del reparto trail/lead en toda la grabación: cuánto llegas a cargar cada pie."],
+  m_cop_x_rango_cm: ["Rango lateral del CoP (cm)", "Cuánto se desplaza el centro de presión de un pie a otro. Poco rango = swing muy «rotacional» o poca transferencia; mucho = muy lateral (sway)."],
+  m_cop_y_rango_cm: ["Rango punta-talón (cm)", "Desplazamiento del CoP hacia las puntas o los talones durante el swing."],
+  m_cop_longitud_trazo_cm: ["Longitud del trazo (cm)", "Recorrido total del centro de presión: más largo = más movimiento (o más tiempo grabado)."],
+  reproductor: ["Reproductor", "Vídeo fotograma a fotograma con el trazo del CoP en el recuadro; arriba el reparto LEAD/TRAIL y la barra de tiempo con top, impacto y golpe. Espacio = reproducir/pausar, flechas = fotograma a fotograma, Esc = cerrar."],
+  "pr-play": ["Reproducir / pausar", "También con la barra espaciadora."],
+  velocidad: ["Velocidad", "De 1× a 1/20×. A ¼× se ve bien el downswing (unos 250 ms reales)."],
+  fotograma: ["Fotograma a fotograma", "Avanza o retrocede un fotograma (~33 ms). También con las flechas del teclado."],
+  "linea-tiempo": ["Línea de tiempo", "Arrastra para moverte por la grabación. El tiempo se muestra también relativo al impacto."],
+  "ir-eventos": ["Ir al top / impacto", "Salta directamente a las marcas detectadas."],
+  marcas: ["Marcar top / impacto", "Si la detección automática no acierta, colócate en el fotograma correcto y fija la marca a mano; se guarda con el swing. «Restablecer» vuelve a la detección automática (audio o pico de fuerza)."],
+  "pr-estado": ["Estado de la práctica", "Te dice qué hacer en cada momento: subirte, centrar el punto, hacer el swing, o que el swing se ha guardado."],
+  "pr-contador": ["Contador", "Swings guardados en esta sesión de práctica."],
+  "pr-sonido": ["Sonido", "Pitidos al centrar (agudo) y al guardar cada swing."],
+  "pr-barra": ["LEAD / TRAIL en vivo", "Reparto del peso entre el pie delantero y el trasero, en grande para verlo desde la tabla."],
+  "pr-resultado": ["Resultado del swing", "Durante unos segundos: trazo del CoP (verde = address, naranja = top, rojo = impacto) y las cifras clave. «▶ ver» lo abre en el reproductor."],
+};
+let helpMode = false;
+function setHelpMode(on) {
+  helpMode = on; document.body.classList.toggle("help", on); $("helpbtn").classList.toggle("on", on);
+  if (!on) $("helppop").hidden = true; else toast("Modo ayuda: pulsa sobre cualquier elemento para saber qué es (Esc para salir)", 5000);
+}
+$("helpbtn").onclick = () => setHelpMode(!helpMode);
+$("helpx").onclick = () => { $("helppop").hidden = true; };
+document.addEventListener("click", (e) => {
+  if (!helpMode) return;
+  if (e.target.closest("#helppop") || e.target.closest("#helpbtn")) return;
+  const el = e.target.closest("[data-help]");
+  e.preventDefault(); e.stopPropagation();
+  if (!el) { $("helppop").hidden = true; return; }
+  const key = el.dataset.help; const h = HELP[key];
+  if (!h) { $("helppop").hidden = true; return; }
+  $("helptitle").textContent = h[0]; $("helptext").textContent = h[1];
+  $("helplink").href = "/manual#" + (key.startsWith("m_") ? "metricas" : key);
+  const pop = $("helppop"); pop.hidden = false;
+  const r = el.getBoundingClientRect(); const pw = Math.min(380, window.innerWidth - 20);
+  let left = Math.min(Math.max(10, r.left), window.innerWidth - pw - 10);
+  let top = r.bottom + 8; if (top + 180 > window.innerHeight) top = Math.max(10, r.top - 190);
+  pop.style.left = left + "px"; pop.style.top = top + "px";
+}, true);
+
 // ---------- arranque ----------
 applySettingsToUI();
 connect();
 loadSwings();
 loadAudioInputs();
+if (sessionStorage.getItem("wizardDone") !== "1") wizardShow(1);
 </script>
 </body>
 </html>

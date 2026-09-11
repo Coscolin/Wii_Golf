@@ -54,15 +54,25 @@ analiza. No hace falta instalar Python ni nada mas.
    A partir de entonces basta con encender la tabla (boton de delante) y el
    programa la detecta solo en unos segundos.
 
-5) Colocate a lo ancho de la tabla (un pie en cada mitad, como en el swing).
-   Carga el peso en el pie derecho: si eres diestra debe subir "TRAIL"; si sube
-   "LEAD", marca "invertir izq/der". Con "Fijar peso" quieta se calibra el %.
+5) Al abrir la web aparece un asistente de 4 pasos: espera a la tabla, fija
+   la tara con la tabla vacia (te pide bajarte si hay peso), mide tu peso
+   (subete y quedate quieto 2 s, con la ropa y el palo) y confirma los ajustes
+   (diestro/zurdo, microfono, camara). Repitelo con "Asistente" cada vez que
+   arranques.
 
-6) Para grabar swings marca "Captura automatica de swings" (y "Microfono" /
-   "Camara" si quieres el golpe y el video) y haz swings normales: cada uno se
-   guarda y analiza solo. Con el boton de reproducir lo ves a camara lenta con
-   el trazo del peso encima del video; con la estrella fijas uno como referencia
-   para comparar los siguientes; con la flecha lo exportas a un zip para enviarlo.
+6) Colocate a lo ancho de la tabla (un pie en cada mitad, como en el swing).
+   Carga el peso en el pie derecho: si eres diestro debe subir "TRAIL"; si sube
+   "LEAD", marca "invertir izq/der".
+
+7) Pulsa "Practicar": pantalla completa con la tabla (y la camara de fondo si
+   esta activa) y el reparto LEAD - TRAIL arriba. Subete, centra el punto en el
+   recuadro y, cuando diga "Listo, haz el swing", juega con normalidad: cada
+   swing se guarda y analiza solo y aparece unos segundos en la esquina con su
+   trazo y sus cifras. Al bajarte, la practica se cierra sola a los 8 s.
+   Con el boton de reproducir de la lista ves cualquier swing a camara lenta con
+   el trazo encima del video; con la estrella fijas uno como referencia; con la
+   flecha lo exportas a un zip. El boton "? Ayuda" explica cada parte de la
+   pantalla y "Manual" abre el manual completo.
 
 Los datos quedan en la carpeta "data" junto al programa (y las figuras en "out").
 

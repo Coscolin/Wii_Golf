@@ -133,6 +133,12 @@ desde una **tablet o móvil en el mismo WiFi**. La primera vez Windows puede
 pedir permiso en el firewall para `python.exe`; acéptalo para entrar desde la
 tablet.
 
+**Asistente**: al abrir la web, cuatro pasos automáticos dejan todo listo:
+tabla conectada → tara con la tabla vacía (pide bajarse si hay peso; a los 2 s
+vacía se tara sola) → tu peso (2 s quieto; queda guardado en los ajustes como
+referencia del % de fuerza para todos los análisis) → ajustes. Se repite con el
+botón «Asistente».
+
 **En vivo**
 
 - CoP con estela sobre la silueta de la tabla; el punto crece y se pone naranja
@@ -148,10 +154,14 @@ tablet.
 
 - **Grabar / Detener y analizar**: un CSV por grabación, con audio y vídeo si
   están activos.
-- **Captura automática**: sin pulsar nada entre swings. Dispara cuando el % de
-  peso en el trail cae 25 puntos en < 0,5 s **y** hubo un pico de fuerza
-  ≥ 112 % del peso en los 0,4 s previos (el rebote tras el swing no lo tiene);
-  guarda 3 s antes + 1,5 s después y analiza al vuelo.
+- **Practicar** (modo práctica a pantalla completa): cámara de fondo, tabla con
+  el CoP y el reparto LEAD – TRAIL en grande. Al subirte se arma la captura
+  automática; un objetivo de centrado te guía hasta «¡Listo! Haz el swing»;
+  cada swing se detecta (caída de 25 puntos de trail en < 0,5 s **y** pico de
+  fuerza ≥ 112 % del peso en los 0,4 s previos), se guarda 3 s antes + 1,5 s
+  después, se analiza al vuelo y muestra unos segundos el trazo y las cifras
+  clave en una esquina (con pitido). Al bajarte, la práctica se cierra sola a
+  los 8 s y vuelves a la pantalla principal.
 - Cada swing son varios archivos en `data/`: `<n>.csv` (tabla), `<n>.json`
   (meta y eventos), `<n>.wav` (audio), `<n>.frames.zip` (vídeo: un JPEG por
   fotograma con su instante) y `out/<n>.png` (figura).
@@ -184,6 +194,11 @@ SYNC rojo de la tabla y luego el botón; se empareja con el PIN que espera la
 tabla (la dirección del adaptador) y se activa su servicio HID, como hace
 WiiPair, sin WiiBalanceWalker. Emparejada de forma permanente, basta con
 encenderla: el servidor la detecta solo (reintenta cada 3 s).
+
+**Ayuda**: «? Ayuda» activa el modo ayuda (cada elemento explica qué es y qué
+significa cada valor al pulsarlo, con enlace a su sección del manual) y
+«Manual» abre el manual de usuario completo (`/manual`, también dentro del
+ejecutable).
 
 **Arrancar como servicio** (siempre disponible, también para la tablet):
 
@@ -321,7 +336,9 @@ tablas).
 1. ✅ Leer 1 tabla: CoP + peso a CSV.
 2. ✅ Análisis del CSV: trazo del CoP, % trail/lead, fuerza vertical, marcas de
    top e impacto (heurístico).
-3. ✅ Web local en tiempo real con grabación y captura automática.
+3. ✅ Web local en tiempo real con grabación y captura automática; asistente de
+   puesta en marcha, modo práctica a pantalla completa, ayuda contextual y
+   manual de usuario.
 4. ✅ Audio del golpe para marcar el impacto, vídeo de la webcam sincronizado,
    reproductor a cámara lenta con el trazo del CoP, swing de referencia,
    exportar/importar, emparejado Bluetooth propio y arranque como servicio.

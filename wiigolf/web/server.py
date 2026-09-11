@@ -95,7 +95,8 @@ AUTO_FORCE_MIN = 1.12    # y un pico de fuerza vertical >= 112 % del peso corpor
 AUTO_FORCE_WINDOW_S = 0.4  # ...en los últimos 0,4 s (el rebote tras el swing no lo tiene)
 
 DEFAULT_SETTINGS = {"handed": "right", "flip_x": False, "flip_y": False,
-                    "audio": False, "video": False, "audio_device": None, "camera": 0}
+                    "audio": False, "video": False, "audio_device": None, "camera": 0,
+                    "body_weight_kg": None}   # fijado por el asistente; referencia del % de fuerza
 
 
 # --------------------------------------------------------------------------- #
@@ -294,6 +295,12 @@ class SimBoard:
         self.bw = bw_kg
         self.t0 = time.perf_counter()
         self._next = self.t0
+        self.present = True   # False = nadie sobre la tabla (para probar el asistente)
+
+    def set_present(self, present: bool) -> None:
+        if present and not self.present:
+            self.t0 = time.perf_counter()   # al subirse empieza en el address (quieto 2,5 s)
+        self.present = present
 
     def _interp(self, u: float) -> tuple[float, float, float]:
         keys = self.KEYS
@@ -311,6 +318,8 @@ class SimBoard:
         if delay > 0:
             time.sleep(delay)
         t = time.perf_counter()
+        if not self.present:
+            return t, {k: max(0.0, random.gauss(0, 0.05)) for k in ("TR", "BR", "TL", "BL")}
         trail, force, y = self._interp((t - self.t0) % self.PERIOD)
         total = force / 100.0 * self.bw
         right = total * trail / 100.0
@@ -454,8 +463,16 @@ class BoardReader(threading.Thread):
     def retry_now(self) -> None:
         self._retry.set()
 
+    def set_sim_present(self, present: bool) -> bool:
+        sim = getattr(self, "_sim", None)
+        if sim is None:
+            return False
+        sim.set_present(present)
+        return True
+
     def _run_sim(self) -> None:
         sim = SimBoard()
+        self._sim = sim
         with self.lock:
             self.connected, self.error = True, None
         n, t_hz = 0, time.perf_counter()
@@ -632,8 +649,17 @@ def _kw(settings: dict) -> dict:
     return dict(handed=settings["handed"], flip_x=settings["flip_x"], flip_y=settings["flip_y"])
 
 
+def _settings_bw(settings: dict, bw: float | None) -> float | None:
+    """Peso corporal de referencia: el pedido, si no el fijado en los ajustes (asistente)."""
+    if bw:
+        return bw
+    v = settings.get("body_weight_kg")
+    return float(v) if v and v >= 20 else None
+
+
 def load_analysis(name: str, settings: dict, bw: float | None = None) -> SwingAnalysis:
     """Analiza un swing usando como marcas los eventos guardados (manual o audio)."""
+    bw = _settings_bw(settings, bw)
     cap = load_csv(swing_paths(name)["csv"])
     ev = load_meta(name).get("events") or {}
     t_top = ev.get("t_top") if ev.get("top_source") == "manual" else None
@@ -646,6 +672,7 @@ def run_analysis(name: str, settings: dict, bw: float | None = None, t_top: floa
     paths = swing_paths(name)
     if not paths["csv"].exists():
         raise FileNotFoundError(f"No existe {paths['csv'].name}")
+    bw = _settings_bw(settings, bw)
     meta = load_meta(name)
     ev = {} if reset_events else dict(meta.get("events") or {})
     if t_top is not None:
@@ -699,8 +726,26 @@ def run_analysis(name: str, settings: dict, bw: float | None = None, t_top: floa
         "png": f"/out/{name}.png?v={int(paths['png'].stat().st_mtime)}",
         "samples": int(cap.t.size), "duration": round(float(cap.t[-1] - cap.t[0]), 2), "hz": round(cap.fs, 1),
         "media": {"audio": paths["wav"].exists(), "video": paths["frames"].exists()},
-        "reference": ref_block, "deltas": deltas,
+        "reference": ref_block, "deltas": deltas, "path": _path_summary(an),
     }
+
+
+def _path_summary(an: SwingAnalysis, step: int = 4) -> dict:
+    """Trazo del CoP (cm) del tramo de pie, diezmado, con las marcas de top e impacto."""
+    s, e = an.segment
+    t, x, y = [], [], []
+    for i in range(s, e, step):
+        xi, yi = float(an.cop_x_cm[i]), float(an.cop_y_cm[i])
+        if math.isnan(xi) or math.isnan(yi):
+            continue
+        t.append(round(float(an.t[i]), 3))
+        x.append(round(xi, 2))
+        y.append(round(yi, 2))
+    marks = {}
+    for key, i in (("top", an.i_top), ("impact", an.i_impact)):
+        if i is not None and not math.isnan(float(an.cop_x_cm[i])):
+            marks[key] = [round(float(an.cop_x_cm[i]), 2), round(float(an.cop_y_cm[i]), 2)]
+    return {"t": t, "x": x, "y": y, "marks": marks}
 
 
 def finalize_swing(name: str, t0: float, t_end: float, source: str, settings: dict,
@@ -810,6 +855,11 @@ class SettingsBody(BaseModel):
     video: bool = False
     audio_device: int | None = None
     camera: int = 0
+    body_weight_kg: float | None = None
+
+
+class SimPresentBody(BaseModel):
+    present: bool
 
 
 class AnalyzeBody(BaseModel):
@@ -947,6 +997,10 @@ def create_app(sim: bool = False) -> FastAPI:
     async def index():
         return FileResponse(STATIC_DIR / "index.html", headers={"Cache-Control": "no-store"})
 
+    @app.get("/manual")
+    async def manual():
+        return FileResponse(STATIC_DIR / "manual.html", headers={"Cache-Control": "no-store"})
+
     @app.websocket("/ws")
     async def ws_endpoint(websocket: WebSocket):
         await websocket.accept()
@@ -1014,13 +1068,21 @@ def create_app(sim: bool = False) -> FastAPI:
         if body.handed not in ("right", "left"):
             raise HTTPException(400, "handed debe ser right o left")
         with reader.lock:
+            bw = body.body_weight_kg if (body.body_weight_kg or 0) >= 20 else None
             reader.settings.update(handed=body.handed, flip_x=body.flip_x, flip_y=body.flip_y,
                                    audio=body.audio, video=body.video, audio_device=body.audio_device,
-                                   camera=body.camera)
+                                   camera=body.camera, body_weight_kg=bw)
             save_settings(reader.settings)
             snapshot = dict(reader.settings)
         await asyncio.to_thread(media_mgr.apply, snapshot)
         return {"status": full_status()}
+
+    @app.post("/api/sim/present")
+    async def api_sim_present(body: SimPresentBody):
+        """Solo en --sim: simula que alguien se sube (true) o se baja (false) de la tabla."""
+        if not reader.sim or not reader.set_sim_present(body.present):
+            raise HTTPException(409, "Solo disponible con la tabla simulada (--sim)")
+        return {"present": body.present}
 
     @app.get("/api/camera/snapshot.jpg")
     async def api_camera_snapshot():

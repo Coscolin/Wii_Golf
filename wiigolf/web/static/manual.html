@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wii Golf · Manual de usuario</title>
+<style>
+  :root{--bg:#0f1318;--card:#171c23;--line:#222a33;--text:#e6edf3;--muted:#9aa4b2;--accent:#50c8ff;--ok:#3ddc97;--bad:#ff6b6b;--warn:#ffd166}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,"Segoe UI",Roboto,sans-serif}
+  header{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+  header h1{font-size:18px;margin:0}
+  a{color:var(--accent)}
+  a.btn{background:#232b35;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:5px 10px;font-size:13px;text-decoration:none}
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:24px;max-width:1200px;margin:0 auto;padding:18px}
+  nav{position:sticky;top:60px;align-self:start;font-size:14px;max-height:calc(100vh - 80px);overflow:auto}
+  nav a{display:block;color:var(--muted);text-decoration:none;padding:3px 0}
+  nav a:hover{color:var(--text)} nav .sub{padding-left:14px;font-size:13px}
+  article{min-width:0}
+  h2{font-size:22px;margin:34px 0 10px;padding-top:8px;border-top:1px solid var(--line);scroll-margin-top:70px}
+  h3{font-size:17px;margin:22px 0 6px;scroll-margin-top:70px;color:var(--accent)}
+  p,li{color:#d6dde6}
+  code,kbd{background:#232b35;border-radius:5px;padding:1px 6px;font-size:14px}
+  .note{background:#1c2a36;border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0}
+  .warn{background:#3d3416;border-left:3px solid var(--warn);padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0}
+  td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-size:13px;text-transform:uppercase}
+  td:first-child{white-space:nowrap;font-weight:600}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr} nav{position:static;max-height:none}}
+</style>
+</head>
+<body>
+<header><h1>⛳ Wii Golf · Manual de usuario</h1><span style="flex:1"></span><a class="btn" href="/">← volver a la aplicación</a></header>
+<div class="wrap">
+<nav>
+  <a href="#que-es">Qué es Wii Golf</a>
+  <a href="#instalacion">Instalación y arranque</a>
+  <a class="sub" href="#windows">Windows</a><a class="sub" href="#macos">macOS</a><a class="sub" href="#tablet">Desde una tablet</a>
+  <a href="#tabla-panel">Conectar la tabla (Bluetooth)</a>
+  <a href="#asistente">Asistente de puesta en marcha</a>
+  <a class="sub" href="#wz-tara">Tara</a><a class="sub" href="#wz-peso">Peso corporal</a><a class="sub" href="#wz-ajustes">Ajustes</a>
+  <a href="#en-vivo">Pantalla principal</a>
+  <a class="sub" href="#reparto">Reparto LEAD / TRAIL</a><a class="sub" href="#colocacion">Cómo colocarte</a>
+  <a href="#practicar">Modo práctica</a>
+  <a href="#grabar">Grabar a mano</a>
+  <a href="#swings">Swings grabados</a>
+  <a href="#analisis">Análisis</a>
+  <a class="sub" href="#metricas">Las métricas</a><a class="sub" href="#figura">La figura</a><a class="sub" href="#eventos">Top e impacto</a>
+  <a href="#reproductor">Reproductor a cámara lenta</a>
+  <a href="#referencia">Swing de referencia</a>
+  <a href="#microfono">Micrófono y cámara</a>
+  <a href="#exportar">Exportar e importar</a>
+  <a href="#ayuda">Ayuda contextual</a>
+  <a href="#archivos">Dónde están los datos</a>
+  <a href="#problemas">Problemas frecuentes</a>
+</nav>
+<article>
+
+<h2 id="que-es">Qué es Wii Golf</h2>
+<p>Wii Golf convierte una <b>Wii Balance Board</b> en una plataforma de presión para el swing de golf. La tabla tiene cuatro células de carga (una en cada esquina) que miden a ~100 veces por segundo cuánto peso hay en cada una. Con eso el programa calcula:</p>
+<ul>
+  <li>el <b>centro de presión (CoP)</b>: el punto de la tabla donde se concentra tu peso, dibujado en vivo y con estela;</li>
+  <li>el <b>reparto entre el pie trasero (trail) y el delantero (lead)</b>, en %;</li>
+  <li>la <b>fuerza vertical</b> contra el suelo, en % de tu peso corporal: el «empuje» del downswing.</li>
+</ul>
+<p>Cada swing se guarda y se analiza automáticamente (top del backswing, impacto, pico de fuerza, transferencia de peso), y puede grabarse con <b>audio</b> (para detectar el golpe a la bola) y <b>vídeo</b> (para verlo a cámara lenta con el trazo superpuesto). Un swing puede fijarse como <b>referencia</b> para comparar los siguientes.</p>
+<div class="note">La tabla solo mide fuerza vertical con cuatro células: da la transferencia de peso y el trazo del CoP con buena fidelidad, pero no el mapa de presión de cada pie ni fuerzas horizontales.</div>
+
+<h2 id="instalacion">Instalación y arranque</h2>
+<p>Las descargas listas para usar están en <a href="https://github.com/Coscolin/Wii_Golf/releases/latest" target="_blank">github.com/Coscolin/Wii_Golf/releases</a>. No hace falta instalar Python ni nada más.</p>
+<h3 id="windows">Windows</h3>
+<ol>
+  <li>Descomprime <code>WiiGolf-win64.zip</code> y haz doble clic en <code>WiiGolf.exe</code>. La primera vez SmartScreen avisará (el programa no va firmado): <i>Más información → Ejecutar de todas formas</i>.</li>
+  <li>Se abre una ventana negra (el servidor: déjala abierta) y el navegador en <code>http://localhost:8000</code>. Si Windows pregunta por el firewall, permite el acceso (hace falta para verlo desde una tablet).</li>
+</ol>
+<h3 id="macos">macOS</h3>
+<ol>
+  <li>Descarga <code>WiiGolf-macos-arm64.zip</code> (Mac con chip Apple) o <code>WiiGolf-macos-x86_64.zip</code> (Mac Intel) y descomprímelo.</li>
+  <li>Quita la cuarentena de la descarga: en Terminal, <code>xattr -dr com.apple.quarantine ~/Downloads/WiiGolf</code> (o abre <i>Wii Golf.command</i> y, cuando lo bloquee, <i>Ajustes del Sistema → Privacidad y seguridad → Abrir de todos modos</i>).</li>
+  <li>Doble clic en <code>Wii Golf.command</code>: abre Terminal con el servidor y el navegador. Acepta los permisos de Bluetooth, micrófono y cámara.</li>
+</ol>
+<p>El archivo <code>LEEME_MAC.txt</code> del zip tiene el detalle, incluido cómo resolver el emparejado si falla.</p>
+<h3 id="tablet">Desde una tablet o móvil</h3>
+<p>La ventana del servidor muestra una dirección del tipo <code>http://192.168.1.20:8000</code>: ábrela en cualquier dispositivo de la misma WiFi para tener la pantalla al lado de la tabla.</p>
+
+<h2 id="tabla-panel">Conectar la tabla (Bluetooth)</h2>
+<p>La tabla se comunica por Bluetooth clásico. <b>Solo la primera vez en cada equipo</b> hay que emparejarla, y no se puede hacer desde los ajustes del sistema: la tabla exige un PIN de 6 bytes binarios (la dirección Bluetooth del equipo al revés) que ningún cuadro de diálogo permite escribir. Por eso el programa lo hace por ti:</p>
+<ol>
+  <li>Pon pilas, abre el compartimento y pulsa el <b>botón rojo SYNC</b>: el LED parpadea unos 20 s.</li>
+  <li>En la aplicación, botón <b>Tabla / Bluetooth</b> (arriba a la derecha; el panel se despliega solo si la tabla no está conectada) → <b>Emparejar</b>.</li>
+  <li>Espera el mensaje de conectada. En macOS el emparejado reintenta hasta 6 veces y puede tardar un par de minutos.</li>
+</ol>
+<p>A partir de entonces basta con <b>encender la tabla</b> con su botón de delante: el servidor la detecta solo en unos segundos (reintenta cada 3 s). <b>Reconectar</b> fuerza un intento inmediato; <b>olvidar</b> borra el emparejado para empezar de cero.</p>
+<div class="warn">macOS: si el emparejado termina con «0x1f (os/kern) default set», reinicia el Bluetooth (Terminal: <code>sudo pkill bluetoothd</code>) o el Mac, elimina la tabla de Ajustes → Bluetooth si aparece, y repite con SYNC. Como plan B está <code>WiimotePair.app</code> (descarga «WiimotePair-BalanceBoard»).</div>
+
+<h2 id="asistente">Asistente de puesta en marcha</h2>
+<p>Al abrir la aplicación aparece el asistente, que en cuatro pasos deja todo listo. Se supera solo, sin pulsar nada, y puedes repetirlo con el botón <b>Asistente</b> (recomendable cada vez que arrancas, porque la tara se pierde al cerrar el programa).</p>
+<ol>
+  <li><b>Tabla</b>: espera a que esté conectada.</li>
+  <li id="wz-tara"><b>Tara a 0 kg</b>: con la tabla vacía (si usas una alfombra de golf encima, déjala puesta). Si detecta peso, pide bajarse; cuando lleva 2 segundos vacía, fija el cero de las cuatro células.</li>
+  <li id="wz-peso"><b>Tu peso</b>: súbete con la ropa y el palo con que vayas a jugar y quédate quieto 2 segundos. Ese peso es el 100 % de la fuerza vertical y se guarda en los ajustes, de modo que todos los análisis (también los de días anteriores al reanalizarlos) usan la misma referencia. Si detecta movimiento, vuelve a contar.</li>
+  <li id="wz-ajustes"><b>Ajustes</b>: diestro/zurdo, inversión de ejes, micrófono y cámara (ver más abajo). <b>Terminar y empezar</b>.</li>
+</ol>
+
+<h2 id="en-vivo">Pantalla principal</h2>
+<p>A la izquierda, la <b>vista en vivo</b>: la tabla vista desde arriba, con el punto del centro de presión y su estela de 1,5 s. El punto crece y se pone naranja cuando la fuerza supera el 115 % de tu peso. Si la cámara está activa, su imagen se ve atenuada de fondo para encuadrar.</p>
+<p>A la derecha: el <b>peso sobre la tabla</b>, la <b>fuerza</b> en % del peso corporal, el <b>peso corporal</b> (fijado por el asistente o estimado), la barra de reparto, el botón <b>Practicar</b>, la tara, la grabación manual y los ajustes.</p>
+<h3 id="reparto">Reparto LEAD / TRAIL</h3>
+<p><b>TRAIL</b> es el pie trasero (el derecho para un diestro) y <b>LEAD</b> el delantero. La barra muestra el porcentaje del peso que soporta el trail; la línea discontinua marca el 50 %. En un swing típico: address ~50 %, top 60-80 % trail, impacto 70-90 % lead.</p>
+<h3 id="colocacion">Cómo colocarte</h3>
+<ul>
+  <li>Pies <b>a lo ancho</b> de la tabla, uno en cada mitad, como en el swing. La tabla mide 51 cm: cabe un stance de hierros; para driver hace falta un tablero encima o una segunda tabla.</li>
+  <li>Comprueba la orientación: carga el pie derecho; si eres diestro debe subir TRAIL. Si sube LEAD, activa <b>invertir izq/der</b>. Si al ir a las puntas el punto baja hacia «talón», activa <b>invertir punta/talón</b>.</li>
+  <li>Tabla sobre suelo duro y plano (en moqueta las células leen mal), sin balancearla al subir.</li>
+</ul>
+
+<h2 id="practicar">Modo práctica (captura automática)</h2>
+<p>El botón <b>▶ Practicar</b> abre la pantalla completa: cámara de fondo (si está activa), la tabla con el punto, y arriba en grande el reparto <b>LEAD – TRAIL</b>; abajo, peso y fuerza. Funciona sin tocar el ordenador:</p>
+<ol>
+  <li><b>Súbete a la tabla</b>: al detectarte se arma la captura automática.</li>
+  <li><b>Céntrate</b>: aparece un recuadro de tolerancia en el centro; el estado te dice hacia dónde corregir. Cuando el punto lleva un momento dentro, suena un pitido y el estado pasa a <b>¡Listo! Haz el swing</b>. Centrarse antes de empezar hace que el swing quede bien registrado (la tabla no se sale de rango y el address es comparable entre swings).</li>
+  <li><b>Haz el swing</b> con normalidad. El programa detecta el downswing (transferencia rápida al lead con pico de fuerza) y guarda desde 3 s antes hasta 1,5 s después, lo analiza y muestra unos segundos en la esquina el <b>trazo y las cifras clave</b> (con «▶ ver» se abre en el reproductor). Cada swing suma en el contador.</li>
+  <li><b>Al bajarte</b> de la tabla la captura se desarma y, si no vuelves en 8 s, la práctica se cierra sola y vuelves a la pantalla principal (también con <kbd>Esc</kbd> o «✕ salir»).</li>
+</ol>
+<div class="note">Entre swings puedes quedarte en la tabla o bajarte un momento a por otra bola: mientras vuelvas antes de 8 s la práctica sigue. Los pitidos se pueden apagar con la casilla «sonido».</div>
+
+<h2 id="grabar">Grabar a mano</h2>
+<p>Alternativa al modo práctica: escribe un nombre, pulsa <b>● Grabar</b>, haz lo que quieras (un ejercicio de transferencias, varios swings…) y pulsa <b>■ Detener y analizar</b>. Se guarda todo el tramo (con audio y vídeo si están activos) y se analiza como un solo swing: la detección buscará el downswing más marcado. Para swings sueltos es mejor «Practicar».</p>
+
+<h2 id="swings">Swings grabados</h2>
+<p>La lista muestra cada grabación con la fecha, la duración y unos iconos: 🎥 tiene vídeo, 🎤 tiene audio, «impacto audio» si el golpe se detectó en el audio, ★ si es la referencia. Botones: <b>▶</b> reproducir, <b>Analizar</b> de nuevo con los ajustes actuales, <b>☆</b> fijar como referencia, <b>⤓</b> exportar a zip, <b>✕</b> borrar.</p>
+
+<h2 id="analisis">Análisis</h2>
+<p>Al guardar (o al pulsar <b>Analizar</b>) se calculan las métricas y la figura del swing. Si hay un swing de referencia, cada métrica se muestra junto a la suya y con la diferencia (Δ).</p>
+<h3 id="metricas">Las métricas</h3>
+<table>
+<tr><th>Métrica</th><th>Qué significa</th><th>Orientación</th></tr>
+<tr><td>Peso corporal (kg)</td><td>Referencia del 100 % de fuerza: el fijado en el asistente o, si no, la mediana del peso mientras estás quieto en la grabación.</td><td>—</td></tr>
+<tr><td>% trail en el top</td><td>Peso sobre el pie trasero al final del backswing.</td><td>60-80 % con driver; menos con hierros cortos.</td></tr>
+<tr><td>% lead en el impacto</td><td>Peso sobre el pie delantero en el impacto.</td><td>Los buenos jugadores llegan al 70-90 %.</td></tr>
+<tr><td>Pico de fuerza (% peso)</td><td>Máxima fuerza vertical en el downswing, el «empuje» que genera velocidad.</td><td>120-190 % en swings enérgicos; ~105 % en swings lentos o ejercicios.</td></tr>
+<tr><td>Top → impacto (ms)</td><td>Duración del downswing.</td><td>230-320 ms. Si sale mucho mayor, revisa la marca de impacto.</td></tr>
+<tr><td>Fuerza en impacto (% peso)</td><td>Fuerza vertical en el instante del impacto (suele estar ya bajando desde el pico).</td><td>—</td></tr>
+<tr><td>Top / Impacto / Pico de fuerza (s)</td><td>Instantes dentro de la grabación.</td><td>—</td></tr>
+<tr><td>% trail mín / máx</td><td>Extremos del reparto en toda la grabación.</td><td>—</td></tr>
+<tr><td>Rango lateral CoP (cm)</td><td>Cuánto se desplaza el centro de presión de un pie a otro.</td><td>Poco = swing muy rotacional o poca transferencia; mucho = muy lateral (<i>sway</i>).</td></tr>
+<tr><td>Rango punta-talón (cm)</td><td>Desplazamiento hacia puntas o talones.</td><td>—</td></tr>
+<tr><td>Longitud del trazo (cm)</td><td>Recorrido total del CoP.</td><td>Más largo = más movimiento (o más tiempo grabado).</td></tr>
+</table>
+<h3 id="figura">La figura</h3>
+<p>Izquierda: el trazo del centro de presión sobre la tabla, coloreado por tiempo, con el address (círculo verde), el top (triángulo naranja) y el impacto (estrella roja); en gris, la referencia. Derecha arriba: el % de peso en el trail a lo largo del tiempo. Derecha abajo: la fuerza vertical en % del peso. Las líneas de puntos marcan el top y el impacto; la zona gris es el tramo en que estás sobre la tabla.</p>
+<h3 id="eventos">Cómo se detectan el top y el impacto</h3>
+<ul>
+  <li><b>Top</b>: el máximo de carga en el trail justo antes del desplazamiento lateral más rápido hacia el lead (el downswing).</li>
+  <li><b>Impacto</b>: si hay audio, el <b>golpe a la bola</b> (un transitorio muy fuerte y corto cerca del top) — es la marca precisa. Si no, se <b>estima</b> como el pico de fuerza vertical tras el top, que ocurre unos milisegundos antes del impacto real. También puedes <b>marcarlo a mano</b> en el reproductor viendo el vídeo; esa marca se guarda.</li>
+</ul>
+
+<h2 id="reproductor">Reproductor a cámara lenta</h2>
+<p>Con <b>▶</b> en la lista o en el análisis se abre a pantalla completa: el vídeo fotograma a fotograma (si lo hay) con el <b>trazo del CoP</b> en el recuadro de la tabla, el <b>reparto LEAD/TRAIL</b> arriba y la barra de tiempo con las marcas de top, impacto y golpe. Controles: reproducir/pausar (<kbd>espacio</kbd>), velocidad de 1× a 1/20×, fotograma anterior/siguiente (<kbd>←</kbd> <kbd>→</kbd>), línea de tiempo, <b>ir al top / impacto</b>, y <b>marcar top / impacto aquí</b> para corregir las marcas a mano (<b>restablecer</b> vuelve al automático). <kbd>Esc</kbd> cierra. Si el swing tiene referencia, su trazo y su punto se dibujan en gris alineados en el impacto.</p>
+
+<h2 id="referencia">Swing de referencia</h2>
+<p>Marca con <b>☆</b> un swing modelo (el tuyo bueno, o el de un profesor). Desde ese momento: los análisis muestran sus métricas al lado con la diferencia Δ (verde = mayor, rojo = menor), la figura lo superpone en gris alineado en el impacto, y el reproductor dibuja su trazo y su punto a la vez que el del swing actual. «quitar» lo desactiva.</p>
+
+<h2 id="microfono">Micrófono y cámara</h2>
+<p><b>Micrófono</b>: graba el audio sincronizado con la tabla (buffer de 20 s) y busca el golpe a la bola para marcar el impacto con precisión. Comprueba con el medidor que el nivel se mueve; si no, elige otro dispositivo o revisa los permisos. Con swings en vacío (sin bola) no hay golpe y se usa la estimación.</p>
+<p><b>Cámara</b>: graba fotogramas con su instante exacto (no un vídeo comprimido) para reproducirlos a cámara lenta con el trazo superpuesto y sincronía perfecta. «ver de fondo» la muestra atenuada tras la tabla para encuadrar. Con poca luz la cámara baja a ~10 fps: conviene buena iluminación. Índice 0 = cámara por defecto.</p>
+
+<h2 id="exportar">Exportar e importar</h2>
+<p><b>⤓ Exportar</b> descarga <code>&lt;nombre&gt;.wiigolf.zip</code> con todo el swing (datos de la tabla, meta y marcas, audio, vídeo y figura), para enviarlo o guardarlo. <b>Importar zip</b> lo carga en otro equipo (si el nombre ya existe, se renombra) y lo analiza con los ajustes de ese equipo.</p>
+
+<h2 id="ayuda">Ayuda contextual</h2>
+<p>El botón <b>? Ayuda</b> pone la aplicación en modo ayuda: todo lo que tiene explicación queda resaltado con un borde discontinuo y, al pulsarlo, aparece una nota con qué es o qué significa ese valor y un enlace a este manual. <kbd>Esc</kbd> o el propio botón salen del modo ayuda.</p>
+
+<h2 id="archivos">Dónde están los datos</h2>
+<p>En la carpeta <code>data</code> junto al programa: por cada swing <code>&lt;n&gt;.csv</code> (tabla), <code>&lt;n&gt;.json</code> (meta y marcas), <code>&lt;n&gt;.wav</code> (audio) y <code>&lt;n&gt;.frames.zip</code> (vídeo); las figuras en <code>out</code>; los ajustes en <code>data/settings.json</code> y la referencia en <code>data/reference.json</code>.</p>
+
+<h2 id="problemas">Problemas frecuentes</h2>
+<table>
+<tr><th>Síntoma</th><th>Qué hacer</th></tr>
+<tr><td>«Tabla no conectada»</td><td>Enciéndela con el botón de delante y espera 5 s. Si es la primera vez en este equipo, emparéjala (SYNC + Emparejar). Pilas nuevas si el LED no enciende.</td></tr>
+<tr><td>El emparejado falla en macOS</td><td>Ver <a href="#tabla-panel">Conectar la tabla</a>: reiniciar bluetoothd o el Mac, olvidar la tabla en Ajustes → Bluetooth, repetir con SYNC; plan B WiimotePair.app.</td></tr>
+<tr><td>Trail y lead salen al revés</td><td>Activa «invertir izq/der» (o gírate 180° sobre la tabla).</td></tr>
+<tr><td>El peso oscila o no llega a 0</td><td>Repite el asistente (tara con la tabla vacía). Tabla sobre suelo duro y plano.</td></tr>
+<tr><td>No se captura ningún swing en práctica</td><td>Hace falta una transferencia rápida al lead <i>y</i> un pico de fuerza ≥ 112 % del peso: swings muy lentos no disparan. Usa «Grabar» a mano para ejercicios.</td></tr>
+<tr><td>El impacto está mal marcado</td><td>Activa el micrófono (golpe a la bola) o márcalo a mano en el reproductor.</td></tr>
+<tr><td>La cámara va a 10 fps</td><td>Más luz: con poca luz la exposición larga baja la cadencia.</td></tr>
+<tr><td>No se ve desde la tablet</td><td>Misma WiFi, y permitir el programa en el firewall (Windows) al arrancarlo.</td></tr>
+<tr><td>Diagnóstico</td><td>En una ventana de comandos, dentro de la carpeta del programa: <code>WiiGolf --check</code> (Windows) o <code>./WiiGolf --check</code> (Mac) dice qué detecta: tabla, Bluetooth, micrófono y cámara.</td></tr>
+</table>
+<p class="muted" style="color:var(--muted);margin-top:30px">Wii Golf es software libre: <a href="https://github.com/Coscolin/Wii_Golf" target="_blank">github.com/Coscolin/Wii_Golf</a>.</p>
+</article>
+</div>
+</body>
+</html>
