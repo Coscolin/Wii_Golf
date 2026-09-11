@@ -57,7 +57,7 @@ elif sys.platform == "darwin":
 else:
     bt = None
 from ..analysis import HALF_X_CM, HALF_Y_CM, SwingAnalysis, analyze, load_csv, plot
-from ..balance_board import MIN_LOAD_KG, SENSORS, BalanceBoard
+from ..balance_board import BALANCE_BOARD_PID, MIN_LOAD_KG, SENSORS, BalanceBoard
 
 
 
@@ -436,6 +436,7 @@ class BoardReader(threading.Thread):
 
     # ---- bucle principal ------------------------------------------------ #
     def run(self) -> None:
+        last_err = None
         while not self.stop_event.is_set():
             try:
                 self._run_sim() if self.sim else self._run_real()
@@ -444,6 +445,9 @@ class BoardReader(threading.Thread):
                     self.connected = False
                     self.hz = 0.0
                     self.error = str(exc)
+                if str(exc) != last_err:  # al terminal, para poder enviar el motivo
+                    last_err = str(exc)
+                    print(f"  [tabla] {exc}", flush=True)
                 self._retry.wait(3.0)
                 self._retry.clear()
 
@@ -469,11 +473,23 @@ class BoardReader(threading.Thread):
         if not boards:
             raise RuntimeError("Tabla no encontrada. Pulsa su botón de encendido; si no aparece, "
                                "usa 'Emparejar' en el panel de la tabla.")
-        board = BalanceBoard(path=boards[0]["path"])
-        board.open()
+        # Si hay varias entradas (macOS lista una por colección HID, y puede añadir
+        # un mando sintético sin número de serie), la tabla física es la que tiene
+        # PID 0x0306 y número de serie (= su dirección Bluetooth).
+        boards.sort(key=lambda d: (d.get("product_id") != BALANCE_BOARD_PID,
+                                   not str(d.get("serial_number") or "").strip()))
+        chosen = boards[0]
+        board = BalanceBoard(path=chosen["path"])
+        try:
+            board.open()
+        except Exception as exc:
+            raise RuntimeError(f"No se pudo abrir la tabla ({exc}). Si acabas de emparejarla, espera unos "
+                               "segundos; si sigue, apágala y enciéndela con su botón.") from exc
         try:
             board.init()
             board.calibrate()
+            print(f"  [tabla] conectada: {chosen.get('product_string') or 'HID'} "
+                  f"serie={chosen.get('serial_number') or '?'} ({len(boards)} entradas HID)", flush=True)
             with self.lock:
                 self.connected, self.error = True, None
             last = time.perf_counter()
