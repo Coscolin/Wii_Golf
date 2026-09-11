@@ -1,0 +1,1090 @@
++ git clone https://github.com/GabrielLascoskiFerraz/WiimotePairPlus.git WiimotePair
+Cloning into 'WiimotePair'...
++ cd WiimotePair
++ git checkout --quiet 8e7f9b12db2da520e4f868305c4861cdf58fa15f
++ grep -n 'Nintendo RVL-CNT-01' WiimotePair/ViewController.m
+835:    if (![device.name containsString:@"Nintendo RVL-CNT-01"]) {
++ sed -i '' 's/containsString:@"Nintendo RVL-CNT-01"/containsString:@"Nintendo RVL-"/' WiimotePair/ViewController.m
++ grep -n 'Nintendo RVL-' WiimotePair/ViewController.m
+835:    if (![device.name containsString:@"Nintendo RVL-"]) {
++ xcodebuild -version
+Xcode 16.4
+Build version 16F6
++ xcodebuild -project WiimotePair.xcodeproj -target WiimotePair -configuration Release SYMROOT=/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build CODE_SIGNING_ALLOWED=NO build
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project WiimotePair.xcodeproj -target WiimotePair -configuration Release SYMROOT=/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    SYMROOT = /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'WiimotePair' in project 'WiimotePair' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x objective-c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/ibtool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch x86_64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x objective-c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch x86_64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x c -c /dev/null
+
+Build description signature: c0c632c6919688fea18b47df8bbe854f
+Build description path: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/XCBuildData/c0c632c6919688fea18b47df8bbe854f.xcbuilddata
+CreateBuildDirectory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair.xcodeproj
+    builtin-create-build-directory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build
+
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -o /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair-cd40f95b83a1b2a9bdbd9a032d9580a3-VFS/all-product-headers.yaml
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair.xcodeproj
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair-cd40f95b83a1b2a9bdbd9a032d9580a3-VFS/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair.xcodeproj
+    builtin-create-build-directory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release
+
+CreateBuildDirectory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair.xcodeproj
+    builtin-create-build-directory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/empty-WiimotePair.plist (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/empty-WiimotePair.plist
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.DependencyStaticMetadataFileList (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.DependencyMetadataFileList (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-project-headers.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-own-target-headers.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-generated-files.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-target-headers.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-non-framework-target-headers.hmap (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+-target x86_64-apple-macos12.0 '-std=gnu17' -fobjc-arc -fobjc-weak -fmodules -gmodules -fpascal-strings -Os -fno-common '-DNS_BLOCK_ASSERTIONS=1' '-DOBJC_OLD_DISPATCH_PROTOTYPES=0' -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fasm-blocks -g '-fvisibility=hidden' -iquote /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-generated-files.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-own-target-headers.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-target-headers.hmap -iquote /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-project-headers.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/include -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources-normal/x86_64 -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/x86_64 -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/WiimotePair.LinkFileList (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/WiimotePair.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+-target arm64-apple-macos12.0 '-std=gnu17' -fobjc-arc -fobjc-weak -fmodules -gmodules -fpascal-strings -Os -fno-common '-DNS_BLOCK_ASSERTIONS=1' '-DOBJC_OLD_DISPATCH_PROTOTYPES=0' -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -g '-fvisibility=hidden' -iquote /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-generated-files.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-own-target-headers.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-all-target-headers.hmap -iquote /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/WiimotePair-project-headers.hmap -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/include -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources-normal/arm64 -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/arm64 -I/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release
+
+WriteAuxiliaryFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/WiimotePair.LinkFileList (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    write-file /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/WiimotePair.LinkFileList
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/unthinned (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /bin/mkdir -p /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Assets.xcassets (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Assets.xcassets --compile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist --app-icon AppIcon --accent-color AccentColor --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 12.0 --platform macosx --bundle-identifier org.dolphin-emu.WiimotePair --generate-objc-asset-symbols /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/DerivedSources/GeneratedAssetSymbols.h
+
+
+CpResource /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources/Credits.rtf /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Credits.rtf (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Credits.rtf /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources
+
+CompileStoryboard /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Base.lproj/Main.storyboard (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/ibtool --errors --warnings --notices --module WiimotePair --output-partial-info-plist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Base.lproj/Main-SBPartialInfo.plist --auto-activate-custom-fonts --target-device mac --minimum-deployment-target 12.0 --output-format human-readable-text /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Base.lproj/Main.storyboard --compilation-directory /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Base.lproj
+
+CompileAssetCatalogVariant thinned /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Assets.xcassets (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Assets.xcassets --compile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --enable-on-demand-resources NO --development-region en --target-device mac --minimum-deployment-target 12.0 --platform macosx
+2026-09-11 20:08:03.885 ibtoold[1555:8426] NSFileCoordinator is doing nothing.
+/* com.apple.actool.compilation-results */
+/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist_thinned
+/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned/AppIcon.icns
+/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned/Assets.car
+
+
+LinkStoryboards (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/ibtool --errors --warnings --notices --module WiimotePair --target-device mac --minimum-deployment-target 12.0 --output-format human-readable-text --link /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Base.lproj/Main.storyboardc
+
+LinkAssetCatalog /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/Assets.xcassets (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-linkAssetCatalog --thinned /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources --plist-output /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources/AppIcon.icns (in target 'WiimotePair' from project 'WiimotePair')
+note: Emplaced /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Resources/Assets.car (in target 'WiimotePair' from project 'WiimotePair')
+
+ProcessInfoPlistFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Info.plist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/empty-WiimotePair.plist (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-infoPlistUtility /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/empty-WiimotePair.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/PkgInfo -expandbuildsettings -platform macosx -additionalcontentfile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/assetcatalog_generated_info.plist -additionalcontentfile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Base.lproj/Main-SBPartialInfo.plist -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/Info.plist
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.o
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.o
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.o
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.o
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability_internal-36J8ZF8XSV8R7N7R7B5HBPBTK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability_internal-36J8ZF8XSV8R7N7R7B5HBPBTK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_fenv-6QUOFZCO493G55V3RIXJE3SOQ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_fenv-6QUOFZCO493G55V3RIXJE3SOQ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdarg-4OHIF7CCD3HQY3JQRD44LDDN.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdarg-4OHIF7CCD3HQY3JQRD44LDDN.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrcheck-DSKHWKH24UJOX00PTENYSQ7DL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrcheck-DSKHWKH24UJOX00PTENYSQ7DL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stddef-7MZOHKWXI8K1C6PEU0FHW58NK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stddef-7MZOHKWXI8K1C6PEU0FHW58NK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability-6UN9GZJKBRHAJ1VQ1K0PX7KRH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability-6UN9GZJKBRHAJ1VQ1K0PX7KRH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_float-DBACNOHPZNE9JFZXXC6K0ILKW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_float-DBACNOHPZNE9JFZXXC6K0ILKW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/TargetConditionals-B00F2R2E2HF0JQWVA646PEQWJ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/TargetConditionals-B00F2R2E2HF0JQWVA646PEQWJ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DarwinFoundation-81O381KDICOXLO82L476UA1W.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DarwinFoundation-81O381KDICOXLO82L476UA1W.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_float-8KQ4H1WECBQMBHIU9QIRJAUWD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_float-8KQ4H1WECBQMBHIU9QIRJAUWD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AvailabilityMacros-48H2CV0M3FPP3X6LRQRJJMCR0.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AvailabilityMacros-48H2CV0M3FPP3X6LRQRJJMCR0.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_math-5C9J0PKNWZKMKCDHICW8QDMXX.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_math-5C9J0PKNWZKMKCDHICW8QDMXX.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_errno-7BGMBA50PUWWHZ7KPOUW6JN22.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_errno-7BGMBA50PUWWHZ7KPOUW6JN22.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_setjmp-1OX0XXQ903EQA5SMITRFM63CH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_setjmp-1OX0XXQ903EQA5SMITRFM63CH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/runetype-2BIULRF6FVBGZF054X3N30IHY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/runetype-2BIULRF6FVBGZF054X3N30IHY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_useconds_t-1S31RRCXG1YAWLDXLBOJKI49L.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_useconds_t-1S31RRCXG1YAWLDXLBOJKI49L.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_sys_select-1GKX8STXOT6RRSHGAVFZMNM07.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_sys_select-1GKX8STXOT6RRSHGAVFZMNM07.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_strings-ER2D89N3QPNW4USVBKUC5QRGH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_strings-ER2D89N3QPNW4USVBKUC5QRGH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_ctype-CQKOWFF22WXHSZ7PWDDTXZPSE.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_ctype-CQKOWFF22WXHSZ7PWDDTXZPSE.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/alloca-AUALOE2MBS6UQ2BRC6DLK4253.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/alloca-AUALOE2MBS6UQ2BRC6DLK4253.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_complex-4PL183P87NPR6DEUQHO0SLE3D.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_complex-4PL183P87NPR6DEUQHO0SLE3D.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_limits-ATR99SO727CKJHTJUBP22NOE8.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_limits-ATR99SO727CKJHTJUBP22NOE8.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/__wctype-DD5WVSMS2JRGKJ0CQE1NFS7JM.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/__wctype-DD5WVSMS2JRGKJ0CQE1NFS7JM.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_tgmath-8SS3Q3K5VJC8B1NEZJ5YOK1ZB.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_tgmath-8SS3Q3K5VJC8B1NEZJ5YOK1ZB.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_locale-GV4KI7Q2HRZ5QRZ2PN3NGT20.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_locale-GV4KI7Q2HRZ5QRZ2PN3NGT20.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_limits-45Q6UXHN087LB10KKJOZMDLZ6.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_limits-45Q6UXHN087LB10KKJOZMDLZ6.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_tgmath-AGI1EZNEU68ZGV69I5PJYEBYH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_tgmath-AGI1EZNEU68ZGV69I5PJYEBYH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/xlocale-F3SVPFCWQ8R774KFGUYDPRV8R.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/xlocale-F3SVPFCWQ8R774KFGUYDPRV8R.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/mach-3MKQJ4ITIMVIV4UFQGLY1733T.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/mach-3MKQJ4ITIMVIV4UFQGLY1733T.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_iso646-7UYWC52G9AOSOM2KJULWLDWHH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_iso646-7UYWC52G9AOSOM2KJULWLDWHH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrauth-2DAEGKDT9D5UELNQBTGJOZXBS.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrauth-2DAEGKDT9D5UELNQBTGJOZXBS.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdbool-8JEIPMIA4TN6GLMPUJXFBW77J.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdbool-8JEIPMIA4TN6GLMPUJXFBW77J.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wctype-8BIY6IHI6AGXB8B49VFYTMRDY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wctype-8BIY6IHI6AGXB8B49VFYTMRDY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_time-CHSTH4JJV7FN1KJDONB9OW950.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_time-CHSTH4JJV7FN1KJDONB9OW950.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdint-9GAJZK8PJNDZ0GK1IMZVP65EA.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdint-9GAJZK8PJNDZ0GK1IMZVP65EA.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_assert-D7YIKJ85OAK074QQUZDI2ZBB7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_assert-D7YIKJ85OAK074QQUZDI2ZBB7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/uuid-893ON5UAJGI8J5HN7YDBIVF4X.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/uuid-893ON5UAJGI8J5HN7YDBIVF4X.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdint-9BLP4QK618U6MTHUU9TM00RTF.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdint-9BLP4QK618U6MTHUU9TM00RTF.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/netinet_in-EBGARGBHTS98BB3BIBD4KMCC2.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/netinet_in-EBGARGBHTS98BB3BIBD4KMCC2.scan
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.o
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdatomic-5Z5MMP2IPNAGTQ6KLHBWONQMX.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdatomic-5Z5MMP2IPNAGTQ6KLHBWONQMX.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_inttypes-13F19DB8BCOR5I9HKFGKC6O31.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_inttypes-13F19DB8BCOR5I9HKFGKC6O31.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/OpenGL-8UH3DI84HI2HMGK6A82FKWXKA.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/OpenGL-8UH3DI84HI2HMGK6A82FKWXKA.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_types-72IQOOULG6TPC6ZTT2ADRY8QO.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_types-72IQOOULG6TPC6ZTT2ADRY8QO.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_fenv-8ISVP967KGHXQFXZKPGV0L6B4.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_fenv-8ISVP967KGHXQFXZKPGV0L6B4.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/TargetConditionals-CN2WK6SS1WEEQB1H576HR3MN.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/TargetConditionals-CN2WK6SS1WEEQB1H576HR3MN.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_signal-8R42NE1Q1QP6GYGD0A3VFRB9A.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_signal-8R42NE1Q1QP6GYGD0A3VFRB9A.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_string-ZFUPBV4GJRQRMHHNBRWJHYY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_string-ZFUPBV4GJRQRMHHNBRWJHYY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdio-3BDM4DNFCY4XXYWVI3CELX66E.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdio-3BDM4DNFCY4XXYWVI3CELX66E.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrcheck-7MFMMLPR9NE9DXR59ZP2WZQ45.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrcheck-7MFMMLPR9NE9DXR59ZP2WZQ45.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stddef-B9YD5PT268D9CZCR01ZNV6ZUG.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stddef-B9YD5PT268D9CZCR01ZNV6ZUG.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_resource-CM6YVBG8EM8NOY11C0F95GR4I.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_resource-CM6YVBG8EM8NOY11C0F95GR4I.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_time-1S7KE2JG2RPVIAM7D8SBQ2D0I.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_time-1S7KE2JG2RPVIAM7D8SBQ2D0I.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrauth-1OY2WD2GBUF4ZDIOSXPEBK1AH.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ptrauth-1OY2WD2GBUF4ZDIOSXPEBK1AH.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_wait-4EB1FQ7NKRKR4D9AG27TOYXX2.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_wait-4EB1FQ7NKRKR4D9AG27TOYXX2.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/gethostuuid-2G4J2JLUGVTRE9JW4XFGH7W50.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/gethostuuid-2G4J2JLUGVTRE9JW4XFGH7W50.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/pthread-21Y8OEBU2JZM7TV4HHUYXJ40J.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/pthread-21Y8OEBU2JZM7TV4HHUYXJ40J.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wchar-D80PYT716BW0LY8F5HVVJXXBD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wchar-D80PYT716BW0LY8F5HVVJXXBD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdlib-4X361FBN4W47TAOW7OMBP0YNT.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdlib-4X361FBN4W47TAOW7OMBP0YNT.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdbool-2F60UUARZSB47XRPWA1MTY9QL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdbool-2F60UUARZSB47XRPWA1MTY9QL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdarg-5DKA9ESHX4WKVRZM1C6CWTHK7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdarg-5DKA9ESHX4WKVRZM1C6CWTHK7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_select-10STXL2XDSPWLMTOK43N33NY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_select-10STXL2XDSPWLMTOK43N33NY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_intrinsics-1Q4OI2YI83K4ENHPHSXB0OQKV.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_intrinsics-1Q4OI2YI83K4ENHPHSXB0OQKV.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability_internal-8U2ECHVUXAG8O35NZAOBPR2LL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability_internal-8U2ECHVUXAG8O35NZAOBPR2LL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/unistd-9PM54RM47JQNYPUYYROMG5WC7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/unistd-9PM54RM47JQNYPUYYROMG5WC7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability-43L8W9002URWME5ZBO72KFCNG.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_availability-43L8W9002URWME5ZBO72KFCNG.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_inttypes-4EEZWB341AKSVOYJUNVPUWJZA.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_inttypes-4EEZWB341AKSVOYJUNVPUWJZA.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DarwinFoundation-CRAK8YSFE3CGOWTPYWAJ5G3F9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DarwinFoundation-CRAK8YSFE3CGOWTPYWAJ5G3F9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AvailabilityMacros-C2QC15XXHRYZAVBUK1RKX0FLF.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AvailabilityMacros-C2QC15XXHRYZAVBUK1RKX0FLF.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/nl_types-6OU84C6U5JSYCYVWDRPHOH19V.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/nl_types-6OU84C6U5JSYCYVWDRPHOH19V.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_assert-9Z2ZGBZJNPKP0UPYYA6WRAZMW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_assert-9Z2ZGBZJNPKP0UPYYA6WRAZMW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_locale-7JUX2BU6QKQCSE1VA1STNEKGK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_locale-7JUX2BU6QKQCSE1VA1STNEKGK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Darwin-D6L70TXV8M90ASO36QKX4CF42.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Darwin-D6L70TXV8M90ASO36QKX4CF42.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/runetype-DELBN5H567HLAJ18F67TTFL9V.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/runetype-DELBN5H567HLAJ18F67TTFL9V.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/xlocale-4A421B5IXBW4C660PRAT7JUBW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/xlocale-4A421B5IXBW4C660PRAT7JUBW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdint-2PVW1GN7YPNMF2CFBFL9KUUK5.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdint-2PVW1GN7YPNMF2CFBFL9KUUK5.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_sys_select-BUVI02PJ7NBQVSBJ9XYSBF6R9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_sys_select-BUVI02PJ7NBQVSBJ9XYSBF6R9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_errno-3WGMSN1FZELGUQ1Z3G8R4X9XP.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_errno-3WGMSN1FZELGUQ1Z3G8R4X9XP.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/uuid-B8K7GYLR5GXNFXFO8ZENQQIJ9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/uuid-B8K7GYLR5GXNFXFO8ZENQQIJ9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_strings-DGWCC25EXZ861NAVI4QAVLCO3.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_strings-DGWCC25EXZ861NAVI4QAVLCO3.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/mach-5YDNGU60QEZVZUJQLJ69OPN7X.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/mach-5YDNGU60QEZVZUJQLJ69OPN7X.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdint-CTX5QCIOKQGQQW1ZJ18FI9RM7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdint-CTX5QCIOKQGQQW1ZJ18FI9RM7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_useconds_t-I643XD73DNCUZEJHR4KTIT51.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_useconds_t-I643XD73DNCUZEJHR4KTIT51.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_inttypes-A780BDRZSHGNZARDFGFS21YOR.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_inttypes-A780BDRZSHGNZARDFGFS21YOR.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdatomic-35VDBUJUBW3LBD5SX8NSPP8JY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_stdatomic-35VDBUJUBW3LBD5SX8NSPP8JY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/alloca-2RKMWFVW538OGW18PM1X8K1VO.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/alloca-2RKMWFVW538OGW18PM1X8K1VO.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_ctype-F5T4SIX4LIA60H61Y6YVZE5B.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_ctype-F5T4SIX4LIA60H61Y6YVZE5B.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_time-DRQVP9V68F7WN3AT42GWAF71G.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_time-DRQVP9V68F7WN3AT42GWAF71G.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_setjmp-7SZ835288GMZHT1KG0SOVS1X0.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_setjmp-7SZ835288GMZHT1KG0SOVS1X0.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/__wctype-5BCEIPQLGP24T3BPR79Y4U78L.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/__wctype-5BCEIPQLGP24T3BPR79Y4U78L.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/netinet_in-AJXWI4B8V4JA1UNTCNYPQ0S8A.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/netinet_in-AJXWI4B8V4JA1UNTCNYPQ0S8A.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_limits-4Z5F5RU04V1A73W7RJNSEFPBC.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_limits-4Z5F5RU04V1A73W7RJNSEFPBC.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wctype-7JZQI275UFSZDEH2IRIUND339.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wctype-7JZQI275UFSZDEH2IRIUND339.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_types-C7XYDBXU28QG2ZLZOIXIRTJFD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_types-C7XYDBXU28QG2ZLZOIXIRTJFD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_float-86GWW62JDCUPDUFUJJKFQKMAC.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_float-86GWW62JDCUPDUFUJJKFQKMAC.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/OpenGL-DIIPKICOV6OJJS8V8Y435D0AK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/OpenGL-DIIPKICOV6OJJS8V8Y435D0AK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_resource-CZ3BPSXK91C2RSBD157BTY4A8.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_resource-CZ3BPSXK91C2RSBD157BTY4A8.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_signal-4F949KWRLG2I20QNXFMVIOIMD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_signal-4F949KWRLG2I20QNXFMVIOIMD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_float-AITZLYSNNDQEWRXOH37PPR5J7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_float-AITZLYSNNDQEWRXOH37PPR5J7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/nl_types-5PBZN6AK5VSZYWG92J5Z6BCEI.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/nl_types-5PBZN6AK5VSZYWG92J5Z6BCEI.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_string-9H7CNTPTOAEHMN82Q1CR3GP74.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_string-9H7CNTPTOAEHMN82Q1CR3GP74.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_wait-CBE74799KIIYTCYGLYTWCPB5E.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_wait-CBE74799KIIYTCYGLYTWCPB5E.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/launch-9YSB3AW0CI3N2ZO7O1TX4P9YW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/launch-9YSB3AW0CI3N2ZO7O1TX4P9YW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdio-2132L510B3AW4IGJJ7KB1XL4N.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdio-2132L510B3AW4IGJJ7KB1XL4N.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdlib-4PRC4C60EIVVID4BOEDW1Q8CI.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_stdlib-4PRC4C60EIVVID4BOEDW1Q8CI.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libkern-8UD0F9G9BV55PGZKSDF6T7BUO.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libkern-8UD0F9G9BV55PGZKSDF6T7BUO.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/MachO-1SAX6BFZVDLZKSA0OH98N5QJS.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/MachO-1SAX6BFZVDLZKSA0OH98N5QJS.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_time-9YFOC4X8PW35NQF9G4BH9RLL3.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_time-9YFOC4X8PW35NQF9G4BH9RLL3.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CUPS-9H60HWA8PCC3V7KRRBS048UWX.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CUPS-9H60HWA8PCC3V7KRRBS048UWX.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libDER-EBKHXGJFSD3061UFTIOP6HODJ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libDER-EBKHXGJFSD3061UFTIOP6HODJ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/gethostuuid-83RVYS2SSIUIH6KHUXKGG4U24.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/gethostuuid-83RVYS2SSIUIH6KHUXKGG4U24.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/pthread-CFM7DXRU50R31VZR69SN9U6GD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/pthread-CFM7DXRU50R31VZR69SN9U6GD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_select-9HS7AARO2O5B8RFFFNOR59MRR.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/sys_select-9HS7AARO2O5B8RFFFNOR59MRR.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wchar-E9GGRSLLT4ZK1EGHPUGE5ANCW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_wchar-E9GGRSLLT4ZK1EGHPUGE5ANCW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ObjectiveC-BEJY0S390RIS3LSJGOOMZVBXR.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ObjectiveC-BEJY0S390RIS3LSJGOOMZVBXR.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/unistd-5T7VAJOI9480R3TJN2SB78XY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/unistd-5T7VAJOI9480R3TJN2SB78XY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_math-CJTFE5JNN03ID1NOE1JT4BWL9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_math-CJTFE5JNN03ID1NOE1JT4BWL9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libDER-DLSVXXI2VMPBZ25M5OPO7G7HD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libDER-DLSVXXI2VMPBZ25M5OPO7G7HD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_complex-BXDYZDCW58886D7TOLBRRXEN2.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_complex-BXDYZDCW58886D7TOLBRRXEN2.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_limits-241D4X44M91H0Q0B60HCQA61J.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_limits-241D4X44M91H0Q0B60HCQA61J.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_object-3M0KT323K0620RO1BYIPBKAYO.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_object-3M0KT323K0620RO1BYIPBKAYO.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_iso646-CZJRJ82GVOLQA7PLPWLP7Z7GP.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_iso646-CZJRJ82GVOLQA7PLPWLP7Z7GP.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_tgmath-4I0ABJG4UN0XLX8F5E7R1747N.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_tgmath-4I0ABJG4UN0XLX8F5E7R1747N.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_workgroup-51FBMMJU8TTIXI37BJQKQABQ9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_workgroup-51FBMMJU8TTIXI37BJQKQABQ9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_inttypes-6XXS8890JR2AKZ653ECO3T2K0.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_inttypes-6XXS8890JR2AKZ653ECO3T2K0.scan
+
+ScanDependencies /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    builtin-ScanDependencies -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.o.scan -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.o
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_tgmath-3K7EQS6QRICF0PTE207SHTIRD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/_Builtin_tgmath-3K7EQS6QRICF0PTE207SHTIRD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Darwin-CLY7IG1OSEXEQUBCQJZA8TTC9.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Darwin-CLY7IG1OSEXEQUBCQJZA8TTC9.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Dispatch-87IZU7R3WD7ZQWYSGV3NCDFPP.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Dispatch-87IZU7R3WD7ZQWYSGV3NCDFPP.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreFoundation-1CJ0IE1XLGUJGL1DZLES6WXKY.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreFoundation-1CJ0IE1XLGUJGL1DZLES6WXKY.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/XPC-5E6P89JFRFJ15WKUWN5JVOXYC.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/XPC-5E6P89JFRFJ15WKUWN5JVOXYC.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CFNetwork-7RFNO0BUV171FO6A3J52B3GYW.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CFNetwork-7RFNO0BUV171FO6A3J52B3GYW.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudioTypes-7RH995VNB0N2M0WJWQ1NHYK46.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudioTypes-7RH995VNB0N2M0WJWQ1NHYK46.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ColorSync-2BM8BMV7ICOHZWZEJBYLDIB62.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ColorSync-2BM8BMV7ICOHZWZEJBYLDIB62.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOKit-76LQTUID0I0XSBFVISC67JGTX.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOKit-76LQTUID0I0XSBFVISC67JGTX.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Security-BJ5VR2NI2DR6K23QZY7763ZK3.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Security-BJ5VR2NI2DR6K23QZY7763ZK3.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CUPS-CE4PDWTU7QLUE6FODX7BK504L.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CUPS-CE4PDWTU7QLUE6FODX7BK504L.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/launch-DTS5XCPFJ844H1NRCLQDNWU5V.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/launch-DTS5XCPFJ844H1NRCLQDNWU5V.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/MachO-1MH38BUL6F65TWI97TK9X2FJ3.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/MachO-1MH38BUL6F65TWI97TK9X2FJ3.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DiskArbitration-67JBED6AYEWQUCQ9IZ9ZOYO23.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DiskArbitration-67JBED6AYEWQUCQ9IZ9ZOYO23.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreGraphics-CUU58EH21FKHCX2WVOKAJ3MM7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreGraphics-CUU58EH21FKHCX2WVOKAJ3MM7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libkern-4H959EM9YP6MYMS84H4YTCNBL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/libkern-4H959EM9YP6MYMS84H4YTCNBL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreServices-8DM60D410UBK9MHOU0MQC74UC.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreServices-8DM60D410UBK9MHOU0MQC74UC.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ObjectiveC-5Y7T07Q3N9GRN57AOL1X3WTD6.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ObjectiveC-5Y7T07Q3N9GRN57AOL1X3WTD6.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_object-E4J94C6EK5H3XVZWKFAPOSQ3N.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_object-E4J94C6EK5H3XVZWKFAPOSQ3N.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreText-D3Q3LA0WLP64DHSQ1900RG9HP.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreText-D3Q3LA0WLP64DHSQ1900RG9HP.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ImageIO-148TMV0TM6RIB71TKXXMNPZ6R.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ImageIO-148TMV0TM6RIB71TKXXMNPZ6R.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_workgroup-CKIJWNQRYYG6QGV3AZHM1WGCV.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/os_workgroup-CKIJWNQRYYG6QGV3AZHM1WGCV.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Foundation-A6UA0LQ5FNR01YHLB4Z2PGO2P.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Foundation-A6UA0LQ5FNR01YHLB4Z2PGO2P.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Dispatch-5TKD8SWJU7GL2UI2O0GUIPSHR.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Dispatch-5TKD8SWJU7GL2UI2O0GUIPSHR.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/XPC-BR6PDZFDZACJJBRTAGHPAPFDM.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/XPC-BR6PDZFDZACJJBRTAGHPAPFDM.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreFoundation-CUSEI4HX2VBBBE49BAU4OM6WQ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreFoundation-CUSEI4HX2VBBBE49BAU4OM6WQ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOKit-89VYRJ4FCNVZHKSF31PZNI74P.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOKit-89VYRJ4FCNVZHKSF31PZNI74P.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ColorSync-AU96R7BSPSVD62P50FUYPY8QQ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ColorSync-AU96R7BSPSVD62P50FUYPY8QQ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CFNetwork-9GF3CSNF1LFEUAF8SOQNJFAJS.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CFNetwork-9GF3CSNF1LFEUAF8SOQNJFAJS.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Security-9RZNMK5O6O3MPSNNQNU1AG4ND.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Security-9RZNMK5O6O3MPSNNQNU1AG4ND.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudioTypes-C8OI4R3XXIKXXFOSOZWTWP5M8.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudioTypes-C8OI4R3XXIKXXFOSOZWTWP5M8.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Symbols-3CKBDMEDAEQHH1FDUJX7PJSTL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Symbols-3CKBDMEDAEQHH1FDUJX7PJSTL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreBluetooth-BPW6CNXMAUA3YZFVB8XKZL9MA.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreBluetooth-BPW6CNXMAUA3YZFVB8XKZL9MA.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudio-C7AOM6QGWYNE72AM5BSNM9MLO.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudio-C7AOM6QGWYNE72AM5BSNM9MLO.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreLocation-CHKFWSLUWVDMYBLBFVB90TSEJ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreLocation-CHKFWSLUWVDMYBLBFVB90TSEJ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOSurface-DNLBXL2ZKHR1PNN6PVR1FEA8G.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOSurface-DNLBXL2ZKHR1PNN6PVR1FEA8G.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreGraphics-34IWDV3ESL02WX5ZLIJB1R5GS.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreGraphics-34IWDV3ESL02WX5ZLIJB1R5GS.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOBluetooth-BSR8GFA2U9OL128L0SECGRS6M.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOBluetooth-BSR8GFA2U9OL128L0SECGRS6M.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Metal-8ZMJKQJRMFXU8PQQYLLFCHKGG.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Metal-8ZMJKQJRMFXU8PQQYLLFCHKGG.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CloudKit-EJOBFFZO3I00EBFKOVYD5I82E.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CloudKit-EJOBFFZO3I00EBFKOVYD5I82E.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DiskArbitration-4I6WP2QJ3VJSVA55L6NRTIGJ0.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/DiskArbitration-4I6WP2QJ3VJSVA55L6NRTIGJ0.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ImageIO-9Z1ULSUX82UQL2TZGG3J1UK97.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ImageIO-9Z1ULSUX82UQL2TZGG3J1UK97.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreServices-CGGY3F7NPXB143HQL2XKA2T37.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreServices-CGGY3F7NPXB143HQL2XKA2T37.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreData-5KA2LCHT6N0A2SR3M5FWQ3T8U.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreData-5KA2LCHT6N0A2SR3M5FWQ3T8U.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreText-81EUHYURKJ0P045LESA3EQQJQ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreText-81EUHYURKJ0P045LESA3EQQJQ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ApplicationServices-6XBLGD74IRXUMKOR6WQWVEW49.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ApplicationServices-6XBLGD74IRXUMKOR6WQWVEW49.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Foundation-1UGO30330NDS0ZN973T3U8JOK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Foundation-1UGO30330NDS0ZN973T3U8JOK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreVideo-7MZA6AW18D25GK3FOCPVUU44W.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreVideo-7MZA6AW18D25GK3FOCPVUU44W.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreImage-2WLXEFZLJDW1B9T8VUW5Q6XK4.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreImage-2WLXEFZLJDW1B9T8VUW5Q6XK4.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/QuartzCore-DRTSKKH2YXLY6BZVEY2S5ENB1.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/QuartzCore-DRTSKKH2YXLY6BZVEY2S5ENB1.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AppKit-BEK64P2JNY8DXUWE57B6SOG7L.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AppKit-BEK64P2JNY8DXUWE57B6SOG7L.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudio-44MUMJ8QBCP0XN38Q12FRG7W4.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreAudio-44MUMJ8QBCP0XN38Q12FRG7W4.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOSurface-A3S8YNG9YBTORM11BI1E7TNKG.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOSurface-A3S8YNG9YBTORM11BI1E7TNKG.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreLocation-98OGFF6ZMZK1KSXVZHQT9DOIN.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreLocation-98OGFF6ZMZK1KSXVZHQT9DOIN.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreBluetooth-UI26VQ58K7D6LK2GV0RNY7AJ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreBluetooth-UI26VQ58K7D6LK2GV0RNY7AJ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Metal-AP4Y54DALCEK895ALIIOWF24O.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Metal-AP4Y54DALCEK895ALIIOWF24O.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CloudKit-1LB2XY84JCPGKZ9OZTW7JUJXL.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CloudKit-1LB2XY84JCPGKZ9OZTW7JUJXL.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Symbols-DQZGLIMT0S1W0AHHF8YOUXSSD.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Symbols-DQZGLIMT0S1W0AHHF8YOUXSSD.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreData-6FLZEH5ILML2F5L1L15N9860C.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreData-6FLZEH5ILML2F5L1L15N9860C.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOBluetooth-8WBZJES6L9OQCKJF6N4V58TQ2.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/IOBluetooth-8WBZJES6L9OQCKJF6N4V58TQ2.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ApplicationServices-454JB7H7LKVBNJX6L78EHALAK.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/ApplicationServices-454JB7H7LKVBNJX6L78EHALAK.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreVideo-43BN0M4VT141LBG3Z4LISD6L7.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreVideo-43BN0M4VT141LBG3Z4LISD6L7.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Cocoa-547TTLZSRG60T0VE9F5BTESLZ.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Cocoa-547TTLZSRG60T0VE9F5BTESLZ.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/QuartzCore-B3OO66QS3PC9L7D8PGPGMO8VU.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/QuartzCore-B3OO66QS3PC9L7D8PGPGMO8VU.scan
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreImage-1KUNK94S2QBXBE8QBXI01O1P3.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/CoreImage-1KUNK94S2QBXBE8QBXI01O1P3.scan
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/main.o
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/ViewController.o
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m normal x86_64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/AppDelegate.o
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AppKit-5MSB0347K5Y5HCJ48KVU3YJSA.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/AppKit-5MSB0347K5Y5HCJ48KVU3YJSA.scan
+
+Ld /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/Binary/WiimotePair normal x86_64 (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos12.0 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -Os -L/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release -L/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release -filelist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/WiimotePair.LinkFileList -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/WiimotePair_lto.o -Xlinker -dependency_info -Xlinker /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/WiimotePair_dependency_info.dat -fobjc-arc -fobjc-link-runtime -framework IOKit -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/Binary/WiimotePair
+
+PrecompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Cocoa-BDC75EIPCOTMFVLN5Y9PUGXCF.scan
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-precompileModule /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/ExplicitPrecompiledModules/Cocoa-BDC75EIPCOTMFVLN5Y9PUGXCF.scan
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/main.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/main.o
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/ViewController.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/ViewController.o
+
+CompileC /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m normal arm64 objective-c com.apple.compilers.llvm.clang.1_0.compiler (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    
+    Using response file: /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp
+    
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x objective-c -ivfsstatcache /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/com.apple.DeveloperTools/16.4-16F6/Xcode/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -fno-color-diagnostics -fmodules-prune-interval\=86400 -fmodules-prune-after\=345600 -fbuild-session-file\=/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -fmodules-validate-once-per-build-session -Wnon-modular-include-in-framework-module -Werror\=non-modular-include-in-framework-module -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Werror\=return-type -Wdocumentation -Wunreachable-code -Wquoted-include-in-framework-header -Wno-implicit-atomic-properties -Werror\=deprecated-objc-isa-usage -Wno-objc-interface-ivars -Werror\=objc-root-class -Wno-arc-repeated-use-of-weak -Wimplicit-retain-self -Wduplicate-method-match -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wconditional-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-selector -Wno-strict-selector-match -Wundeclared-selector -Wdeprecated-implementations -Wno-implicit-fallthrough -fstrict-aliasing -Wprotocol -Wdeprecated-declarations -Wno-sign-conversion -Winfinite-recursion -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wno-semicolon-before-method-body -Wunguarded-availability @/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/e6072d4f65d7061329687fe24e3d63a7-common-args.resp -MMD -MT dependencies -MF /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.d --serialize-diagnostics /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.dia -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/WiimotePair/AppDelegate.m -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/AppDelegate.o
+
+Ld /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/Binary/WiimotePair normal arm64 (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos12.0 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -Os -L/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release -L/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/EagerLinkingTBDs/Release -F/Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release -filelist /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/WiimotePair.LinkFileList -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/WiimotePair_lto.o -Xlinker -dependency_info -Xlinker /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/WiimotePair_dependency_info.dat -fobjc-arc -fobjc-link-runtime -framework IOKit -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/Binary/WiimotePair
+
+CreateUniversalBinary /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS/WiimotePair normal arm64\ x86_64 (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/arm64/Binary/WiimotePair /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/WiimotePair.build/Release/WiimotePair.build/Objects-normal/x86_64/Binary/WiimotePair -output /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS/WiimotePair
+
+GenerateDSYMFile /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app.dSYM /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS/WiimotePair (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app/Contents/MacOS/WiimotePair -o /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app.dSYM
+
+RegisterExecutionPolicyException /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-RegisterExecutionPolicyException /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app
+
+Validate /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    builtin-validationUtility /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+Touch /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /usr/bin/touch -c /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app
+
+RegisterWithLaunchServices /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app (in target 'WiimotePair' from project 'WiimotePair')
+    cd /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair
+    /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/runner/work/Wii_Golf/Wii_Golf/WiimotePair/build/Release/WiimotePair.app
+
+** BUILD SUCCEEDED **
+
+++ find build -name WiimotePair.app -type d
+++ head -1
++ APP=build/Release/WiimotePair.app
++ test -n build/Release/WiimotePair.app
++ codesign --force --deep --sign - --entitlements WiimotePair/WiimotePair.entitlements build/Release/WiimotePair.app
+build/Release/WiimotePair.app: replacing existing signature
++ codesign --verify --deep --strict --verbose=2 build/Release/WiimotePair.app
+build/Release/WiimotePair.app: valid on disk
+build/Release/WiimotePair.app: satisfies its Designated Requirement
++ ditto -c -k --keepParent build/Release/WiimotePair.app ../WiimotePair-BalanceBoard.zip
++ ls -la ../WiimotePair-BalanceBoard.zip
+-rw-r--r--  1 runner  staff  325159 Sep 11 20:08 ../WiimotePair-BalanceBoard.zip
+== job wiimotepair | run 34642550479 | status success ==
