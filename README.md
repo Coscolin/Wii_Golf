@@ -9,13 +9,16 @@ arquitectura con 1 vs 2 tablas y matrices de presión) están en
 
 ## Estado
 
-Funciona la cadena completa con **una** tabla en Windows: lectura HID a
-~100 Hz, grabación a CSV y análisis del swing con métricas y gráficas.
+Funciona la cadena completa con **una** tabla en Windows y macOS: lectura HID a
+~100 Hz, grabación a CSV y análisis del swing con métricas y gráficas. Con
+**dos tablas (una por pie)** la web pasa sola a modo dual: carga y CoP de cada
+pie, fuerza por pie y CoP global entre ambas (ver *Dos tablas*).
 
 ```
 wiigolf/
-  balance_board.py          driver HID (init, calibración, lectura, CoP)
-  analysis.py               análisis del swing: métricas, top/impacto, figura, referencia
+  balance_board.py          driver HID (init, calibración, lectura, CoP); enumerate_boards() por tabla física
+  dual.py                   geometría de dos tablas (una por pie): CoP por pie y CoP global
+  analysis.py               análisis del swing: métricas, top/impacto, figura, referencia (1 o 2 tablas)
   media.py                  micrófono y webcam en continuo; WAV + fotogramas JPEG; golpe a la bola
   bt_win.py                 emparejar/conectar la tabla por Bluetooth (API de Windows, sin apps)
 scripts/
@@ -23,7 +26,7 @@ scripts/
   02_live_read.py           lectura en vivo + grabación a CSV
   03_analyze.py             analiza un CSV y genera out/<nombre>.png
   04_web.py                 web local en tiempo real (CoP en vivo, grabación, captura automática)
-  make_synthetic_swing.py   genera un swing sintético para probar sin la tabla
+  make_synthetic_swing.py   genera un swing sintético para probar sin la tabla (--dual: dos tablas)
   wiigolf.bat               arranca el servidor y abre el navegador (doble clic)
   autostart.ps1             instala/quita la tarea que arranca el servidor al iniciar sesión
 wiigolf/web/
@@ -73,7 +76,8 @@ python scripts/02_live_read.py --csv data/swing_001.csv --duration 15
 
 Súbete a la tabla y verás el peso total y el CoP en vivo. Cada muestra se
 guarda en el CSV (`t, TR, BR, TL, BL, total, cop_x, cop_y`). `Ctrl+C` detiene
-la captura. La carpeta `data/` está en `.gitignore`.
+la captura. La carpeta `data/` está en `.gitignore`. (Este script lee una sola
+tabla; con dos tablas se graba desde la web.)
 
 ### Prueba 3 - Análisis del swing
 
@@ -117,6 +121,8 @@ Opciones útiles:
 ```powershell
 python scripts/make_synthetic_swing.py
 python scripts/03_analyze.py data/synthetic_swing.csv
+python scripts/make_synthetic_swing.py --dual --gap 2
+python scripts/03_analyze.py data/synthetic_dual.csv
 ```
 
 ![Análisis del swing sintético](docs/img/synthetic_swing.png)
@@ -213,7 +219,48 @@ así que esta es la forma de que la web "esté siempre"; la página se reconecta
 sola cuando el servidor vuelve.
 
 Para desarrollar sin la tabla: `python scripts/04_web.py --sim` reproduce en
-bucle un swing simulado (el micro y la cámara sí son reales).
+bucle un swing simulado (el micro y la cámara sí son reales); `--sim 2` simula
+las dos tablas (una por pie).
+
+## Dos tablas (una por pie)
+
+Con dos Balance Boards emparejadas y encendidas la web pasa **sola** al modo
+dual (píldora «2 tablas conectadas»); si una se apaga, vuelve a una tabla.
+
+- **Colocación**: las dos tablas lado a lado y **giradas 90°** (el lado largo
+  de 51,1 cm en la dirección punta‑talón del pie, el corto de 31,6 cm en el eje
+  lateral), ambas con el botón de encendido hacia el mismo lado (por defecto la
+  izquierda del golfista). Pegadas o con un hueco.
+- **Ajustes** (fila *2 tablas*, solo en dual): **hueco entre tablas** en cm
+  entre los bordes interiores (0 = pegadas; la distancia entre centros es
+  hueco + 31,6 cm y es la que usa el CoP global), **botón de las tablas hacia
+  la izquierda / derecha** (orientación del giro) e **⇄ intercambiar tablas**
+  si el pie derecho sale en la tabla de la izquierda (se recuerda por número de
+  serie). *Invertir izq/der* no se usa en dual; *invertir punta/talón* sí.
+- **Panel Tabla / Bluetooth**: lista las tablas conectadas (serie, lado, pie,
+  Hz, tara) con **identificar** (parpadea su LED). Para emparejar la segunda:
+  SYNC en la nueva y *Emparejar*; la ya conectada se ignora.
+- **En vivo**: las dos siluetas a escala, punto y estela de cada pie (verde
+  lead, naranja trail) con sus kg y %, y el punto global entre ambas. Las
+  muestras fusionadas siguen el reloj de la tabla izquierda (~100 Hz) con la
+  última lectura de la derecha (≤ 10 ms).
+- **Análisis**: métricas por pie (punta‑talón de cada pie en el top y en el
+  impacto, lateral del lead en el impacto, pico de fuerza de cada pie, rangos
+  punta‑talón) además de las de siempre; la figura dibuja las dos tablas con el
+  trazo de cada pie y añade el panel *CoP punta‑talón de cada pie*. El
+  reproductor muestra las dos tablas con el punto de cada pie.
+- Cada swing **congela** en su `.json` la colocación usada (`boards.layout`):
+  mover las tablas después no cambia los swings viejos; si el hueco estaba mal,
+  corrígelo y pulsa *reanalizar con la colocación actual*.
+- **CSV dual**: `t, L_TR, L_BR, L_TL, L_BL, R_TR, R_BR, R_TL, R_BL, total,
+  cop_x_cm, cop_y_cm, t_L, t_R` (kg por sensor de la tabla izquierda y derecha,
+  CoP global en cm en el sistema del golfista y el instante real de la última
+  lectura de cada tabla). El CSV de una tabla no cambia y se sigue analizando.
+- Geometría (`wiigolf/dual.py`): con el botón a la izquierda la tabla está
+  girada 90° antihorario, así que el eje local largo (TR/BR frente a TL/BL)
+  pasa a ser punta‑talón y el corto (TR/TL frente a BR/BL) el lateral; el CoP
+  global es la media de los CoP de cada pie ponderada por su carga, con cada
+  tabla en x = ∓D/2. Pruebas en `tests/test_dual.py` (`pip install pytest`).
 
 ## Repartirlo como .exe (sin instalar Python)
 
@@ -299,7 +346,7 @@ con la tabla en un Mac. Si falla, lo que hace falta es la salida de
   tu montaje sale al revés, usa `--flip-x`.
 - El stance cabe para hierros; con driver (stance más ancho que los 51 cm de la
   tabla) hace falta un tablero de contrachapado encima (diseño de la Univ. de
-  Tennessee, ver docs) o la segunda tabla.
+  Tennessee, ver docs) o la segunda tabla (sección *Dos tablas*).
 
 ## Hallazgos hasta ahora
 
@@ -344,5 +391,8 @@ tablas).
    exportar/importar, emparejado Bluetooth propio y arranque como servicio.
 5. Validar el impacto por audio con golpes reales y afinar umbrales; comparar
    varios swings superpuestos (consistencia).
-6. **2 tablas** (una por pie) sincronizadas: CoP por pie y GRF vertical.
+6. ✅ **2 tablas** (una por pie): modo dual automático, CoP y fuerza por pie,
+   CoP global con el hueco entre tablas, emparejado de la segunda tabla,
+   simulador `--sim 2` y sintético dual. Pendiente de validar con dos tablas
+   reales (signos de la orientación con la comprobación de 10 s).
 7. Matriz de presión (FSR/Velostat) sobre cada tabla para el mapa de presión.

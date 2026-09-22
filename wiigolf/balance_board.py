@@ -1,6 +1,9 @@
 """
 Lectura de una Wii Balance Board (RVL-WBC-01) por HID usando `hidapi`.
 
+Con dos tablas (una por pie) cada una es un HID independiente: `enumerate_boards()`
+devuelve una entrada por tabla física y la geometría conjunta está en `dual.py`.
+
 La Balance Board habla el mismo protocolo que un Wiimote. Sus 4 células de
 carga son una "extensión" cuyos datos llegan dentro de los informes de datos.
 
@@ -117,6 +120,39 @@ class BalanceBoard:
         """Todos los HID que parecen una Balance Board / Wiimote (VID Nintendo)."""
         return [d for d in hid.enumerate() if d.get("vendor_id") == NINTENDO_VID]
 
+    @staticmethod
+    def enumerate_boards() -> list[dict]:
+        """Una entrada por tabla FÍSICA: {"key", "path", "serial", "product"}.
+
+        - macOS lista una entrada por colección HID (y a veces un mando sintético sin
+          número de serie): se agrupa por serie y, si hay entradas con serie, se
+          descartan las que no la tienen.
+        - En Windows la serie puede venir vacía: la clave pasa a ser el `path`, que es
+          estable para el mismo dispositivo emparejado en el mismo PC.
+        - Un Wiimote emparejado comparte VID/PID: si el HID trae nombre de producto y
+          no es el de la tabla (RVL-WBC-01), se descarta.
+        El orden es estable (por clave) para que "la primera" sea siempre la misma."""
+        devs = [d for d in BalanceBoard.enumerate() if d.get("product_id") == BALANCE_BOARD_PID]
+        keep = []
+        for d in devs:
+            prod = str(d.get("product_string") or "")
+            if prod and "RVL-" in prod and "RVL-WBC" not in prod:
+                continue  # un mando (RVL-CNT-01), no una tabla
+            keep.append(d)
+        with_serial = [d for d in keep if str(d.get("serial_number") or "").strip()]
+        if with_serial:
+            keep = with_serial
+        boards: dict[str, dict] = {}
+        for d in keep:
+            serial = str(d.get("serial_number") or "").strip()
+            path = d.get("path")
+            key = serial or (path.decode("utf-8", "replace") if isinstance(path, bytes) else str(path))
+            if key in boards:
+                continue
+            boards[key] = {"key": key, "path": path, "serial": serial or None,
+                           "product": d.get("product_string") or None}
+        return [boards[k] for k in sorted(boards)]
+
     def open(self) -> "BalanceBoard":
         if self.path:
             self.dev.open_path(self.path)
@@ -188,6 +224,15 @@ class BalanceBoard:
         """Enciende/apaga el LED azul. Útil para confirmar que la tabla recibe
         informes de salida (si el LED responde, el canal de salida funciona)."""
         self._write([_OUT_LED, 0x10 if on else 0x00])
+
+    def identify(self, times: int = 4, period_s: float = 0.25) -> None:
+        """Parpadea el LED para saber cuál de las tablas es esta (queda encendido).
+        No bloquea más de ~2 s; se usa entre lecturas desde el hilo de la tabla."""
+        for _ in range(times):
+            self.set_led(False)
+            time.sleep(period_s)
+            self.set_led(True)
+            time.sleep(period_s)
 
     def init(self) -> None:
         """Inicializa la extensión (las células de carga) y fija el modo de datos."""

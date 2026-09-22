@@ -62,19 +62,26 @@ jobs:
             # --- prueba de humo del ejecutable empaquetado ---
             cd dist/WiiGolf
             ./WiiGolf --check
-            python ../../scripts/make_synthetic_swing.py data/synthetic_swing.csv
-            ./WiiGolf --sim --no-browser --host 127.0.0.1 --port 8020 > server.log 2>&1 &
+            PYTHONUTF8=1 python ../../scripts/make_synthetic_swing.py data/synthetic_swing.csv
+            PYTHONUTF8=1 python ../../scripts/make_synthetic_swing.py data/synthetic_dual.csv --dual --gap 2
+            # dos tablas simuladas (una por pie): el servidor debe arrancar en modo dual
+            ./WiiGolf --sim 2 --no-browser --host 127.0.0.1 --port 8020 > server.log 2>&1 &
             SERVER=$!
             for i in $(seq 1 30); do curl -sf http://127.0.0.1:8020/api/status -o /dev/null && break; sleep 1; done
+            sleep 2
             curl -sf http://127.0.0.1:8020/api/status -o r1.json && head -c 300 r1.json && echo
+            grep -q '"mode": *"dual"' r1.json || (echo "el servidor no ha entrado en modo dual" && cat r1.json && exit 1)
             curl -sf -X POST -H "Content-Type: application/json" -d '{}' http://127.0.0.1:8020/api/analyze/synthetic_swing -o r2.json && head -c 300 r2.json && echo
+            curl -sf -X POST -H "Content-Type: application/json" -d '{}' http://127.0.0.1:8020/api/analyze/synthetic_dual -o r4.json && head -c 300 r4.json && echo
+            grep -q 'lead_punta_talon_en_impacto_cm' r4.json || (echo "faltan las metricas por pie" && exit 1)
             curl -sf http://127.0.0.1:8020/api/swings/synthetic_swing/track -o r3.json && head -c 120 r3.json && echo
+            curl -sf http://127.0.0.1:8020/api/swings/synthetic_dual/track -o r5.json && head -c 120 r5.json && echo
             curl -sf http://127.0.0.1:8020/api/bluetooth/status && echo
             curl -sfo /dev/null -w "index.html HTTP %{http_code} (%{size_download} bytes)\n" http://127.0.0.1:8020/
-            test -f out/synthetic_swing.png
+            test -f out/synthetic_swing.png && test -f out/synthetic_dual.png
             kill $SERVER || true
             sleep 1; cat server.log || true
-            rm -rf data/* out server.log r1.json r2.json r3.json
+            rm -rf data/* out server.log r1.json r2.json r3.json r4.json r5.json
           } 2>&1 | tee build.log
       - uses: actions/upload-artifact@v4
         with:

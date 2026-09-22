@@ -31,3 +31,6 @@ out/
 Thumbs.db
 .DS_Store
 bluetoothd.log
+
+# pytest
+.pytest_cache/

@@ -2,8 +2,9 @@
 Punto de entrada de la aplicación: el mismo para los scripts y para el
 ejecutable (WiiGolf.exe en Windows, WiiGolf en macOS).
 
-    python -m wiigolf.app [--host 0.0.0.0] [--port 8000] [--sim] [--no-browser]
-    WiiGolf --check        comprueba tabla, micro, cámara y Bluetooth, y sale
+    python -m wiigolf.app [--host 0.0.0.0] [--port 8000] [--sim [N]] [--no-browser]
+    WiiGolf --check        comprueba tabla(s), micro, cámara y Bluetooth, y sale
+    --sim 2                dos tablas simuladas (una por pie)
     WiiGolf --pair         empareja la tabla por Bluetooth (pulsa SYNC antes) y sale
 
 Arranca el servidor web, abre el navegador y muestra las URLs. Los datos se
@@ -53,10 +54,11 @@ def check() -> int:
 
     from wiigolf.balance_board import BalanceBoard
     try:
-        devs = BalanceBoard.enumerate()
+        devs = BalanceBoard.enumerate_boards()
         if devs:
-            d = devs[0]
-            print(f"  Tabla (HID): encontrada -> {d.get('manufacturer_string')} {d.get('product_string')}")
+            print(f"  Tablas (HID): {len(devs)} encontrada(s)" + (" -> modo dos tablas (una por pie)" if len(devs) >= 2 else ""))
+            for d in devs:
+                print(f"    {d.get('product') or 'HID'} serie={d.get('serial') or '?'}")
         else:
             print("  Tabla (HID): no encontrada (enciendela; si no aparece, emparejala con --pair o desde la web)")
     except Exception as exc:
@@ -109,7 +111,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="WiiGolf", description="Servidor web local de Wii Golf")
     ap.add_argument("--host", default="0.0.0.0", help="0.0.0.0 = accesible desde la red local")
     ap.add_argument("--port", type=int, default=8000)
-    ap.add_argument("--sim", action="store_true", help="usar una tabla simulada")
+    ap.add_argument("--sim", type=int, nargs="?", const=1, default=0, metavar="N",
+                    help="usar N tablas simuladas (1 por defecto; 2 = una por pie)")
     ap.add_argument("--no-browser", action="store_true", help="no abrir el navegador")
     ap.add_argument("--check", action="store_true", help="comprobar el equipo y salir")
     ap.add_argument("--pair", action="store_true", help="emparejar la tabla (pulsa SYNC antes) y salir")
@@ -136,7 +139,7 @@ def main(argv: list[str] | None = None) -> int:
 
     app = create_app(sim=args.sim)
     url = f"http://localhost:{args.port}"
-    modo = "SIMULACION" if args.sim else "tabla real"
+    modo = ("SIMULACION (2 tablas)" if args.sim >= 2 else "SIMULACION") if args.sim else "tabla real"
     print()
     print(f"  Wii Golf ({modo})")
     print(f"    este equipo:   {url}")

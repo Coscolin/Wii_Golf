@@ -50,14 +50,18 @@ def main() -> int:
 
     list_all_hid()
 
-    boards = BalanceBoard.enumerate()
+    boards = BalanceBoard.enumerate_boards()
     if not boards:
         print("[!] No se encontró ninguna Balance Board (VID 0x057E).")
         print("    Empareja la tabla por Bluetooth (pulsa el botón rojo del")
         print("    compartimento de pilas) y vuelve a ejecutar.")
         return 1
 
-    print(f"[+] {len(boards)} tabla(s) Nintendo encontrada(s). Usando la primera.")
+    print(f"[+] {len(boards)} tabla(s) encontrada(s):")
+    for b in boards:
+        print(f"      serie={b['serial'] or '?'}  {b['product'] or 'HID'}")
+    print("    Usando la primera." + (" Con dos tablas, la web las usa a la vez (una por pie)."
+                                     if len(boards) > 1 else ""))
     board = BalanceBoard(path=boards[0]["path"])
 
     try:

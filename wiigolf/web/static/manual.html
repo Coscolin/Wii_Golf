@@ -42,6 +42,8 @@
   <a class="sub" href="#wz-tara">Tara</a><a class="sub" href="#wz-peso">Peso corporal</a><a class="sub" href="#wz-ajustes">Ajustes</a>
   <a href="#en-vivo">Pantalla principal</a>
   <a class="sub" href="#reparto">Reparto LEAD / TRAIL</a><a class="sub" href="#colocacion">Cómo colocarte</a>
+  <a href="#dual">Dos tablas (una por pie)</a>
+  <a class="sub" href="#hueco">Hueco y orientación</a><a class="sub" href="#dual-metricas">Métricas por pie</a>
   <a href="#practicar">Modo práctica</a>
   <a href="#grabar">Grabar a mano</a>
   <a href="#swings">Swings grabados</a>
@@ -65,7 +67,7 @@
   <li>la <b>fuerza vertical</b> contra el suelo, en % de tu peso corporal: el «empuje» del downswing.</li>
 </ul>
 <p>Cada swing se guarda y se analiza automáticamente (top del backswing, impacto, pico de fuerza, transferencia de peso), y puede grabarse con <b>audio</b> (para detectar el golpe a la bola) y <b>vídeo</b> (para verlo a cámara lenta con el trazo superpuesto). Un swing puede fijarse como <b>referencia</b> para comparar los siguientes.</p>
-<div class="note">La tabla solo mide fuerza vertical con cuatro células: da la transferencia de peso y el trazo del CoP con buena fidelidad, pero no el mapa de presión de cada pie ni fuerzas horizontales.</div>
+<div class="note">La tabla solo mide fuerza vertical con cuatro células: da la transferencia de peso y el trazo del CoP con buena fidelidad, pero no el mapa de presión de cada pie ni fuerzas horizontales. Con <a href="#dual">dos tablas, una por pie</a>, se obtiene además la carga y el centro de presión de cada pie por separado.</div>
 
 <h2 id="instalacion">Instalación y arranque</h2>
 <p>Las descargas listas para usar están en <a href="https://github.com/Coscolin/Wii_Golf/releases/latest" target="_blank">github.com/Coscolin/Wii_Golf/releases</a>. No hace falta instalar Python ni nada más.</p>
@@ -110,10 +112,47 @@
 <p><b>TRAIL</b> es el pie trasero (el derecho para un diestro) y <b>LEAD</b> el delantero. La barra muestra el porcentaje del peso que soporta el trail; la línea discontinua marca el 50 %. En un swing típico: address ~50 %, top 60-80 % trail, impacto 70-90 % lead.</p>
 <h3 id="colocacion">Cómo colocarte</h3>
 <ul>
-  <li>Pies <b>a lo ancho</b> de la tabla, uno en cada mitad, como en el swing. La tabla mide 51 cm: cabe un stance de hierros; para driver hace falta un tablero encima o una segunda tabla.</li>
+  <li>Pies <b>a lo ancho</b> de la tabla, uno en cada mitad, como en el swing. La tabla mide 51 cm: cabe un stance de hierros; para driver hace falta un tablero encima o una <a href="#dual">segunda tabla</a>.</li>
   <li>Comprueba la orientación: carga el pie derecho; si eres diestro debe subir TRAIL. Si sube LEAD, activa <b>invertir izq/der</b>. Si al ir a las puntas el punto baja hacia «talón», activa <b>invertir punta/talón</b>.</li>
   <li>Tabla sobre suelo duro y plano (en moqueta las células leen mal), sin balancearla al subir.</li>
 </ul>
+
+<h2 id="dual">Dos tablas (una por pie)</h2>
+<p>Con <b>dos Balance Boards</b> cada pie va en la suya. No hay que activar nada: en cuanto la segunda tabla está conectada, la aplicación pasa sola al modo de dos tablas (la píldora de arriba dice «2 tablas conectadas») y, si una se apaga, vuelve al modo de una tabla. Lo que se gana:</p>
+<ul>
+  <li>el <b>reparto trail / lead exacto</b>: cada pie pesa lo que marca su tabla (con una sola tabla se aproxima con las dos mitades);</li>
+  <li>el <b>centro de presión de cada pie</b>: punta-talón y lateral, en cm, en vivo y en el análisis (dónde apoya cada pie en el top y en el impacto);</li>
+  <li>la <b>fuerza vertical de cada pie</b> (pico del lead y del trail en % de tu peso);</li>
+  <li>el <b>CoP global</b> entre las dos tablas, para lo que hace falta saber a qué distancia están (ver abajo).</li>
+</ul>
+<h3>Cómo colocar las tablas</h3>
+<ol>
+  <li>Las dos tablas <b>lado a lado y giradas 90°</b>: el lado largo (51 cm) en la dirección de tu pie (punta-talón) y el lado corto (31,6 cm) en el eje lateral. Así el pie cabe entero y el eje punta-talón usa la base de sensores larga, con más resolución.</li>
+  <li>Las dos con el <b>botón de encendido hacia el mismo lado</b>: normalmente hacia tu izquierda (hacia el objetivo si eres diestro). Puede ser hacia la derecha, pero dilo en los ajustes.</li>
+  <li>Pegadas o con un hueco: mide el hueco entre los bordes interiores y escríbelo en los ajustes (0 si están pegadas).</li>
+  <li>Enciende las dos. La primera vez, la segunda tabla hay que <b>emparejarla</b> igual que la primera: pulsa SYNC en ella y «Emparejar» en el panel Tabla / Bluetooth (la que ya está conectada se ignora).</li>
+</ol>
+<h3 id="hueco">Hueco, orientación e izquierda / derecha</h3>
+<p>Cuando se conectan las dos tablas aparece en los ajustes la fila <b>2 tablas</b>:</p>
+<ul>
+  <li><b>Hueco entre tablas</b> (cm): distancia entre los bordes interiores; 0 si están pegadas. La app suma el lado corto de la tabla (31,6 cm) para obtener la distancia entre centros, que es la que usa el CoP global. Si no lo indicas, se supone 0 y la fila queda resaltada.</li>
+  <li><b>Botón de las tablas hacia la izquierda / derecha</b>: la orientación del giro. Comprobación de 10 segundos: ponte de puntillas y el punto de cada pie debe subir hacia «punta»; carga el borde exterior de un pie y su punto debe irse hacia fuera. Si sale al revés en los dos ejes, cambia este ajuste.</li>
+  <li><b>⇄ intercambiar tablas</b>: si tu pie derecho aparece en la tabla de la izquierda, intercámbialas (también desde el panel Tabla / Bluetooth, donde cada tabla tiene un botón <b>identificar</b> que hace parpadear su LED). Se recuerda entre sesiones. La casilla «invertir izq/der» no se usa con dos tablas.</li>
+</ul>
+<div class="note">Cada swing guarda el hueco y la orientación con que se grabó y se analiza siempre con ellos, aunque después muevas las tablas. Si te equivocaste al escribirlos, corrígelos en los ajustes y usa <b>reanalizar con la colocación actual</b> en el análisis de ese swing.</div>
+<p>La tara del asistente se aplica a las dos tablas a la vez (vacías). Si enciendes la segunda más tarde, repite la tara.</p>
+<h3 id="dual-metricas">Métricas por pie</h3>
+<p>Con dos tablas la figura añade el trazo de cada pie dentro de su tabla y un panel con el <b>CoP punta-talón de cada pie</b> a lo largo del tiempo, y la tabla de métricas incluye (+ = punta, − = talón; lateral + = tu derecha):</p>
+<table>
+<tr><th>Métrica</th><th>Qué significa</th><th>Orientación</th></tr>
+<tr><td>Pie trail: punta-talón en el top</td><td>Dónde apoya el pie trasero al final del backswing.</td><td>Medio pie o algo al talón; irse a la punta suele indicar pérdida de postura.</td></tr>
+<tr><td>Pie lead: punta-talón en el impacto</td><td>Dónde apoya el pie delantero en el impacto.</td><td>Los buenos jugadores empujan con el talón (negativo) y giran sobre él; hacia la punta acompaña al <i>early extension</i>.</td></tr>
+<tr><td>Pie trail: punta-talón en el impacto</td><td>Apoyo del pie trasero en el impacto.</td><td>Al rodar hacia dentro suele ir a la punta (+).</td></tr>
+<tr><td>Pie lead: lateral en el impacto</td><td>Desplazamiento lateral dentro del pie delantero.</td><td>—</td></tr>
+<tr><td>Pico de fuerza pie lead / trail</td><td>Fuerza vertical máxima de cada pie, en % de tu peso.</td><td>El empuje del downswing se hace sobre todo con el lead.</td></tr>
+<tr><td>Rango punta-talón de cada pie</td><td>Cuánto recorre el CoP de cada pie entre talón y punta.</td><td>—</td></tr>
+</table>
+<p>El reproductor muestra las dos tablas con el punto de cada pie (verde lead, naranja trail) y sus valores; las grabaciones con dos tablas llevan el distintivo «2 tablas» en la lista.</p>
 
 <h2 id="practicar">Modo práctica (captura automática)</h2>
 <p>El botón <b>▶ Practicar</b> abre la pantalla completa: cámara de fondo (si está activa), la tabla con el punto, y arriba en grande el reparto <b>LEAD – TRAIL</b>; abajo, peso y fuerza. Funciona sin tocar el ordenador:</p>
@@ -173,14 +212,16 @@
 <p>El botón <b>? Ayuda</b> pone la aplicación en modo ayuda: todo lo que tiene explicación queda resaltado con un borde discontinuo y, al pulsarlo, aparece una nota con qué es o qué significa ese valor y un enlace a este manual. <kbd>Esc</kbd> o el propio botón salen del modo ayuda.</p>
 
 <h2 id="archivos">Dónde están los datos</h2>
-<p>En la carpeta <code>data</code> junto al programa: por cada swing <code>&lt;n&gt;.csv</code> (tabla), <code>&lt;n&gt;.json</code> (meta y marcas), <code>&lt;n&gt;.wav</code> (audio) y <code>&lt;n&gt;.frames.zip</code> (vídeo); las figuras en <code>out</code>; los ajustes en <code>data/settings.json</code> y la referencia en <code>data/reference.json</code>.</p>
+<p>En la carpeta <code>data</code> junto al programa: por cada swing <code>&lt;n&gt;.csv</code> (tabla), <code>&lt;n&gt;.json</code> (meta y marcas, y con dos tablas la colocación usada), <code>&lt;n&gt;.wav</code> (audio) y <code>&lt;n&gt;.frames.zip</code> (vídeo); las figuras en <code>out</code>; los ajustes en <code>data/settings.json</code> y la referencia en <code>data/reference.json</code>. El CSV de una tabla tiene las columnas <code>t, TR, BR, TL, BL, total, cop_x, cop_y</code>; el de dos tablas <code>t, L_TR, L_BR, L_TL, L_BL, R_TR, R_BR, R_TL, R_BL, total, cop_x_cm, cop_y_cm, t_L, t_R</code> (L = tabla izquierda, R = derecha, kg por sensor).</p>
 
 <h2 id="problemas">Problemas frecuentes</h2>
 <table>
 <tr><th>Síntoma</th><th>Qué hacer</th></tr>
 <tr><td>«Tabla no conectada»</td><td>Enciéndela con el botón de delante y espera 5 s. Si es la primera vez en este equipo, emparéjala (SYNC + Emparejar). Pilas nuevas si el LED no enciende.</td></tr>
 <tr><td>El emparejado falla en macOS</td><td>Ver <a href="#tabla-panel">Conectar la tabla</a>: reiniciar bluetoothd o el Mac, olvidar la tabla en Ajustes → Bluetooth, repetir con SYNC; plan B WiimotePair.app.</td></tr>
-<tr><td>Trail y lead salen al revés</td><td>Activa «invertir izq/der» (o gírate 180° sobre la tabla).</td></tr>
+<tr><td>Trail y lead salen al revés</td><td>Activa «invertir izq/der» (o gírate 180° sobre la tabla). Con dos tablas, usa «⇄ intercambiar tablas».</td></tr>
+<tr><td>Con dos tablas, punta y talón salen al revés</td><td>Cambia «botón de las tablas hacia la izquierda / derecha» en los ajustes (ver <a href="#hueco">hueco y orientación</a>).</td></tr>
+<tr><td>La segunda tabla no se conecta</td><td>Emparéjala como la primera (SYNC + Emparejar: la ya conectada se ignora). Después basta con encender las dos; el modo cambia solo.</td></tr>
 <tr><td>El peso oscila o no llega a 0</td><td>Repite el asistente (tara con la tabla vacía). Tabla sobre suelo duro y plano.</td></tr>
 <tr><td>No se captura ningún swing en práctica</td><td>Hace falta una transferencia rápida al lead <i>y</i> un pico de fuerza ≥ 112 % del peso: swings muy lentos no disparan. Usa «Grabar» a mano para ejercicios.</td></tr>
 <tr><td>El impacto está mal marcado</td><td>Activa el micrófono (golpe a la bola) o márcalo a mano en el reproductor.</td></tr>

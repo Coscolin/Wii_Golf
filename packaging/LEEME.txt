@@ -43,6 +43,15 @@ analiza. No hace falta instalar Python ni nada mas.
    flecha lo exportas a un zip. El boton "? Ayuda" explica cada parte de la
    pantalla y "Manual" abre el manual completo.
 
+7) Dos tablas (una por pie, opcional): colocalas lado a lado GIRADAS 90 grados
+   (el lado largo en la direccion del pie), las dos con el boton de encendido
+   hacia el mismo lado (normalmente tu izquierda). Empareja la segunda como la
+   primera (SYNC + "Emparejar"; la ya conectada se ignora) y enciende las dos:
+   el programa pasa solo a "2 tablas". En los ajustes escribe el hueco entre
+   los bordes de las tablas (0 si estan pegadas) y hacia donde apunta el
+   boton. Comprueba 10 s: de puntillas el punto de cada pie sube a "punta";
+   si el pie derecho sale en la tabla izquierda, "intercambiar tablas".
+
 Los datos quedan en la carpeta "data" junto al exe (y las figuras en "out").
 
 Si algo no va: abre una ventana de comandos en la carpeta y ejecuta

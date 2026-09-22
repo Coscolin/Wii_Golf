@@ -307,12 +307,21 @@ def pair(log=print, seconds: float = 10.0, forget_first: bool = False) -> dict:
             return {"ok": False, "board": None,
                     "message": "No se ha encontrado la tabla. Pulsa el botón SYNC rojo del "
                                "compartimento de pilas (el LED parpadea) y vuelve a intentarlo."}
+        # Con una tabla ya emparejada y conectada, la que interesa es la OTRA (la que está
+        # en modo SYNC): primero las no emparejadas, luego las emparejadas sin conectar.
+        boards.sort(key=lambda d: (bool(d.fAuthenticated and d.fConnected), bool(d.fAuthenticated),
+                                   bool(d.fRemembered)))
+        for d in boards:
+            log(f"Encontrada: {d.szName} [{addr_str(d.Address)}] conectada={bool(d.fConnected)} "
+                f"recordada={bool(d.fRemembered)} autenticada={bool(d.fAuthenticated)}")
         dev = boards[0]
-        log(f"Encontrada: {dev.szName} [{addr_str(dev.Address)}] conectada={bool(dev.fConnected)} "
-            f"recordada={bool(dev.fRemembered)} autenticada={bool(dev.fAuthenticated)}")
 
         if dev.fConnected and dev.fAuthenticated:
-            return {"ok": True, "board": device_dict(dev), "message": "La tabla ya está emparejada y conectada."}
+            n = len(boards)
+            return {"ok": True, "board": device_dict(dev),
+                    "message": ("La tabla ya está emparejada y conectada." if n == 1 else
+                                f"Las {n} tablas ya están emparejadas y conectadas.")
+                    + " Para añadir otra, pulsa SYNC en la nueva y vuelve a Emparejar."}
 
         if forget_first and dev.fRemembered:
             r = lib.BluetoothRemoveDevice(byref(dev.Address))

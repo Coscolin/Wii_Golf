@@ -146,14 +146,19 @@ def _delegate_classes(NSObject) -> dict:
                 _CB_STATE["state"] = None
 
     class WGInquiryDelegate(NSObject):
+        def _wanted(self, dev) -> bool:
+            # ctx["skip"]: direcciones ya emparejadas (la 1ª tabla): se busca OTRA
+            return (is_board(dev.name()) and self.ctx["dev"] is None
+                    and _addr_norm(dev.addressString()) not in self.ctx.get("skip", ()))
+
         def deviceInquiryDeviceFound_device_(self, inquiry, dev):
             name = str(dev.name() or "")
             self.log(f"  visto: {name or '(sin nombre)'} [{_addr_norm(dev.addressString())}]")
-            if is_board(name) and self.ctx["dev"] is None:
+            if self._wanted(dev):
                 self.ctx["dev"] = dev
 
         def deviceInquiryDeviceNameUpdated_device_devicesRemaining_(self, inquiry, dev, remaining):
-            if is_board(dev.name()) and self.ctx["dev"] is None:
+            if self._wanted(dev):
                 self.log(f"  nombre: {dev.name()} [{_addr_norm(dev.addressString())}]")
                 self.ctx["dev"] = dev
 
@@ -434,18 +439,23 @@ def pair(log=print, seconds: float = 12.0, forget_first: bool = False) -> dict:
     if forget_first:
         log("En macOS no se puede olvidar por API: hazlo en Ajustes > Bluetooth si hace falta.")
 
-    # 1) ¿ya conocida?
+    # 1) ¿ya conocida? Una emparejada pero desconectada se reconecta; si todas las
+    #    conocidas están ya conectadas, se busca OTRA (segunda tabla, una por pie).
     device = None
+    known: list[str] = []
     for d in IOB.IOBluetoothDevice.pairedDevices() or []:
         if is_board(d.name()):
-            device = d
+            known.append(_addr_norm(d.addressString()))
             log(f"Tabla ya conocida: {d.name()} [{_addr_norm(d.addressString())}] "
                 f"emparejada={bool(d.isPaired())} conectada={bool(d.isConnected())}")
-            break
+            if device is None and not (d.isPaired() and d.isConnected()):
+                device = d
+    if device is None and known:
+        log(f"Las {len(known)} tabla(s) conocida(s) ya están conectadas: se busca una nueva (pulsa SYNC en ella).")
 
     # 2) inquiry clásico (la tabla debe estar en modo SYNC)
     if device is None or not device.isPaired():
-        found = {"dev": None, "done": False}
+        found = {"dev": None, "done": False, "skip": set(known) if device is None else set()}
         log(f"Buscando la tabla durante ~{seconds:.0f} s: pulsa el botón SYNC rojo (LED parpadeando)...")
         idel = _delegate_classes(NSObject)["inquiry"].alloc().init()
         idel.ctx, idel.log = found, log

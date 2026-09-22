@@ -30,6 +30,7 @@
   button.bigbtn{width:100%;font-size:19px;padding:14px 20px;background:#1c4d66;border-color:#2b7aa3;margin:6px 0}
   button.bigbtn:disabled{background:#232b35}
   #helpbtn.on{background:#1c4d66;border-color:#2b7aa3}
+  #dualrow.need{outline:2px solid var(--warn);outline-offset:4px;border-radius:8px}
   input[type=text]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:8px 10px;font-size:14px;width:150px}
   input[type=number]{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:6px 8px;font-size:14px;width:64px}
   select{background:#0f1318;color:var(--text);border:1px solid #2f3945;border-radius:8px;padding:7px 8px;font-size:14px;max-width:260px}
@@ -115,7 +116,9 @@
       <button id="btrefresh" class="small">Actualizar</button>
     </div>
     <div class="muted">Una vez emparejada de forma permanente, basta con pulsar el botón de encendido de la tabla:
-      el servidor la detecta solo (reintenta cada 3 s).</div>
+      el servidor la detecta solo (reintenta cada 3 s). <b>Segunda tabla</b> (una por pie): pulsa SYNC en la nueva y
+      «Emparejar» (la que ya está conectada se ignora); al encenderla el modo pasa solo a dos tablas.</div>
+    <div id="boardslist" class="muted" style="margin-top:6px" data-help="tablas-conectadas"></div>
     <pre id="btlog" class="log" hidden></pre>
   </section>
 
@@ -187,8 +190,15 @@
     <div id="settingsblock">
       <div class="row">
         <select id="handed" data-help="diestro"><option value="right">Diestro</option><option value="left">Zurdo</option></select>
-        <label data-help="invertir-x"><input type="checkbox" id="flipx"> invertir izq/der</label>
+        <label data-help="invertir-x" id="flipxlbl"><input type="checkbox" id="flipx"> invertir izq/der</label>
         <label data-help="invertir-y"><input type="checkbox" id="flipy"> invertir punta/talón</label>
+      </div>
+      <div class="row" id="dualrow" hidden data-help="dual">
+        <span class="muted"><b>2 tablas</b> (una por pie):</span>
+        <label data-help="hueco">hueco entre tablas <input type="number" id="gap" min="0" max="100" step="0.5" placeholder="cm" style="width:74px"> cm</label>
+        <span id="gapinfo" class="muted"></span>
+        <select id="dualbutton" data-help="boton"><option value="left">botón de las tablas hacia la izquierda</option><option value="right">botón de las tablas hacia la derecha</option></select>
+        <button id="swapboards" class="small" data-help="intercambiar">⇄ intercambiar tablas</button>
       </div>
       <div class="row">
         <label data-help="microfono"><input type="checkbox" id="audio"> Micrófono (impacto)</label>
@@ -223,6 +233,10 @@
     <div class="row" id="anactions" hidden>
       <button id="anplay" class="small primary" data-help="reproducir">▶ Reproducir a cámara lenta</button>
       <button id="anref" class="small" data-help="referencia">★ Fijar como referencia</button>
+    </div>
+    <div class="row" id="anlayout" hidden data-help="an-colocacion">
+      <span id="anlayoutinfo" class="muted"></span>
+      <button id="anrelayout" class="small" hidden>reanalizar con la colocación actual</button>
     </div>
     <table class="mtable" id="anmetrics"></table>
     <img id="anpng" alt="figura del análisis" data-help="figura">
@@ -295,12 +309,16 @@
 <script>
 const $ = (id) => document.getElementById(id);
 const HX = 21.65, HY = 11.4;          // mitad de la distancia entre sensores (cm)
+const BOARD_W_CM = 51.1, BOARD_D_CM = 31.6;   // tabla física: lado largo y lado corto (cm)
+const FOOT_COLORS = {lead: "#3ddc97", trail: "#ffa040"};
 const TRAIL_S = 1.5;                   // segundos de estela en vivo
 const dpr = window.devicePixelRatio || 1;
 const ON_BOARD_KG = 20;                // por encima hay alguien sobre la tabla
 const CENTER_TOL_X = 5.0, CENTER_TOL_Y = 3.5;   // cm: zona de "centrado" en modo práctica
 
-let settings = {handed: "right", flip_x: false, flip_y: false, audio: false, video: false, audio_device: null, camera: 0, body_weight_kg: null};
+let settings = {handed: "right", flip_x: false, flip_y: false, audio: false, video: false, audio_device: null, camera: 0, body_weight_kg: null,
+                dual_gap_cm: null, dual_button: "left", dual_left_key: null};
+let lastDual = false, gapToastShown = false;
 let latest = null, trail = [], bwEma = null, status = {}, ws = null, selected = null;
 let recentTotals = [], settingsBusy = false, lastAnalysis = null;
 const bwFixed = () => settings.body_weight_kg != null;
@@ -324,11 +342,55 @@ function fmtDate(ts) { const d = new Date(ts * 1000); return d.toLocaleDateStrin
 function fmt(v, d) { return (v == null || isNaN(v)) ? "–" : Number(v).toFixed(d == null ? 1 : d); }
 function boardConnected() { return !!(status.connected || status.sim); }
 function onBoard() { return !!latest && latest.tot >= Math.max(ON_BOARD_KG, 0.45 * (bodyWeight() || 0)); }
+function isDual() { return !!(status.boards && status.boards.mode === "dual"); }
+function currentLayout() {
+  const l = (status.boards && status.boards.layout) || {};
+  return {gap_cm: l.gap_cm, button: l.button || settings.dual_button, center_distance_cm: l.center_distance_cm || ((settings.dual_gap_cm || 0) + BOARD_D_CM)};
+}
+// CoP global de una muestra en vivo, en cm (una tabla: normalizado -> cm; dos tablas: ya viene en cm)
+function copCm(s) { return s.mode === "dual" ? [s.xcm, s.ycm] : [s.x * HX, s.y * HY]; }
 function trailPct(s) {
   if (!s || s.tot < 2) return null;
+  if (s.mode === "dual") return (settings.handed === "right" ? s.R.kg : s.L.kg) / s.tot * 100;   // flip_x no se aplica en dual
   let right = s.tr + s.br, left = s.tl + s.bl;
   if (settings.flip_x) [right, left] = [left, right];
   return (settings.handed === "right" ? right : left) / s.tot * 100;
+}
+// Geometría de una escena: una tabla (normal) o dos giradas 90° (lado largo punta-talón) en x = ∓D/2.
+// Devuelve toPx(xcm, ycm) en el sistema del golfista, los rectángulos de las tablas y px por cm.
+// live=true: los valores vienen crudos de la tabla y hay que aplicar los flips; los del análisis ya los llevan.
+function boardGeom(mode, layout, ox, oy, availW, availH, live) {
+  if (mode === "dual") {
+    const D = (layout && layout.center_distance_cm) || BOARD_D_CM;
+    const totalW = D + BOARD_D_CM, totalH = BOARD_W_CM;
+    const sc = Math.min(availW / totalW, availH / totalH);
+    const cx = ox + availW / 2, cy = oy + availH / 2;
+    const fy = (live && settings.flip_y) ? -1 : 1;
+    const toPx = (x, y) => [cx + x * sc, cy - fy * y * sc];
+    const rect = (c) => ({x: cx + (c - BOARD_D_CM / 2) * sc, y: cy - BOARD_W_CM / 2 * sc, w: BOARD_D_CM * sc, h: BOARD_W_CM * sc});
+    return {mode, D, sx: sc, sy: sc, toPx, footPx: (side, x, y) => toPx(x + (side === "L" ? -D / 2 : D / 2), y),
+            rects: [rect(-D / 2), rect(D / 2)], cx, cy, w: totalW * sc, h: totalH * sc};
+  }
+  let w = availW, h = w * (HY / HX); if (h > availH) { h = availH; w = h * (HX / HY); }
+  const x0 = ox + (availW - w) / 2, y0 = oy + (availH - h) / 2;
+  const fx = (live && settings.flip_x) ? -1 : 1, fy = (live && settings.flip_y) ? -1 : 1;
+  const toPx = (x, y) => [x0 + w / 2 + fx * x / HX * w / 2, y0 + h / 2 - fy * y / HY * h / 2];
+  return {mode: "single", sx: w / (2 * HX), sy: h / (2 * HY), toPx, rects: [{x: x0, y: y0, w, h}], cx: x0 + w / 2, cy: y0 + h / 2, w, h};
+}
+// Dibuja la(s) tabla(s) de una geometría: en dual, las dos giradas con LEAD/TRAIL debajo y punta/talón al lado.
+function drawBoards(c, g, opts) {
+  opts = opts || {}; const u = opts.u || dpr, font = opts.font || 13;
+  if (g.mode !== "dual") { drawBoard(c, g.rects[0].x, g.rects[0].y, g.rects[0].w, g.rects[0].h, {labels: true, translucent: opts.translucent, u, font}); return; }
+  const trailRight = opts.trailRight != null ? opts.trailRight : settings.handed === "right";
+  g.rects.forEach((r, i) => {
+    drawBoard(c, r.x, r.y, r.w, r.h, {translucent: opts.translucent, u, vertical: true});
+    c.fillStyle = "#9aa4b2"; c.font = `${font * u}px system-ui`; c.textAlign = "center";
+    c.fillText(((i === 1) === trailRight) ? "TRAIL" : "LEAD", r.x + r.w / 2, r.y + r.h + 16 * u);
+  });
+  const r1 = g.rects[1];
+  c.fillStyle = "#9aa4b2"; c.font = `${(font - 2) * u}px system-ui`; c.textAlign = "left";
+  c.fillText("punta", r1.x + r1.w + 5 * u, r1.y + 12 * u);
+  c.fillText("talón", r1.x + r1.w + 5 * u, r1.y + r1.h - 3 * u);
 }
 function beep(freq, ms) {
   if (!$("prbeep").checked) return;
@@ -345,6 +407,7 @@ function applySettingsToUI() {
   $("handed").value = settings.handed; $("flipx").checked = !!settings.flip_x; $("flipy").checked = !!settings.flip_y;
   $("audio").checked = !!settings.audio; $("video").checked = !!settings.video;
   $("camera").value = settings.camera || 0; $("audiodev").value = settings.audio_device == null ? "" : String(settings.audio_device);
+  $("gap").value = settings.dual_gap_cm == null ? "" : settings.dual_gap_cm; $("dualbutton").value = settings.dual_button || "left";
 }
 async function pushSettings(patch) {
   Object.assign(settings, patch); settingsBusy = true;
@@ -359,6 +422,13 @@ $("audio").onchange = () => pushSettings({audio: $("audio").checked});
 $("video").onchange = () => pushSettings({video: $("video").checked});
 $("camera").onchange = () => pushSettings({camera: parseInt($("camera").value) || 0});
 $("audiodev").onchange = () => pushSettings({audio_device: $("audiodev").value === "" ? null : parseInt($("audiodev").value)});
+$("gap").onchange = () => { const v = $("gap").value.trim(); const n = parseFloat(v); pushSettings({dual_gap_cm: (v === "" || isNaN(n)) ? null : Math.max(0, n)}); };
+$("dualbutton").onchange = () => pushSettings({dual_button: $("dualbutton").value});
+async function swapBoards() {
+  try { const r = await api("/api/boards/swap", null, "POST"); status = r.status; renderStatus(); toast("Tablas intercambiadas: la izquierda pasa a ser la derecha"); }
+  catch (e) { toast(e.message, 6000); }
+}
+$("swapboards").onclick = swapBoards;
 
 async function loadAudioInputs() {
   try {
@@ -378,7 +448,8 @@ function connect() {
     const m = JSON.parse(e.data);
     if (m.type === "s") {
       latest = m;
-      trail.push({x: m.x, y: m.y, t: m.t, tot: m.tot});
+      const [xcm, ycm] = copCm(m);
+      trail.push({x: xcm, y: ycm, t: m.t, tot: m.tot, L: m.L, R: m.R});
       while (trail.length && trail[0].t < m.t - TRAIL_S) trail.shift();
       if (m.tot > ON_BOARD_KG) {
         recentTotals.push(m.tot); if (recentTotals.length > 100) recentTotals.shift();
@@ -405,11 +476,22 @@ function connect() {
 // ---------- estado ----------
 function renderStatus() {
   const s = status;
-  if (s.sim) setPill("Tabla simulada", "sim");
-  else if (s.connected) setPill("Tabla conectada", "ok");
+  const B = s.boards || {}, dual = B.mode === "dual", blist = B.list || [];
+  if (s.sim) setPill(dual ? "2 tablas simuladas" : "Tabla simulada", "sim");
+  else if (s.connected) setPill(dual ? "2 tablas conectadas (una por pie)" : "Tabla conectada", "ok");
   else setPill("Tabla no conectada", "bad");
-  $("hz").textContent = s.connected ? `${s.hz} Hz` : "";
-  $("err").textContent = (!s.connected && s.error) ? s.error : "";
+  $("hz").textContent = s.connected ? (dual ? blist.filter(b => b.connected).map(b => b.hz).join(" / ") + " Hz" : `${s.hz} Hz`) : "";
+  const stale = dual && blist.some(b => b.stale);
+  $("err").textContent = (!s.connected && s.error) ? s.error : (stale ? "una de las tablas no envía datos" : "");
+  $("dualrow").hidden = !dual; $("flipxlbl").hidden = dual;
+  if (dual) {
+    const L = B.layout || {};
+    $("gapinfo").textContent = L.gap_cm == null ? "← indica el hueco entre los bordes de las tablas (0 si están pegadas)" : `centros a ${fmt(L.center_distance_cm, 1)} cm`;
+    $("dualrow").classList.toggle("need", !!B.needs_gap);
+    if (B.needs_gap && !gapToastShown) { gapToastShown = true; toast("Segunda tabla detectada: indica el hueco entre las tablas en los ajustes", 8000); }
+  }
+  if (dual !== lastDual) { lastDual = dual; resize(); if (PR.open) resizePractice(); }
+  renderBoardsList();
   $("tared").textContent = s.tared ? "tara aplicada" : "";
   $("untare").hidden = !s.tared;
   const rec = $("rec");
@@ -437,6 +519,18 @@ function renderStatus() {
   $("practice").disabled = !boardConnected();
   renderRefLine(s.reference);
   syncBoardPanel(s);
+}
+function renderBoardsList() {
+  const B = status.boards || {}; const el = $("boardslist"); const lst = B.list || [];
+  const sig = JSON.stringify(lst.map(b => [b.key, b.side, b.foot, b.connected, Math.round(b.hz), b.tared, b.stale]));
+  if (el.dataset.sig === sig) return; el.dataset.sig = sig;
+  if (!lst.length) { el.innerHTML = ""; return; }
+  el.innerHTML = lst.map((b, i) => `<div>Tabla <b>${b.serial || b.product || b.key}</b>${b.side && B.mode === "dual" ? ` — <b>${b.side === "L" ? "izquierda" : "derecha"}</b> (pie ${b.foot})` : ""} · ${b.connected ? b.hz + " Hz" : "conectando…"}${b.tared ? " · tara" : ""}${b.stale ? " · <span style='color:var(--warn)'>sin datos</span>" : ""} <button class="small" data-idx="${i}" data-help="identificar">identificar (LED)</button></div>`).join("")
+    + (B.mode === "dual" ? `<div style="margin-top:4px"><button class="small" id="swapboards2" data-help="intercambiar">⇄ intercambiar izquierda / derecha</button> si el pie sale en la tabla contraria.</div>` : "");
+  el.querySelectorAll("button[data-idx]").forEach(btn => btn.onclick = async () => {
+    try { await api("/api/boards/identify", {key: lst[+btn.dataset.idx].key}); toast("Mira qué tabla parpadea"); } catch (e) { toast(e.message); }
+  });
+  const sb = $("swapboards2"); if (sb) sb.onclick = swapBoards;
 }
 function renderRefLine(ref) {
   $("refline").innerHTML = ref ? `Referencia para comparar: <b>${ref}</b> <button class="small" id="clearref">quitar</button>`
@@ -506,7 +600,7 @@ setInterval(() => {
 }, 100);
 
 const cv = $("board"), ctx = cv.getContext("2d");
-function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * (camAspect || 0.62) * dpr; }
+function resize() { const w = cv.clientWidth || 600; cv.width = w * dpr; cv.height = w * (camAspect || (isDual() ? 0.8 : 0.62)) * dpr; }
 window.addEventListener("resize", resize); resize();
 
 function drawBoard(c, ox, oy, bwid, bhei, opts) {
@@ -514,8 +608,13 @@ function drawBoard(c, ox, oy, bwid, bhei, opts) {
   const u = (opts && opts.u) || dpr;
   c.fillStyle = (opts && opts.translucent) ? "rgba(18,24,32,0.45)" : "#121820"; c.fillRect(ox, oy, bwid, bhei);
   c.strokeStyle = "#2a3038"; c.lineWidth = 1;
-  for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox + bwid * i / 4, oy); c.lineTo(ox + bwid * i / 4, oy + bhei); c.stroke(); }
-  c.beginPath(); c.moveTo(ox, oy + bhei / 2); c.lineTo(ox + bwid, oy + bhei / 2); c.stroke();
+  if (opts && opts.vertical) {   // tabla girada 90°: el lado largo va en vertical
+    for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox, oy + bhei * i / 4); c.lineTo(ox + bwid, oy + bhei * i / 4); c.stroke(); }
+    c.beginPath(); c.moveTo(ox + bwid / 2, oy); c.lineTo(ox + bwid / 2, oy + bhei); c.stroke();
+  } else {
+    for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(ox + bwid * i / 4, oy); c.lineTo(ox + bwid * i / 4, oy + bhei); c.stroke(); }
+    c.beginPath(); c.moveTo(ox, oy + bhei / 2); c.lineTo(ox + bwid, oy + bhei / 2); c.stroke();
+  }
   c.strokeStyle = "#55606d"; c.lineWidth = 3 * u; c.strokeRect(ox, oy, bwid, bhei);
   if (opts && opts.labels) {
     c.fillStyle = "#9aa4b2"; c.font = `${(opts.font || 13) * u}px system-ui`; c.textAlign = "center";
@@ -538,35 +637,65 @@ function drawScene(c, W, H, opts) {
     c.drawImage(camImg, (W - dw) / 2, (H - dh) / 2, dw, dh);
     c.restore();
   }
-  const pad = 0.09 * W, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
-  const toPx = (x, y) => {
-    const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y;
-    return [ox + bwid / 2 + sx * bwid / 2, oy + bhei / 2 - sy * bhei / 2];
-  };
-  drawBoard(c, ox, oy, bwid, bhei, {labels: true, translucent: !!camImg, u, font: opts.font || 13});
+  const dual = isDual();
+  const ox = 0.09 * W, oy = 26 * u;
+  const g = boardGeom(dual ? "dual" : "single", currentLayout(), ox, oy, W - 2 * ox, H - 2 * oy, true);
+  const toPx = g.toPx;
+  drawBoards(c, g, {translucent: !!camImg, u, font: opts.font || 13});
+  if (dual) {
+    // kg y % de cada pie sobre su tabla, y aviso si la otra tabla no envía datos
+    const trailRight = settings.handed === "right";
+    g.rects.forEach((r, i) => {
+      const foot = latest && latest.mode === "dual" ? (i === 0 ? latest.L : latest.R) : null;
+      if (!foot || latest.tot < 2) return;
+      c.fillStyle = FOOT_COLORS[((i === 1) === trailRight) ? "trail" : "lead"]; c.font = `bold ${(opts.font || 13) * u}px system-ui`; c.textAlign = "center";
+      c.fillText(`${foot.kg.toFixed(1)} kg · ${(foot.kg / latest.tot * 100).toFixed(0)} %`, r.x + r.w / 2, r.y - 8 * u);
+    });
+    if (latest && latest.stale) { c.fillStyle = "#ffd166"; c.font = `${(opts.font || 13) * u}px system-ui`; c.textAlign = "center"; c.fillText("una tabla no envía datos", g.cx, g.cy); }
+  }
   if (opts.target) {
     // zona de centrado: rectángulo de tolerancia + cruz en el centro
-    const tx = CENTER_TOL_X / HX * bwid / 2, ty = CENTER_TOL_Y / HY * bhei / 2;
+    const tx = CENTER_TOL_X * g.sx, ty = CENTER_TOL_Y * g.sy;
     const [cx, cy] = toPx(0, 0);
     c.strokeStyle = opts.centered ? "rgba(61,220,151,0.9)" : "rgba(255,209,102,0.9)"; c.lineWidth = 3 * u;
     c.setLineDash([8 * u, 6 * u]); c.strokeRect(cx - tx, cy - ty, 2 * tx, 2 * ty); c.setLineDash([]);
     c.beginPath(); c.moveTo(cx - 14 * u, cy); c.lineTo(cx + 14 * u, cy); c.moveTo(cx, cy - 14 * u); c.lineTo(cx, cy + 14 * u); c.stroke();
   }
+  const trailRight = settings.handed === "right";
+  const footColor = (side) => FOOT_COLORS[((side === "R") === trailRight) ? "trail" : "lead"];
   if (trail.length > 1) {
     const t1 = trail[trail.length - 1].t;
-    c.lineCap = "round"; c.lineWidth = 3.5 * u;
+    c.lineCap = "round";
     for (let i = 1; i < trail.length; i++) {
       const a = trail[i - 1], b = trail[i];
       if (a.tot < 2 || b.tot < 2) continue;
       const age = Math.min(1, (t1 - b.t) / TRAIL_S);
-      c.strokeStyle = `rgba(80,200,255,${(1 - age) * 0.9})`;
+      if (dual && a.L && b.L) {   // estela de cada pie dentro de su tabla
+        c.lineWidth = 2 * u;
+        for (const side of ["L", "R"]) {
+          if (a[side].kg < 2 || b[side].kg < 2) continue;
+          c.strokeStyle = footColor(side); c.globalAlpha = (1 - age) * 0.7;
+          const [x0, y0] = g.footPx(side, a[side].x, a[side].y), [x1, y1] = g.footPx(side, b[side].x, b[side].y);
+          c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+        }
+        c.globalAlpha = 1;
+      }
+      c.lineWidth = 3.5 * u; c.strokeStyle = `rgba(80,200,255,${(1 - age) * 0.9})`;
       const [x0, y0] = toPx(a.x, a.y), [x1, y1] = toPx(b.x, b.y);
       c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
     }
   }
   if (latest && latest.tot >= 2) {
-    const [x, y] = toPx(latest.x, latest.y);
     const bw = bodyWeight(); const f = bw ? latest.tot / bw : 1;
+    if (dual && latest.mode === "dual") {   // punto de cada pie, tamaño según su carga
+      for (const side of ["L", "R"]) {
+        const foot = latest[side]; if (foot.kg < 2) continue;
+        const [fx, fy] = g.footPx(side, foot.x, foot.y);
+        c.fillStyle = footColor(side); c.beginPath(); c.arc(fx, fy, (6 + 9 * Math.min(1.5, foot.kg / (bw || latest.tot))) * u, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#0f1318"; c.lineWidth = 1.5 * u; c.stroke();
+      }
+    }
+    const [x, y] = toPx(...copCm(latest));
     const r = (9 + 12 * Math.max(0, Math.min(2, f))) * u;
     c.fillStyle = f > 1.15 ? "#ff7a59" : "#ffd166";
     c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
@@ -665,7 +794,7 @@ const PR = {open: false, state: "waiting", armed: false, onSince: null, offSince
 const prcv = $("prcanvas"), prc = prcv.getContext("2d");
 function resizePractice() {
   const wrap = $("prwrap"); const W = wrap.clientWidth || 800, H = wrap.clientHeight || 450;
-  const aspect = camAspect || 0.62;
+  const aspect = camAspect || (isDual() ? 0.8 : 0.62);
   let w = W, h = w * aspect; if (h > H) { h = H; w = h / aspect; }
   w = Math.floor(w); h = Math.floor(h);
   prcv.style.width = w + "px"; prcv.style.height = h + "px"; prcv.width = w * dpr; prcv.height = h * dpr;
@@ -701,7 +830,7 @@ function practiceTick() {
     PR.offSince = null;
     if (PR.onSince == null) PR.onSince = now;
     if (!PR.armed && now - PR.onSince > 0.8) setArmed(true);
-    const xcm = latest.x * HX, ycm = latest.y * HY;
+    const [xcm, ycm] = copCm(latest);
     const centered = Math.abs(xcm) <= CENTER_TOL_X && Math.abs(ycm) <= CENTER_TOL_Y;
     if (centered) {
       if (PR.centeredSince == null) PR.centeredSince = now;
@@ -737,6 +866,7 @@ function showPracticeResult(a) {
   const cells = [["% trail en el top", fmt(m.trail_pct_en_top, 0) + " %"], ["% lead en el impacto", fmt(m.lead_pct_en_impacto, 0) + " %"],
                  ["pico de fuerza", fmt(m.pico_fuerza_pct_bw, 0) + " % del peso"], ["top → impacto", m.top_a_impacto_ms != null ? m.top_a_impacto_ms + " ms" : "–"],
                  ["recorrido lateral", fmt(m.cop_x_rango_cm, 1) + " cm"], ["impacto", {audio: "por audio", manual: "manual", heuristic: "estimado"}[(a.events || {}).impact_source] || "–"]];
+  if (a.mode === "dual") cells.push(["trail punta-talón en el top", fmtPT(m.trail_punta_talon_en_top_cm)], ["lead punta-talón en el impacto", fmtPT(m.lead_punta_talon_en_impacto_cm)]);
   $("prrm").innerHTML = cells.map(([k, v]) => `<div><b>${k}</b>${v}</div>`).join("");
   drawMini($("prmini"), a.path);
   $("prresult").hidden = false;
@@ -744,13 +874,26 @@ function showPracticeResult(a) {
   setPrStatus(`Swing ${PR.count} guardado ✔ — céntrate para el siguiente`, "ok");
 }
 $("prview").onclick = () => { if (PR.lastName) openPlayer(PR.lastName); };
+// punta-talón con signo legible: + punta, − talón
+function fmtPT(v) { return v == null ? "–" : (v > 0 ? "+" : "") + Number(v).toFixed(1) + " cm " + (v > 0.5 ? "(punta)" : v < -0.5 ? "(talón)" : ""); }
 function drawMini(c, path) {
   const g = c.getContext("2d"); const W = c.width, H = c.height;
   g.clearRect(0, 0, W, H);
-  const pad = 18, bwid = W - 2 * pad, bhei = bwid * (HY / HX), ox = pad, oy = (H - bhei) / 2;
-  drawBoard(g, ox, oy, bwid, bhei, {labels: true, font: 10, u: 1});
+  const dual = !!(path && path.mode === "dual");
+  const geo = boardGeom(dual ? "dual" : "single", (path && path.layout) || currentLayout(), 18, 14, W - 36, H - 28, false);
+  drawBoards(g, geo, {font: 10, u: 1});
   if (!path || !path.x || path.x.length < 2) return;
-  const toPx = (x, y) => { const sx = settings.flip_x ? -x : x, sy = settings.flip_y ? -y : y; return [ox + bwid / 2 + sx / HX * bwid / 2, oy + bhei / 2 - sy / HY * bhei / 2]; };
+  const toPx = geo.toPx;
+  if (dual && path.feet) {   // trazo de cada pie en su tabla (fino)
+    const trailRight = settings.handed === "right";
+    for (const name of ["lead", "trail"]) {
+      const f = path.feet[name]; if (!f) continue;
+      const side = ((name === "trail") === trailRight) ? "R" : "L";
+      g.strokeStyle = FOOT_COLORS[name]; g.lineWidth = 1.5; g.beginPath(); let started = false;
+      f.x.forEach((x, i) => { if (x == null || f.y[i] == null) { started = false; return; } const [px, py] = geo.footPx(side, x, f.y[i]); if (!started) { g.moveTo(px, py); started = true; } else g.lineTo(px, py); });
+      g.stroke();
+    }
+  }
   g.strokeStyle = "#50c8ff"; g.lineWidth = 2.5; g.lineCap = "round"; g.beginPath();
   path.x.forEach((x, i) => { const [px, py] = toPx(x, path.y[i]); if (i === 0) g.moveTo(px, py); else g.lineTo(px, py); });
   g.stroke();
@@ -769,6 +912,7 @@ async function loadSwings() {
     const badges = (s.is_reference ? '<span class="badge ref">★ referencia</span>' : "") +
       (s.video ? '<span class="badge" title="con vídeo">🎥</span>' : "") + (s.audio ? '<span class="badge" title="con audio">🎤</span>' : "") +
       (s.impact_source === "audio" ? '<span class="badge" title="impacto detectado en el audio">impacto audio</span>' : "") +
+      (s.mode === "dual" ? '<span class="badge" title="grabado con dos tablas, una por pie">2 tablas</span>' : "") +
       (s.analyzed ? "" : '<span class="badge">sin analizar</span>');
     tr.innerHTML = `<td>${s.name}${badges}</td><td class="muted">${fmtDate(s.mtime)}${s.duration ? " · " + s.duration.toFixed(1) + " s" : ""}</td><td style="text-align:right;white-space:nowrap"></td>`;
     const cell = tr.lastElementChild;
@@ -798,8 +942,17 @@ const LABELS = {
   top_a_impacto_ms: "Top → impacto (ms)", t_top_s: "Top (s)", t_impacto_s: "Impacto (s)", t_pico_fuerza_s: "Pico de fuerza (s)",
   trail_pct_min_max: "% trail mín / máx", cop_x_rango_cm: "Rango lateral CoP (cm)", cop_y_rango_cm: "Rango punta-talón (cm)",
   cop_longitud_trazo_cm: "Longitud del trazo (cm)",
+  // dos tablas (una por pie): punta-talón + = punta, − = talón; lateral + = derecha del golfista
+  trail_punta_talon_en_top_cm: "Pie trail: punta-talón en el top (cm)", lead_punta_talon_en_top_cm: "Pie lead: punta-talón en el top (cm)",
+  lead_punta_talon_en_impacto_cm: "Pie lead: punta-talón en el impacto (cm)", trail_punta_talon_en_impacto_cm: "Pie trail: punta-talón en el impacto (cm)",
+  lead_lateral_en_impacto_cm: "Pie lead: lateral en el impacto (cm)",
+  pico_fuerza_lead_pct_bw: "Pico de fuerza pie lead (% peso)", pico_fuerza_trail_pct_bw: "Pico de fuerza pie trail (% peso)",
+  cop_lead_rango_punta_talon_cm: "Pie lead: rango punta-talón (cm)", cop_trail_rango_punta_talon_cm: "Pie trail: rango punta-talón (cm)",
 };
 const ORDER = ["peso_corporal_kg", "trail_pct_en_top", "lead_pct_en_impacto", "pico_fuerza_pct_bw", "top_a_impacto_ms",
+               "trail_punta_talon_en_top_cm", "lead_punta_talon_en_top_cm", "lead_punta_talon_en_impacto_cm", "trail_punta_talon_en_impacto_cm",
+               "lead_lateral_en_impacto_cm", "pico_fuerza_lead_pct_bw", "pico_fuerza_trail_pct_bw",
+               "cop_lead_rango_punta_talon_cm", "cop_trail_rango_punta_talon_cm",
                "fuerza_en_impacto_pct_bw", "t_top_s", "t_impacto_s", "t_pico_fuerza_s", "trail_pct_min_max",
                "cop_x_rango_cm", "cop_y_rango_cm", "cop_longitud_trazo_cm"];
 function showAnalysis(a) {
@@ -807,8 +960,16 @@ function showAnalysis(a) {
   $("antitle").textContent = "Análisis · " + a.name;
   const ev = a.events || {};
   const src = {audio: "impacto por audio" + (a.impact_audio && a.impact_audio.snr ? ` (SNR ${a.impact_audio.snr})` : ""), manual: "impacto marcado a mano", heuristic: "impacto estimado (pico de fuerza)"}[ev.impact_source] || "";
-  $("anmeta").textContent = `${a.samples} muestras · ${a.duration} s · ${a.hz} Hz` + (src ? " · " + src : "") +
+  $("anmeta").textContent = `${a.samples} muestras · ${a.duration} s · ${a.hz} Hz` + (a.mode === "dual" ? " · 2 tablas" : "") + (src ? " · " + src : "") +
     (a.media ? (a.media.video ? " · 🎥" : "") + (a.media.audio ? " · 🎤" : "") : "");
+  const bl = (a.boards && a.boards.layout) || null;
+  $("anlayout").hidden = a.mode !== "dual";
+  if (a.mode === "dual") {
+    const same = bl && (bl.gap_cm == null ? settings.dual_gap_cm == null : bl.gap_cm === settings.dual_gap_cm) && bl.button === (settings.dual_button || "left");
+    $("anlayoutinfo").textContent = `Colocación usada: hueco ${bl && bl.gap_cm != null ? fmt(bl.gap_cm, 1) + " cm" : "sin indicar (0 cm)"}, botón hacia la ${bl && bl.button === "right" ? "derecha" : "izquierda"}`
+      + (same ? "" : " · distinta de la actual");
+    $("anrelayout").hidden = !!same;
+  }
   let notes = (a.notes || []).join(" ");
   if (a.impact_audio && a.impact_audio.t == null && a.media && a.media.audio) notes += " No se detectó el golpe en el audio (nivel " + fmt(a.impact_audio.peak, 3) + ", SNR " + fmt(a.impact_audio.snr, 0) + ").";
   $("annotes").textContent = notes;
@@ -834,7 +995,12 @@ function showAnalysis(a) {
   const img = $("anpng"); img.src = a.png; img.style.display = "";
   document.querySelectorAll("#swings tr").forEach(tr => tr.className = tr.firstElementChild.textContent.startsWith(a.name) ? "sel" : "");
 }
-function clearAnalysis() { lastAnalysis = null; selected = null; $("antitle").textContent = "Análisis"; $("anmeta").textContent = ""; $("annotes").textContent = ""; $("anmetrics").innerHTML = ""; $("anpng").style.display = "none"; $("anactions").hidden = true; }
+function clearAnalysis() { lastAnalysis = null; selected = null; $("antitle").textContent = "Análisis"; $("anmeta").textContent = ""; $("annotes").textContent = ""; $("anmetrics").innerHTML = ""; $("anpng").style.display = "none"; $("anactions").hidden = true; $("anlayout").hidden = true; }
+$("anrelayout").onclick = async () => {
+  if (!lastAnalysis) return;
+  try { showAnalysis(await api("/api/analyze/" + lastAnalysis.name, {use_current_layout: true})); loadSwings(); toast("Reanalizado con la colocación actual de las tablas"); }
+  catch (e) { toast(e.message); }
+};
 $("anplay").onclick = () => { if (lastAnalysis) openPlayer(lastAnalysis.name); };
 $("anref").onclick = async () => {
   if (!lastAnalysis) return;
@@ -918,14 +1084,35 @@ function drawPlayer() {
   pctx.fillStyle = "#e6edf3"; pctx.font = `bold ${15 * u}px system-ui`; pctx.textAlign = "left";
   pctx.fillText(`LEAD ${tp == null ? "–" : (100 - tp).toFixed(0) + " %"}`, bx + 4 * u, by - 6 * u);
   pctx.textAlign = "right"; pctx.fillText(`${tp == null ? "–" : tp.toFixed(0) + " %"} TRAIL`, bx + bwd - 4 * u, by - 6 * u);
-  // recuadro de la tabla (abajo a la izquierda)
-  const iw = W * (T.video ? 0.40 : 0.62), ih = iw * (HY / HX), ix = 14 * u, iy = H - ih - 30 * u;
-  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * u, iy - 24 * u, iw + 20 * u, ih + 52 * u);
-  drawBoard(pctx, ix, iy, iw, ih, {labels: true, font: 11});
-  const toPx = (xcm, ycm) => {
-    const sx = settings.flip_x ? -xcm : xcm, sy = settings.flip_y ? -ycm : ycm;
-    return [ix + iw / 2 + (sx / HX) * iw / 2, iy + ih / 2 - (sy / HY) * ih / 2];
-  };
+  // recuadro de la(s) tabla(s) (abajo a la izquierda); los cm del análisis ya llevan los flips
+  const dual = T.mode === "dual";
+  const Dcm = dual ? ((T.layout && T.layout.center_distance_cm) || BOARD_D_CM) : 0;
+  const iw = W * (T.video ? (dual ? 0.34 : 0.40) : (dual ? 0.48 : 0.62)), ih = dual ? iw * (BOARD_W_CM / (Dcm + BOARD_D_CM)) : iw * (HY / HX);
+  const ix = 14 * u, iy = H - ih - 30 * u;
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(ix - 10 * u, iy - 24 * u, iw + 20 * u + (dual ? 30 * u : 0), ih + 52 * u);
+  const geo = boardGeom(dual ? "dual" : "single", T.layout || {}, ix, iy, iw, ih, false);
+  drawBoards(pctx, geo, {font: 11, u, trailRight: T.trail_is_pos_x});
+  const toPx = geo.toPx;
+  if (dual && T.feet) {   // trazo y punto de cada pie en su tabla
+    for (const name of ["lead", "trail"]) {
+      const F = T.feet[name]; if (!F) continue;
+      const side = ((name === "trail") === T.trail_is_pos_x) ? "R" : "L";
+      pctx.strokeStyle = FOOT_COLORS[name]; pctx.lineWidth = 1.8 * u; pctx.lineCap = "round"; pctx.beginPath(); let started = false;
+      for (let k = 0; k < T.t.length && T.t[k] <= P.t; k++) {
+        const x = F.x_cm[k], y = F.y_cm[k];
+        if (x == null || y == null) { started = false; continue; }
+        const [px, py] = geo.footPx(side, x, y);
+        if (!started) { pctx.moveTo(px, py); started = true; } else pctx.lineTo(px, py);
+      }
+      pctx.stroke();
+      const k = bsearch(T.t, P.t);
+      if (F.x_cm[k] != null && F.y_cm[k] != null) {
+        const [px, py] = geo.footPx(side, F.x_cm[k], F.y_cm[k]);
+        pctx.fillStyle = FOOT_COLORS[name]; pctx.beginPath(); pctx.arc(px, py, (4 + 6 * Math.min(1.5, (F.pct[k] || 0) / 100 * ((f || 100) / 100))) * u, 0, Math.PI * 2); pctx.fill();
+        pctx.strokeStyle = "#0f1318"; pctx.lineWidth = 1.2 * u; pctx.stroke();
+      }
+    }
+  }
   const drawPath = (tr, tEnd, color, width, full) => {
     const n = tr.t.length; let started = false;
     pctx.strokeStyle = color; pctx.lineWidth = width * u; pctx.lineCap = "round"; pctx.beginPath();
@@ -968,10 +1155,17 @@ function drawPlayer() {
   mark(ev.t_top, "#ffa040", "top"); mark(ev.t_impact, "#ff5050", ev.impact_source === "audio" ? "impacto (audio)" : ev.impact_source === "manual" ? "impacto (manual)" : "impacto ≈");
   if (T.impact_audio && T.impact_audio.t != null && ev.impact_source !== "audio") mark(T.impact_audio.t, "#ff9ad0", "golpe (audio)");
   pctx.fillStyle = "#50c8ff"; pctx.fillRect(xOf(P.t) - 1.5 * u, tby - 6 * u, 3 * u, tbh + 12 * u);
-  // fuerza a la derecha
-  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - 200 * u, H - 44 * u, 186 * u, 32 * u);
-  pctx.fillStyle = "#e6edf3"; pctx.font = `${13 * u}px system-ui`; pctx.textAlign = "left";
-  pctx.fillText(`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`, W - 190 * u, H - 22 * u);
+  // fuerza a la derecha (y con dos tablas, punta-talón de cada pie)
+  const lines = [`fuerza ${f == null ? "–" : f.toFixed(0) + " % del peso"}`];
+  if (dual && T.feet) {
+    const pt = (v) => v == null ? "–" : (v > 0 ? "+" : "") + v.toFixed(1) + " cm";
+    lines.push(`lead: ${pt(T.feet.lead.y_cm[i])} punta-talón · ${fmt(T.feet.lead.pct[i], 0)} %`);
+    lines.push(`trail: ${pt(T.feet.trail.y_cm[i])} punta-talón · ${fmt(T.feet.trail.pct[i], 0)} %`);
+  }
+  const bh2 = (14 + 20 * lines.length) * u, bw2 = (dual ? 300 : 186) * u;
+  pctx.fillStyle = "rgba(15,19,24,0.72)"; pctx.fillRect(W - bw2 - 14 * u, H - bh2 - 12 * u, bw2, bh2);
+  pctx.font = `${13 * u}px system-ui`; pctx.textAlign = "left";
+  lines.forEach((ln, k) => { pctx.fillStyle = k === 0 ? "#e6edf3" : FOOT_COLORS[k === 1 ? "lead" : "trail"]; pctx.fillText(ln, W - bw2 - 4 * u, H - bh2 - 12 * u + (24 + 20 * k) * u); });
   $("ptime").textContent = `t = ${P.t.toFixed(3)} s` + (ev.t_impact != null ? `  (${((P.t - ev.t_impact) * 1000).toFixed(0)} ms ${P.t >= ev.t_impact ? "tras" : "antes del"} impacto)` : "");
 }
 function tick(ts) {
@@ -1052,7 +1246,7 @@ $("pair").onclick = async () => {
 
 // ---------- ayuda contextual ----------
 const HELP = {
-  estado: ["Estado de la tabla", "Verde: la tabla está conectada y enviando datos. Rojo: no se detecta (enciéndela con su botón de delante; si es la primera vez, emparéjala desde Tabla / Bluetooth). Amarillo: tabla simulada (modo de pruebas sin hardware)."],
+  estado: ["Estado de la tabla", "Verde: la tabla está conectada y enviando datos («2 tablas conectadas» si hay una por pie). Rojo: no se detecta (enciéndela con su botón de delante; si es la primera vez, emparéjala desde Tabla / Bluetooth). Amarillo: tabla simulada (modo de pruebas sin hardware)."],
   hz: ["Frecuencia de muestreo", "Muestras por segundo que llegan de la tabla. Lo normal son ~100 Hz; si baja mucho, la conexión Bluetooth va mal (distancia, pilas)."],
   manual: ["Manual", "Abre el manual de usuario completo en otra pestaña."],
   asistente: ["Asistente de puesta en marcha", "Te guía en 4 pasos: tabla conectada, tara a 0 kg sin nadie encima, tu peso (2 s quieto) y ajustes. Puedes repetirlo cuando quieras con este botón; conviene hacerlo cada vez que arrancas."],
@@ -1064,7 +1258,7 @@ const HELP = {
   "wz-tara": ["Paso 2: tara", "Con la tabla vacía (o solo con la alfombra) se fija el cero de las cuatro células. Si hay peso encima, el asistente pide bajarse; a los 2 s de tabla vacía la tara se aplica sola."],
   "wz-peso": ["Paso 3: tu peso", "Súbete con la ropa y el palo con que vayas a jugar y quédate quieto 2 s: se fija tu peso, que será el 100 % de la fuerza vertical en todos los análisis (se guarda en los ajustes)."],
   "wz-ajustes": ["Paso 4: ajustes", "Diestro/zurdo (define qué pie es trail y cuál lead), inversión de ejes si te colocas al revés, y micrófono/cámara opcionales."],
-  "en-vivo": ["Vista en vivo", "Silueta de la tabla vista desde arriba con el punto del centro de presión (CoP) y su estela de 1,5 s. El punto crece y se pone naranja cuando la fuerza vertical supera el 115 % de tu peso. Con la cámara activa, la imagen se ve atenuada de fondo para encuadrar."],
+  "en-vivo": ["Vista en vivo", "Silueta de la tabla vista desde arriba con el punto del centro de presión (CoP) y su estela de 1,5 s. El punto crece y se pone naranja cuando la fuerza vertical supera el 115 % de tu peso. Con dos tablas se ven las dos (giradas), el punto y la estela de cada pie (verde lead, naranja trail) con sus kg y %, y el punto global entre ambas. Con la cámara activa, la imagen se ve atenuada de fondo para encuadrar."],
   peso: ["Peso sobre la tabla", "Suma de las cuatro células en kg (tras la tara). Durante el swing sube por encima de tu peso (empuje) y baja después (descarga)."],
   fuerza: ["Fuerza vertical", "Peso actual dividido por tu peso corporal, en %. 100 % = quieto; 120-190 % en el pico del downswing de un swing enérgico."],
   "peso-corporal": ["Peso corporal", "Referencia del % de fuerza. Fijado por el asistente (o con «Fijar peso» estando quieto) se guarda en los ajustes y lo usan también los análisis; si no, se estima sobre la marcha."],
@@ -1075,6 +1269,22 @@ const HELP = {
   diestro: ["Diestro / zurdo", "Define qué pie es TRAIL (trasero) y cuál LEAD (delantero): para un diestro el trail es el derecho."],
   "invertir-x": ["Invertir izquierda/derecha", "Actívalo si al cargar el pie derecho sube LEAD en vez de TRAIL (depende de hacia dónde mires al subirte a la tabla)."],
   "invertir-y": ["Invertir punta/talón", "Actívalo si al ir a las puntas de los pies el punto baja hacia «talón»."],
+  dual: ["Dos tablas (una por pie)", "Con dos Balance Boards conectadas, cada pie va en la suya: las tablas se colocan lado a lado GIRADAS 90° (el lado largo en la dirección del pie), las dos con el botón de encendido hacia el mismo lado. La app calcula la carga y el centro de presión de cada pie y el CoP global entre ambas."],
+  hueco: ["Hueco entre tablas", "Distancia entre los bordes interiores de las dos tablas, en cm (0 si están pegadas). Hace falta para situar el CoP global: la distancia entre los centros es el hueco + 31,6 cm (el lado corto de la tabla)."],
+  boton: ["Botón de las tablas", "Hacia dónde apunta el botón de encendido de las dos tablas (giradas 90°): a tu izquierda o a tu derecha. Si al ir a las puntas el punto de cada pie baja hacia «talón» y al cargar el lado exterior del pie el punto va hacia dentro, cambia este ajuste."],
+  intercambiar: ["Intercambiar tablas", "Si el pie derecho aparece en la tabla de la izquierda (o al revés), intercambia qué tabla es la izquierda y cuál la derecha. Se recuerda entre sesiones."],
+  identificar: ["Identificar", "Hace parpadear el LED de esa tabla para saber cuál es cuál."],
+  "tablas-conectadas": ["Tablas conectadas", "Cada tabla con su número de serie, si es la izquierda o la derecha (y qué pie le toca), su frecuencia y si tiene tara."],
+  "an-colocacion": ["Colocación usada", "Con dos tablas, cada swing guarda el hueco y la orientación con que se grabó y se analiza siempre con ellos, aunque después muevas las tablas. Si te equivocaste al indicarlos, corrígelos en los ajustes y pulsa «reanalizar con la colocación actual»."],
+  m_trail_punta_talon_en_top_cm: ["Pie trail: punta-talón en el top (cm)", "Dónde está el centro de presión del pie trasero al final del backswing: + hacia la punta, − hacia el talón. Orientativo: en un buen backswing el trail carga el medio pie o algo hacia el talón; irse a la punta suele indicar pérdida de postura."],
+  m_lead_punta_talon_en_top_cm: ["Pie lead: punta-talón en el top (cm)", "CoP del pie delantero en el top: + punta, − talón."],
+  m_lead_punta_talon_en_impacto_cm: ["Pie lead: punta-talón en el impacto (cm)", "CoP del pie delantero en el impacto. Los buenos jugadores empujan con el talón del lead (valor negativo) y giran sobre él; irse a la punta suele acompañar al «early extension»."],
+  m_trail_punta_talon_en_impacto_cm: ["Pie trail: punta-talón en el impacto (cm)", "CoP del pie trasero en el impacto: al rodar el pie hacia dentro suele ir hacia la punta (+)."],
+  m_lead_lateral_en_impacto_cm: ["Pie lead: lateral en el impacto (cm)", "Desplazamiento lateral del CoP dentro del pie delantero en el impacto: + hacia tu derecha (el borde interior si eres diestro), − hacia la izquierda (borde exterior)."],
+  m_pico_fuerza_lead_pct_bw: ["Pico de fuerza del pie lead", "Máxima fuerza vertical del pie delantero, en % de tu peso. En el downswing la mayor parte del empuje se hace con el lead."],
+  m_pico_fuerza_trail_pct_bw: ["Pico de fuerza del pie trail", "Máxima fuerza vertical del pie trasero, en % de tu peso (normalmente en la transición)."],
+  m_cop_lead_rango_punta_talon_cm: ["Pie lead: rango punta-talón (cm)", "Cuánto recorre el CoP del pie delantero entre el talón y la punta durante el swing."],
+  m_cop_trail_rango_punta_talon_cm: ["Pie trail: rango punta-talón (cm)", "Cuánto recorre el CoP del pie trasero entre el talón y la punta durante el swing."],
   microfono: ["Micrófono", "Graba el audio sincronizado con la tabla y busca el golpe a la bola: un transitorio muy fuerte y corto. Si lo encuentra, marca el impacto con precisión (en vez de estimarlo por el pico de fuerza)."],
   "micro-dispositivo": ["Dispositivo de audio", "Qué micrófono usar. Comprueba con el medidor que el nivel se mueve al hablar."],
   "micro-nivel": ["Nivel del micrófono", "Medidor del volumen captado; si no se mueve, ese micro está silenciado o sin permiso."],

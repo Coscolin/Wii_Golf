@@ -60,6 +60,15 @@ analiza. No hace falta instalar Python ni nada mas.
    (diestro/zurdo, microfono, camara). Repitelo con "Asistente" cada vez que
    arranques.
 
+5b) Dos tablas (una por pie, opcional): colocalas lado a lado GIRADAS 90 grados
+   (el lado largo en la direccion del pie), las dos con el boton de encendido
+   hacia el mismo lado (normalmente tu izquierda). Empareja la segunda como la
+   primera (SYNC + "Emparejar"; la ya conectada se ignora) y enciende las dos:
+   el programa pasa solo a "2 tablas". En los ajustes escribe el hueco entre
+   los bordes de las tablas (0 si estan pegadas) y hacia donde apunta el boton.
+   De puntillas, el punto de cada pie debe subir a "punta"; si el pie derecho
+   sale en la tabla izquierda, "intercambiar tablas".
+
 6) Colocate a lo ancho de la tabla (un pie en cada mitad, como en el swing).
    Carga el peso en el pie derecho: si eres diestro debe subir "TRAIL"; si sube
    "LEAD", marca "invertir izq/der".
